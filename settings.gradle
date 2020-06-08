@@ -1,0 +1,9 @@
+rootProject.name='JTakeAway'
+include ':app'
+setBinding(new Binding([gradle:this]))
+evaluate(new File(
+        settingsDir,
+        '../jtakeaway_module/.android/include_flutter.groovy'
+))
+include ':jtakeaway_module'
+project(':jtakeaway_module').projectDir = new File('../jtakeaway_module')

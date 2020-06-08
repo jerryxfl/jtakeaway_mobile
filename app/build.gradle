@@ -1,0 +1,92 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+    defaultConfig {
+        applicationId "com.jerry.jtakeaway"
+        minSdkVersion 21
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                includeCompileClasspath = true
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(":flutter")
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.annotation:annotation:1.1.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    testImplementation 'junit:junit:4.13'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+
+    //事件订阅
+    implementation 'org.greenrobot:eventbus:3.1.1'
+
+
+    //注解绑定框架
+    implementation 'com.jakewharton:butterknife:10.2.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
+
+    //图片加载库
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+
+    //OkHttp
+    implementation 'com.squareup.okhttp3:okhttp:4.7.2'
+    implementation 'com.squareup.okio:okio:2.7.0-alpha.lockfree.1'
+
+    //json
+    implementation 'org.jsoup:jsoup:1.13.1'
+    implementation 'com.alibaba:fastjson:1.2.68'
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+
+    //cardview
+    //noinspection GradleCompatible
+    implementation 'com.android.support:cardview-v7:28.0.0'
+    //recyclerview
+    implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha03'
+
+    //圆形图片
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+
+    //替代shareperformance
+    implementation 'com.tencent:mmkv:1.0.10'
+
+    //fontawsome
+    implementation 'com.shamanland:fonticon:0.1.9'
+
+    //selector代码
+    implementation 'com.yuan.library.selector:selectordrawable-release:1.0.3'
+
+    //点击任何键盘外的部分来取消键盘
+    implementation 'com.gabrielsamojlo.keyboarddismisser:keyboard-dismisser:1.3.1'
+}

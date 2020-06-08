@@ -1,0 +1,62 @@
+package com.jerry.jtakeaway.base;
+
+import android.app.Activity;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import org.greenrobot.eventbus.EventBus;
+
+public abstract class BaseFragment extends Fragment {
+    public abstract int getLayout();
+
+    public abstract void Init(View view);
+
+    public abstract void InitData();
+
+    public abstract void InitListener();
+
+    public abstract void destroy();
+
+    public Activity activity;
+    public Context context;
+
+
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(getLayout(), container,false);
+        activity = getActivity();
+        context = getContext();
+        Init(view);
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        InitData();
+        InitListener();
+    }
+
+    public void SignEventBus() {//注册eventBus
+        EventBus.getDefault().register(this);
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        if (EventBus.getDefault().isRegistered(this)) {//注销事件分发器
+            EventBus.getDefault().unregister(this);
+        }
+        destroy();
+        super.onDestroyView();
+    }
+}

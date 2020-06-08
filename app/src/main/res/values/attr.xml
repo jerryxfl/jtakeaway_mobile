@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AniImgButton">
+        <attr name="normalImg" format="reference"/>
+        <attr name="pressedImg" format="reference"/>
+    </declare-styleable>
+</resources>

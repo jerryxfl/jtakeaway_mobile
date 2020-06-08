@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.generalActivity.WelcomeActivity">
+    <ImageView
+        android:id="@+id/advertising_iv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/startimg"/>
+    <TextView
+        android:background="@drawable/timepicker_shape"
+        android:alpha="0.2"
+        android:layout_marginEnd="10dp"
+        android:id="@+id/timepicker_tv"
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="3s 跳转"
+        android:textColor="#222222"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"/>
+
+    <ImageView
+        android:id="@+id/fkwm_iv"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="100dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/fkwm" />
+    <ImageView
+        android:id="@+id/fkwmjsfkwm_iv"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="100dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/cwmjsfkwm" />
+
+
+</RelativeLayout>
