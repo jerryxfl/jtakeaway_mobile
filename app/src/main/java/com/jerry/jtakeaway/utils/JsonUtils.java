@@ -4,16 +4,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.jerry.jtakeaway.bean.responseBean.Result;
 
 public class JsonUtils {
-    public static <T> Result<T> getResult(JSONObject json) {
-        Result<T> result = new Result<T>();
-        result.setCode(json.getIntValue("code"));
+    public static  Result getResult(JSONObject json) {
+        Result result = new Result();
         result.setMsg(json.getString("msg"));
+        result.setCode(json.getIntValue("code"));
         if(json.get("data")!=null){
-//            result.setData(json.getObject("data",T.class));
+            result.setData(json.getJSONObject("data"));
         }
         return result;
     }
-
 }
 
 //{

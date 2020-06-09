@@ -1,17 +1,19 @@
 package com.jerry.jtakeaway.bean.responseBean;
 
 
+import com.alibaba.fastjson.JSONObject;
+
 /**
  * @version V1.0
  * @Package com.ss.jwt.R
  * @author: Liu
  * @Date: 10:21
  */
-public class Result<T> {
+public class Result {
     /*返回体*/
-    private  Integer code;
+    private Integer code;
     private String msg;
-    private T data;
+    private JSONObject data;
 
 
     public Integer getCode() {
@@ -30,11 +32,20 @@ public class Result<T> {
         this.msg = msg;
     }
 
-    public T getData() {
+    public JSONObject getData() {
         return data;
     }
 
-    public void setData(T data) {
+    public void setData(JSONObject data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "Result{" +
+                "code=" + code +
+                ", msg='" + msg + '\'' +
+                ", data=" + data +
+                '}';
     }
 }
