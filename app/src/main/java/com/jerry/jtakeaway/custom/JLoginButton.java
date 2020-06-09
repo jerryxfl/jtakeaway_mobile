@@ -132,9 +132,10 @@ public class JLoginButton extends View {
             circlePaint.setColor(Color.parseColor("#f5222d"));
             circlePaint.setAlpha(150);
         }else if (loginStatus == 4){
-            handler.removeMessages(0);
             circlePaint.setColor(Color.parseColor("#a0d911"));
-            circlePaint.setAlpha(150);
+            circlePaint.setAlpha(255);
+            handler.removeMessages(0);
+            handler.sendEmptyMessageDelayed(0,1000);
         }
         canvas.drawCircle(circlePointX, circlePointY, circleRadius, circlePaint);//背景园
 

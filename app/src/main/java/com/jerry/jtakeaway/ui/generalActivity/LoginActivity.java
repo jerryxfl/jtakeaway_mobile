@@ -1,20 +1,20 @@
 package com.jerry.jtakeaway.ui.generalActivity;
 
-import android.animation.Animator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -54,9 +54,12 @@ public class LoginActivity extends BaseActivity {
     LinearLayout username_lt;
     @BindView(R.id.password_lt)
     LinearLayout password_lt;
+    @BindView(R.id.container)
+    RelativeLayout container;
 
-    @BindView(R.id.loginbtn_btn)
-    JLoginButton loginbtn_btn;
+
+    @BindView(R.id.loginbtn)
+    JLoginButton loginbtn;
 
     @BindView(R.id.forgetpwd_tv)
     TextView forgetpwd_tv;
@@ -84,6 +87,7 @@ public class LoginActivity extends BaseActivity {
             reset(error_wrapper);
         }
     };
+    private ScaleAnimation scaleAnimation;
 
     @Override
     public int getLayout() {
@@ -117,31 +121,28 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void InitListener() {
-        loginbtn_btn.setOnClickListener(new JLoginButton.OnJClickListener() {
-            @Override
-            public void onClick() {
-                String username = username_et.getText().toString().trim();
-                String password = password_et.getText().toString().trim();
-                if ("".equals(username)) {
-                    error_tv.setText("账号不能为空");
-                    tipAnimation(error_wrapper);
-                    loginbtn_btn.LoginFailed();
-                    return;
-                }
-                if ("".equals(password)) {
-                    error_tv.setText("密码不能为空");
-                    tipAnimation(error_wrapper);
-                    loginbtn_btn.LoginFailed();
-                    return;
-                }
-                if (!userdeal_cb.isChecked()) {
-                    error_tv.setText("请先同意用户协议");
-                    tipAnimation(error_wrapper);
-                    loginbtn_btn.LoginFailed();
-                    return;
-                }
-                login(username, password);
+        loginbtn.setOnClickListener(() -> {
+            String username = username_et.getText().toString().trim();
+            String password = password_et.getText().toString().trim();
+            if ("".equals(username)) {
+                error_tv.setText("账号不能为空");
+                tipAnimation(error_wrapper);
+                loginbtn.LoginFailed();
+                return;
             }
+            if ("".equals(password)) {
+                error_tv.setText("密码不能为空");
+                tipAnimation(error_wrapper);
+                loginbtn.LoginFailed();
+                return;
+            }
+            if (!userdeal_cb.isChecked()) {
+                error_tv.setText("请先同意用户协议");
+                tipAnimation(error_wrapper);
+                loginbtn.LoginFailed();
+                return;
+            }
+            login(username, password);
         });
 
         //忘记密码
@@ -222,7 +223,7 @@ public class LoginActivity extends BaseActivity {
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 e.printStackTrace();
                 new Handler(Looper.getMainLooper()).post(() -> {
-                    loginbtn_btn.LoginFailed();
+                    loginbtn.LoginFailed();
                     error_tv.setText("服务器链接失败");
                     tipAnimation(error_wrapper);
                 });
@@ -244,13 +245,12 @@ public class LoginActivity extends BaseActivity {
                             UserUtils.getInstance().setUser(gson.fromJson(json.getString("user"), User.class));
                         }
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                            loginbtn_btn.LoginSuccess();
                             goToNew();
-                        },3000);
+                        },1500);
 
                     } else {
                         new Handler(Looper.getMainLooper()).post(() -> {
-                            loginbtn_btn.LoginFailed();
+                            loginbtn.LoginFailed();
                             error_tv.setText(result.getMsg());
                             tipAnimation(error_wrapper);
                         });
@@ -265,39 +265,34 @@ public class LoginActivity extends BaseActivity {
 
 
     private void goToNew(){
-        loginbtn_btn.goToNew();
-
+        loginbtn.goToNew();
+        loginbtn.bringToFront();
         Intent intent = new Intent(this, HomeActivity.class);
-        int centerPointX=(loginbtn_btn.getLeft()+loginbtn_btn.getRight())/2;
-        int centerPointY=(loginbtn_btn.getTop()+loginbtn_btn.getBottom())/2;
-        Animator animator= ViewAnimationUtils.createCircularReveal(loginbtn_btn,centerPointX,centerPointY,0,1111);
-        animator.setDuration(3000);
-        animator.addListener(new Animator.AnimatorListener() {
+        scaleAnimation = new ScaleAnimation(1,200,1,200,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF, 0.5f);
+        scaleAnimation.setDuration(300);
+        scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animator animation) {
-                new Handler().postDelayed(() -> {
+            public void onAnimationStart(Animation animation) {
+                handler.postDelayed(() -> {
                     startActivity(intent);
                     overridePendingTransition(R.anim.anim_in,R.anim.anim_out);
-                },2000);
+                    finish();
+                },200);
             }
 
             @Override
-            public void onAnimationEnd(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
+            public void onAnimationEnd(Animation animation) {
 
             }
 
             @Override
-            public void onAnimationRepeat(Animator animation) {
+            public void onAnimationRepeat(Animation animation) {
 
             }
         });
-//        animator.start();
-
+        scaleAnimation.setFillAfter(true);
+        scaleAnimation.setRepeatCount(0);
+        loginbtn.startAnimation(scaleAnimation);
     }
 
 }

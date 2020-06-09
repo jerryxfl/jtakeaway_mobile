@@ -62,7 +62,7 @@
             android:textColor="@drawable/text_selector"/>
     </RelativeLayout>
     <com.jerry.jtakeaway.custom.JLoginButton
-        android:id="@+id/loginbtn_btn"
+        android:id="@+id/loginbtn"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_centerHorizontal="true"
