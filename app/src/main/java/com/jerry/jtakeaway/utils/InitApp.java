@@ -1,13 +1,11 @@
 package com.jerry.jtakeaway.utils;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.util.Log;
-
 
 import java.util.HashSet;
 import java.util.Set;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class InitApp {
     private Set<Activity> activities;//保存所有界面
@@ -35,25 +33,20 @@ public class InitApp {
         }
     }
 
+
     private void finish(Activity activity) {
         System.out.println("显示退出窗口");
-        AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-        dialog.setTitle("提示");
-        dialog.setMessage("是否退出当前程序？");
-        dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                System.exit(0);
-            }
-        });
-        dialog.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Log.d("jerry", "___取消");
-            }
-        });
-        if (dialog != null) {
-            dialog.show();
-        }
+        new SweetAlertDialog(activity, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("你确定要退出吗?")
+                .setConfirmText("是的")
+                .setConfirmClickListener(sDialog -> {
+                    System.exit(0);
+                })
+                .setCancelText("不了")
+                .setCancelClickListener(sweetAlertDialog -> {
+                    sweetAlertDialog.dismissWithAnimation();
+                })
+                .show();
+
     }
 }

@@ -34,6 +34,7 @@ public class OkHttp3Util {
                 .readTimeout(5 * 1000, TimeUnit.MILLISECONDS)
                 .writeTimeout(5 * 1000, TimeUnit.MILLISECONDS)
                 .connectTimeout(5 * 1000, TimeUnit.MILLISECONDS)
+                .callTimeout(5*1000, TimeUnit.MILLISECONDS)
                 .build();
         Request request = null;
         if (jwt == null || "".equals(jwt)) {
@@ -59,6 +60,7 @@ public class OkHttp3Util {
                 .readTimeout(5 * 1000, TimeUnit.MILLISECONDS)
                 .writeTimeout(5 * 1000, TimeUnit.MILLISECONDS)
                 .connectTimeout(5 * 1000, TimeUnit.MILLISECONDS)
+                .callTimeout(5*1000, TimeUnit.MILLISECONDS)
                 .build();
         Request request = null;
         RequestBody formBody = RequestBody.create(JSON, json.toString());
@@ -87,6 +89,7 @@ public class OkHttp3Util {
                 .readTimeout(5 * 1000, TimeUnit.MILLISECONDS)
                 .writeTimeout(5 * 1000, TimeUnit.MILLISECONDS)
                 .connectTimeout(5 * 1000, TimeUnit.MILLISECONDS)
+                .callTimeout(5*1000, TimeUnit.MILLISECONDS)
                 .build();
 
         Request request = null;
@@ -131,6 +134,7 @@ public class OkHttp3Util {
                 .readTimeout(5 * 1000, TimeUnit.MILLISECONDS)
                 .writeTimeout(5 * 1000, TimeUnit.MILLISECONDS)
                 .connectTimeout(5 * 1000, TimeUnit.MILLISECONDS)
+                .callTimeout(5*1000, TimeUnit.MILLISECONDS)
                 .build();
         Request request = null;
         if (jwt == null || "".equals(jwt)) {

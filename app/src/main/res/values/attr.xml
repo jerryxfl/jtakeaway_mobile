@@ -4,4 +4,10 @@
         <attr name="normalImg" format="reference"/>
         <attr name="pressedImg" format="reference"/>
     </declare-styleable>
+
+
+<!--    <declare-styleable name="JTabItem">-->
+<!--        <attr name="src" format="reference"/>-->
+<!--        <attr name="text" format="string"/>-->
+<!--    </declare-styleable>-->
 </resources>

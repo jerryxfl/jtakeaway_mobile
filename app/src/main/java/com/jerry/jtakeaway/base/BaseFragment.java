@@ -13,10 +13,13 @@ import androidx.fragment.app.Fragment;
 
 import org.greenrobot.eventbus.EventBus;
 
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
+
 public abstract class BaseFragment extends Fragment {
     public abstract int getLayout();
 
-    public abstract void Init(View view);
+    public abstract void InitView();
 
     public abstract void InitData();
 
@@ -26,6 +29,7 @@ public abstract class BaseFragment extends Fragment {
 
     public Activity activity;
     public Context context;
+    private Unbinder unbinder;
 
 
 
@@ -33,15 +37,16 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(getLayout(), container,false);
+        unbinder = ButterKnife.bind(this,view);
         activity = getActivity();
         context = getContext();
-        Init(view);
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        InitView();
         InitData();
         InitListener();
     }
@@ -56,6 +61,11 @@ public abstract class BaseFragment extends Fragment {
         if (EventBus.getDefault().isRegistered(this)) {//注销事件分发器
             EventBus.getDefault().unregister(this);
         }
+        if (unbinder != null && unbinder != Unbinder.EMPTY) {//取消注解绑定
+            unbinder.unbind();
+            unbinder = null;
+        }
+
         destroy();
         super.onDestroyView();
     }

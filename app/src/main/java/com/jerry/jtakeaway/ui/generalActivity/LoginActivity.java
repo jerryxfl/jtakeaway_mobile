@@ -1,26 +1,20 @@
 package com.jerry.jtakeaway.ui.generalActivity;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 
 import com.alibaba.fastjson.JSONObject;
-import com.bumptech.glide.Glide;
 import com.gabrielsamojlo.keyboarddismisser.KeyboardDismisser;
 import com.google.gson.Gson;
 import com.jerry.jtakeaway.R;
@@ -28,8 +22,7 @@ import com.jerry.jtakeaway.base.BaseActivity;
 import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.User;
 import com.jerry.jtakeaway.bean.responseBean.Result;
-import com.jerry.jtakeaway.custom.JLoginButton;
-import com.jerry.jtakeaway.ui.user.activity.HomeActivity;
+import com.jerry.jtakeaway.utils.BitmapBlurHelper;
 import com.jerry.jtakeaway.utils.JsonUtils;
 import com.jerry.jtakeaway.utils.MMkvUtil;
 import com.jerry.jtakeaway.utils.OkHttp3Util;
@@ -48,45 +41,11 @@ import okhttp3.Response;
 
 
 public class LoginActivity extends BaseActivity {
-    @BindView(R.id.loginbackground_iv)
-    ImageView loginbackground_iv;
-    @BindView(R.id.username_lt)
-    LinearLayout username_lt;
-    @BindView(R.id.password_lt)
-    LinearLayout password_lt;
     @BindView(R.id.container)
     RelativeLayout container;
+    @BindView(R.id.login_card)
+    CardView login_card;
 
-
-    @BindView(R.id.loginbtn)
-    JLoginButton loginbtn;
-
-    @BindView(R.id.forgetpwd_tv)
-    TextView forgetpwd_tv;
-    @BindView(R.id.sign_tv)
-    TextView sign_tv;
-
-    @BindView(R.id.username_et)
-    EditText username_et;
-    @BindView(R.id.password_et)
-    EditText password_et;
-
-    @BindView(R.id.error_wrapper)
-    LinearLayout error_wrapper;
-
-    @BindView(R.id.error_tv)
-    TextView error_tv;
-
-    @BindView(R.id.userdeal_cb)
-    CheckBox userdeal_cb;
-    @SuppressLint("HandlerLeak")
-    Handler handler = new Handler() {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            reset(error_wrapper);
-        }
-    };
     private ScaleAnimation scaleAnimation;
 
     @Override
@@ -98,20 +57,11 @@ public class LoginActivity extends BaseActivity {
     public void InitView() {
         //点击键盘外任何地方键盘消失
         KeyboardDismisser.useWith(this);
+        Bitmap bitmap = BitmapBlurHelper.doBlur(this,BitmapFactory.decodeResource(getResources(), R.drawable.startimg), 20);
+        Drawable drawable = new BitmapDrawable(bitmap);
+        container.setBackground(drawable);
 
-        //设置透明°
-        username_lt.getBackground().mutate().setAlpha(80);
-        password_lt.getBackground().mutate().setAlpha(80);
-
-        //设置背景图
-        Glide.with(this)
-                .load(R.drawable.login_bg_prod)
-                .into(loginbackground_iv);
-
-
-        username_et.setText("1072059168");
-        password_et.setText("26521");
-        userdeal_cb.setChecked(true);
+        login_card.getBackground().setAlpha(152);
     }
 
     @Override
@@ -121,42 +71,42 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void InitListener() {
-        loginbtn.setOnClickListener(() -> {
-            String username = username_et.getText().toString().trim();
-            String password = password_et.getText().toString().trim();
-            if ("".equals(username)) {
-                error_tv.setText("账号不能为空");
-                tipAnimation(error_wrapper);
-                loginbtn.LoginFailed();
-                return;
-            }
-            if ("".equals(password)) {
-                error_tv.setText("密码不能为空");
-                tipAnimation(error_wrapper);
-                loginbtn.LoginFailed();
-                return;
-            }
-            if (!userdeal_cb.isChecked()) {
-                error_tv.setText("请先同意用户协议");
-                tipAnimation(error_wrapper);
-                loginbtn.LoginFailed();
-                return;
-            }
-            login(username, password);
-        });
-
-        //忘记密码
-        forgetpwd_tv.setOnClickListener(v -> {
-//            startActivity(FlutterActivity
-//                    .withNewEngine()
-//                    .initialRoute("/forgetPassword")
-//                    .build(this));
-        });
-
-        //注册
-        sign_tv.setOnClickListener(v -> {
-
-        });
+//        loginbtn.setOnClickListener(() -> {
+//            String username = username_et.getText().toString().trim();
+//            String password = password_et.getText().toString().trim();
+//            if ("".equals(username)) {
+//                error_tv.setText("账号不能为空");
+//                tipAnimation(error_wrapper);
+//                loginbtn.LoginFailed();
+//                return;
+//            }
+//            if ("".equals(password)) {
+//                error_tv.setText("密码不能为空");
+//                tipAnimation(error_wrapper);
+//                loginbtn.LoginFailed();
+//                return;
+//            }
+//            if (!userdeal_cb.isChecked()) {
+//                error_tv.setText("请先同意用户协议");
+//                tipAnimation(error_wrapper);
+//                loginbtn.LoginFailed();
+//                return;
+//            }
+//            login(username, password);
+//        });
+//
+//        //忘记密码
+//        forgetpwd_tv.setOnClickListener(v -> {
+////            startActivity(FlutterActivity
+////                    .withNewEngine()
+////                    .initialRoute("/forgetPassword")
+////                    .build(this));
+//        });
+//
+//        //注册
+//        sign_tv.setOnClickListener(v -> {
+//
+//        });
     }
 
     @Override
@@ -165,37 +115,37 @@ public class LoginActivity extends BaseActivity {
     }
 
 
-    private void tipAnimation(View view) {
-        System.out.println("动画开始");
-        //参数7～8：x轴的结束位置
-        TranslateAnimation translateAni = new TranslateAnimation(0, 0, PixAndDpUtil.dip2px(this, 50), PixAndDpUtil.dip2px(this, -50));
-
-        //设置动画执行的时间，单位是毫秒
-        translateAni.setDuration(1000);
-        translateAni.setInterpolator(new AccelerateDecelerateInterpolator());
-        translateAni.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                handler.removeMessages(1);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                handler.sendEmptyMessageDelayed(1, 3000);
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        // 设置动画模式（Animation.REVERSE设置循环反转播放动画,Animation.RESTART每次都从头开始）
-        translateAni.setRepeatMode(Animation.REVERSE);
-        translateAni.setFillAfter(true);
-        // 启动动画
-        view.startAnimation(translateAni);
-    }
+//    private void tipAnimation(View view) {
+//        System.out.println("动画开始");
+//        //参数7～8：x轴的结束位置
+//        TranslateAnimation translateAni = new TranslateAnimation(0, 0, PixAndDpUtil.dip2px(this, 50), PixAndDpUtil.dip2px(this, -50));
+//
+//        //设置动画执行的时间，单位是毫秒
+//        translateAni.setDuration(1000);
+//        translateAni.setInterpolator(new AccelerateDecelerateInterpolator());
+//        translateAni.setAnimationListener(new Animation.AnimationListener() {
+//            @Override
+//            public void onAnimationStart(Animation animation) {
+//                handler.removeMessages(1);
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation) {
+//                handler.sendEmptyMessageDelayed(1, 3000);
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation) {
+//
+//            }
+//        });
+//
+//        // 设置动画模式（Animation.REVERSE设置循环反转播放动画,Animation.RESTART每次都从头开始）
+//        translateAni.setRepeatMode(Animation.REVERSE);
+//        translateAni.setFillAfter(true);
+//        // 启动动画
+//        view.startAnimation(translateAni);
+//    }
 
     private void reset(View view) {
         System.out.println("结束动画开始");
@@ -223,9 +173,9 @@ public class LoginActivity extends BaseActivity {
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 e.printStackTrace();
                 new Handler(Looper.getMainLooper()).post(() -> {
-                    loginbtn.LoginFailed();
-                    error_tv.setText("服务器链接失败");
-                    tipAnimation(error_wrapper);
+//                    loginbtn.LoginFailed();
+//                    error_tv.setText("服务器链接失败");
+//                    tipAnimation(error_wrapper);
                 });
             }
 
@@ -241,6 +191,8 @@ public class LoginActivity extends BaseActivity {
                         if (result.getData() != null) {
                             String jwt = result.getData().getString("jwt");
                             MMkvUtil.getInstance(LoginActivity.this, "jwts").encode("jwt", jwt);
+                            MMkvUtil.getInstance(LoginActivity.this, "jwts").encode("account", username);
+                            MMkvUtil.getInstance(LoginActivity.this, "jwts").encode("password", password);
                             Gson gson = new Gson();
                             UserUtils.getInstance().setUser(gson.fromJson(json.getString("user"), User.class));
                         }
@@ -250,9 +202,9 @@ public class LoginActivity extends BaseActivity {
 
                     } else {
                         new Handler(Looper.getMainLooper()).post(() -> {
-                            loginbtn.LoginFailed();
-                            error_tv.setText(result.getMsg());
-                            tipAnimation(error_wrapper);
+//                            loginbtn.LoginFailed();
+//                            error_tv.setText(result.getMsg());
+//                            tipAnimation(error_wrapper);
                         });
                     }
                 } catch (Exception e) {
@@ -265,34 +217,38 @@ public class LoginActivity extends BaseActivity {
 
 
     private void goToNew(){
-        loginbtn.goToNew();
-        loginbtn.bringToFront();
-        Intent intent = new Intent(this, HomeActivity.class);
-        scaleAnimation = new ScaleAnimation(1,200,1,200,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF, 0.5f);
-        scaleAnimation.setDuration(300);
-        scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                handler.postDelayed(() -> {
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.anim_in,R.anim.anim_out);
-                    finish();
-                },200);
-            }
+//        loginbtn.goToNew();
+//        loginbtn.bringToFront();
+//        Intent intent = new Intent(this, HomeActivity.class);
+//        scaleAnimation = new ScaleAnimation(1,200,1,200,Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF, 0.5f);
+//        scaleAnimation.setDuration(300);
+//        scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
+//            @Override
+//            public void onAnimationStart(Animation animation) {
+//                handler.postDelayed(() -> {
+//                    startActivity(intent);
+//                    overridePendingTransition(R.anim.anim_in,R.anim.anim_out);
+//                    finish();
+//                },200);
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation) {
+//
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation) {
+//
+//            }
+//        });
+//        scaleAnimation.setFillAfter(true);
+//        scaleAnimation.setRepeatCount(0);
+//        loginbtn.startAnimation(scaleAnimation);
+//        Glide.with(this)
+//                .load(R.drawable.login_success_shape)
+//                .into(loginbackground_iv);
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        scaleAnimation.setFillAfter(true);
-        scaleAnimation.setRepeatCount(0);
-        loginbtn.startAnimation(scaleAnimation);
     }
 
 }

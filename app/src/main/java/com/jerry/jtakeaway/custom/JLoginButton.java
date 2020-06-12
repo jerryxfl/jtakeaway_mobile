@@ -241,34 +241,28 @@ public class JLoginButton extends View {
     }
 
     public void LoginSuccess() {
-        if (valueAnimator != null) {
-            if (valueAnimator.isRunning()) {
-                valueAnimator.end();
-                loginStatus = 2;
-                invalidate();
-            }
-        }
+        reset(2);
     }
 
 
     public void LoginFailed() {
-        if (valueAnimator != null) {
-            if (valueAnimator.isRunning()) {
-                valueAnimator.end();
-                loginStatus = 3;
-                invalidate();
-            }
-        }
+        reset(3);
+
     }
 
     public void goToNew() {
+        reset(4);
+    }
+
+    private void reset(int status) {
         if (valueAnimator != null) {
             if (valueAnimator.isRunning()) {
                 valueAnimator.end();
-                loginStatus = 4;
+                loginStatus = status;
                 invalidate();
             }
         }
+
     }
 
 
@@ -282,6 +276,8 @@ public class JLoginButton extends View {
     public interface  OnJClickListener{
         public void onClick(); //单击事件处理接口
     }
+
+
 
 
 }
