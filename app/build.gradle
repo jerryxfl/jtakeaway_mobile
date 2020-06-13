@@ -99,4 +99,14 @@ dependencies {
 
     //动画toast
     implementation 'net.steamcrafted:load-toast:1.0.12'
+
+    //下拉刷新
+    implementation 'com.github.yanyiqun001.goRefresh:refreshlayout:0.6.2'
+//    implementation 'com.github.yanyiqun001.goRefresh:refreshlayout_lottie:0.6.2'
+
+    //noinspection GradleDependency
+    implementation 'com.airbnb.android:lottie:3.4.1'
+
+
+
 }

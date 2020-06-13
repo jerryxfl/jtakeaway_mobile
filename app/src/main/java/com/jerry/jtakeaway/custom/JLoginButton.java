@@ -1,5 +1,6 @@
 package com.jerry.jtakeaway.custom;
 
+import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -8,32 +9,38 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
-import android.os.Handler;
-import android.os.Message;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
-
-import androidx.annotation.NonNull;
+import android.view.animation.AnticipateOvershootInterpolator;
 
 @SuppressWarnings("all")
 public class JLoginButton extends View {
-    private Context mContext;
-    private int loginStatus = 0;//0初始状态 1正在登录 2登录成功 3登录失败
+    private Paint buttonPaint;//矩形画笔
+    private Paint textPaint;//字体画笔
+    private Paint arcPaint;//圆弧画笔
+
+
 
     private Paint circlePaint;//圆的画笔
     private int circleRadius;//圆的半径
     private int circlePointX, circlePointY;//圆的坐标
+    //注册背景色
+    private int normalColor = Color.parseColor("#F76B6C");
+    //显示文字
+    private String text = "登录/注册";
+    private float fontSize = 50;
 
-    private Paint linePaint;
-    private Path linePath;
+//    private boolean isLogin = false;
 
+    private float progress = 0;
+    private float angle=0;
 
-    private Paint arcPaint;
-    private int arcAngle = -90;
 
 
     private ValueAnimator valueAnimator;
+    private ValueAnimator rotateValueAnimator;
+    private float radius;
+    private Path path;
 
 
     public JLoginButton(Context context) {
@@ -46,72 +53,37 @@ public class JLoginButton extends View {
 
     public JLoginButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        Init(context);
+        Init();
     }
 
 
-    private void Init(Context context) {
-        this.mContext = context;
-
+    private void Init() {
         //初始化圆的画笔
-        circlePaint = new Paint();
-        circlePaint.setStyle(Paint.Style.FILL);
-        circlePaint.setAntiAlias(true);
-        circlePaint.setDither(true);
+        Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
+        p.setDither(true);
+        p.setAntiAlias(true);
+        p.setStyle(Paint.Style.FILL);
+        p.setColor(normalColor);
+        p.setStrokeWidth(10);
+        buttonPaint = p;
 
-        //初始化线的画笔
-        linePaint = new Paint();
-        linePaint.setStrokeWidth(13);
-        linePaint.setColor(Color.parseColor("#fbfbfb"));
-        linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setAntiAlias(true);
-        linePaint.setDither(true);
-        linePath = new Path();//线的路径
+        //初始化字体画笔
+        p= new Paint();
+        p.setColor(Color.BLACK);
+        p.setTextSize(fontSize);
+        p.setStyle(Paint.Style.FILL);
+        p.setTextAlign(Paint.Align.CENTER);
+        textPaint = p;
 
+        //初始化圆弧画笔
+        p = new Paint();
+        p.setStyle(Paint.Style.STROKE);
+        p.setStrokeWidth(10);
+        p.setColor(Color.WHITE);
+        arcPaint = p;
 
-        //圆弧画笔
-        arcPaint = new Paint();
-        arcPaint.setStrokeWidth(13);
-        arcPaint.setColor(Color.parseColor("#fbfbfb"));
-        arcPaint.setStyle(Paint.Style.STROKE);
-        arcPaint.setAntiAlias(true);
-        arcPaint.setDither(true);
+        path = new Path();
 
-
-    }
-
-    //测量控件
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
-
-        int minWidth = 2 * circleRadius + getPaddingLeft() + getPaddingRight();
-        int minHeight = 2 * circleRadius + getPaddingTop() + getPaddingBottom();
-
-        int maeasureWidth, maeasureHeight;
-        if (widthMode == MeasureSpec.EXACTLY) {//确切值
-            maeasureWidth = width;
-        } else if (widthMode == MeasureSpec.AT_MOST) {//最大值
-            maeasureWidth = Math.min(minWidth, width);
-        } else {
-            maeasureWidth = minWidth;
-        }
-
-
-        if (widthMode == MeasureSpec.EXACTLY) {//确切值
-            maeasureHeight = height;
-        } else if (widthMode == MeasureSpec.AT_MOST) {//最大值
-            maeasureHeight = Math.min(minHeight, height);
-        } else {
-            maeasureHeight = minHeight;
-        }
-
-        setMeasuredDimension(maeasureWidth, maeasureHeight);
     }
 
 
@@ -119,165 +91,152 @@ public class JLoginButton extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        circleRadius = getMeasuredWidth() / 2;
-        circlePointX = getMeasuredWidth() / 2;
-        circlePointY = getMeasuredHeight() / 2;
-        if (loginStatus == 0 || loginStatus == 1) {
-            circlePaint.setColor(Color.parseColor("#fbfbfb"));
-            circlePaint.setAlpha(100);
-        } else if (loginStatus == 2) {
-            circlePaint.setColor(Color.parseColor("#73d13d"));
-            circlePaint.setAlpha(150);
-        } else if (loginStatus == 3) {
-            circlePaint.setColor(Color.parseColor("#f5222d"));
-            circlePaint.setAlpha(150);
-        }else if (loginStatus == 4){
-            circlePaint.setColor(Color.parseColor("#a0d911"));
-            circlePaint.setAlpha(255);
-            handler.removeMessages(0);
-            handler.sendEmptyMessageDelayed(0,1000);
+
+        path.reset();
+        //绘制矩形
+        //矩形路径
+        path.moveTo(0+progress, getHeight() / 2);
+        path.quadTo(0+progress, 0, getWidth() / 6+progress>getWidth()/2?getWidth()/2:getWidth() / 6+progress, 0);
+        path.lineTo(getWidth() * 5 / 6-progress<getWidth()/2?getWidth()/2:getWidth() * 5 / 6-progress, 0);
+        path.quadTo(getWidth()-progress, 0, getWidth()-progress, getHeight() / 2);
+        path.quadTo(getWidth()-progress, getHeight(), getWidth() * 5 / 6-progress<getWidth()/2?getWidth()/2:getWidth() * 5 / 6-progress, getHeight());
+        path.lineTo( getWidth() / 6+progress>getWidth()/2?getWidth()/2:getWidth() / 6+progress, getHeight());
+        path.quadTo(0+progress, getHeight(), 0+progress, getHeight() / 2);
+        path.close();
+        canvas.drawPath(path, buttonPaint);
+
+        //绘制文字
+        if(progress<getWidth()/6)canvas.drawText(text,circlePointX,getHeight()-fontSize,textPaint);
+        if(progress>getWidth()/2-(circleRadius+20)){
+            RectF rectF = new RectF(
+                    getWidth()/2- radius,
+                    (getHeight()- radius *2)/2,
+                    getWidth()/2+ radius,
+                    (getHeight()- radius *2)/2+ radius *2
+            );
+            canvas.drawArc(rectF,angle,270,false,arcPaint);
         }
-        canvas.drawCircle(circlePointX, circlePointY, circleRadius, circlePaint);//背景园
-
-        if (loginStatus == 0) {
-            //画箭头
-            int arrowPointX = (getMeasuredWidth() * 3) / 4;
-            int arrowPointY = getMeasuredHeight() / 2;
-
-            int topPointX = getMeasuredWidth() / 2;
-            int topPointY = getMeasuredHeight() / 4;
-
-            int bottomPointX = getMeasuredWidth() / 2;
-            int bottomPointY = (getMeasuredHeight() * 3) / 4;
-
-            linePath.reset();
-            linePath.moveTo(arrowPointX, arrowPointY);
-            linePath.lineTo(topPointX, topPointY);
-            linePath.moveTo(arrowPointX, arrowPointY);
-            linePath.lineTo(bottomPointX, bottomPointY);
-            linePath.close();
-            canvas.drawPath(linePath, linePaint);
-        } else if (loginStatus == 1) {
-            //画圆弧
-            RectF rectF = new RectF(getMeasuredWidth() / 4, getMeasuredHeight() / 4, (getMeasuredWidth() * 3) / 4, (getMeasuredHeight() * 3) / 4);
-            canvas.drawArc(rectF, arcAngle, 260, false, arcPaint);
-        }else if (loginStatus == 2){
-            //登录成功
-            //画勾
-            int startPointX = (getMeasuredWidth()*3)/8;
-            int startPointY = (getMeasuredHeight()*5)/8;
-
-            int centerPointX = getMeasuredWidth() / 2;
-            int centerPointY = (getMeasuredHeight() * 3) / 4;
-
-            int endPointX = (getMeasuredWidth()*6)/8;
-            int endPointY = (getMeasuredHeight()*3)/8;
-
-            linePath.reset();
-            linePath.moveTo(startPointX, startPointY);
-            linePath.lineTo(centerPointX,centerPointY);
-            linePath.quadTo(centerPointX,centerPointY,endPointX,endPointY);
-            canvas.drawPath(linePath,linePaint);
-            handler.removeMessages(0);
-            handler.sendEmptyMessageDelayed(0,2000);
-        }else if (loginStatus == 3){
-            //登录失败
-            int firstStartPointX = getMeasuredWidth() / 4;
-            int firstStartPointY = getMeasuredHeight() / 4;
-
-            int firstEndPointX = (getMeasuredWidth() *3)/ 4;
-            int firstEndPointY = (getMeasuredHeight() *3)/ 4;
-
-
-            int secondStartPointX = (getMeasuredWidth() *3)/ 4;
-            int secondStartPointY = getMeasuredHeight() / 4;
-
-            int secondEndPointX = getMeasuredWidth() / 4;
-            int secondEndPointY = (getMeasuredHeight() *3)/ 4;
-
-            linePath.reset();
-            linePath.moveTo(firstStartPointX, firstStartPointY);
-            linePath.lineTo(firstEndPointX, firstEndPointY);
-            linePath.moveTo(secondStartPointX, secondStartPointY);
-            linePath.lineTo(secondEndPointX, secondEndPointY);
-            canvas.drawPath(linePath, linePaint);
-            handler.removeMessages(0);
-            handler.sendEmptyMessageDelayed(0,2000);
-        }
-
 
     }
 
-    Handler handler = new Handler(){
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            super.handleMessage(msg);
-            loginStatus = 0;
-            invalidate();
-        }
-    };
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        // 宽度意图
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int width = MeasureSpec.getSize(widthMeasureSpec);
+        //高度意图
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        int height = MeasureSpec.getSize(heightMeasureSpec);
 
+        int minWidth = circleRadius*2+getPaddingRight()+getPaddingLeft();
+        int minHeight =  circleRadius*2+getPaddingTop()+getPaddingBottom();
 
+        int maeasureWidth,maeasureHeight;
 
-
-    public void startLogin() {
-        System.out.println("登录动画执行");
-        loginStatus = 1;
-        if(valueAnimator==null){
-            valueAnimator = ValueAnimator.ofInt(0, 1080);
-            valueAnimator.addUpdateListener(animation -> {
-                arcAngle = (int) animation.getAnimatedValue();
-                invalidate();
-            });
-            valueAnimator.setInterpolator(new LinearInterpolator());
-            valueAnimator.setRepeatCount(ValueAnimator.INFINITE);
-            valueAnimator.setDuration(3000);
-            valueAnimator.start();
+        if(widthMode == MeasureSpec.EXACTLY){
+            //确切值
+            maeasureWidth = width;
+        }else if(widthMode == MeasureSpec.AT_MOST) {
+            //最大值
+            maeasureWidth = Math.min(width,minWidth);
         }else {
-            if(!valueAnimator.isRunning()){
-                valueAnimator.start();
-            }
-        }
-    }
-
-    public void LoginSuccess() {
-        reset(2);
-    }
-
-
-    public void LoginFailed() {
-        reset(3);
-
-    }
-
-    public void goToNew() {
-        reset(4);
-    }
-
-    private void reset(int status) {
-        if (valueAnimator != null) {
-            if (valueAnimator.isRunning()) {
-                valueAnimator.end();
-                loginStatus = status;
-                invalidate();
-            }
+            maeasureWidth = width;
         }
 
+        if(heightMode == MeasureSpec.EXACTLY){
+            //确切值
+            maeasureHeight = height;
+        }else if(heightMode == MeasureSpec.AT_MOST) {
+            //最大值
+            maeasureHeight = Math.min(height,minHeight);
+        }else {
+            maeasureHeight = height;
+        }
+        //通知测量完成
+        setMeasuredDimension(maeasureWidth, maeasureHeight);
     }
 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        //计算园中心坐标
+        circlePointX = getWidth() / 2;
+        circlePointY = getHeight() / 2;
+        circleRadius = circlePointY;
+        radius = circleRadius-30;
+        //重新布局测量
+        requestLayout();
+    }
 
-    public void setOnClickListener(OnJClickListener  listener) {
+    public void setOnClickListener(OnJClickListener listener) {
         setOnClickListener(v -> {
-            startLogin();
+            Doing();
             listener.onClick();
         });
     }
 
-    public interface  OnJClickListener{
-        public void onClick(); //单击事件处理接口
+    private void Doing(){
+        if(valueAnimator == null){
+            rotateValueAnimator = ValueAnimator.ofFloat(360);
+            rotateValueAnimator.setDuration(1000);
+            rotateValueAnimator.setRepeatCount(-1);
+            rotateValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    angle = (float) animation.getAnimatedValue();
+                    invalidate();
+                }
+            });
+            valueAnimator = ValueAnimator.ofFloat(0,getWidth()/2-(circleRadius+15));
+            valueAnimator.setDuration(1000);
+            valueAnimator.setInterpolator(new AnticipateOvershootInterpolator());
+            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    progress = (float) animation.getAnimatedValue();
+                    invalidate();
+                }
+            });
+            valueAnimator.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    invalidate();
+                    rotateValueAnimator.start();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+
+                }
+            });
+            valueAnimator.start();
+        }else{
+            valueAnimator.cancel();
+            valueAnimator.start();
+        }
     }
 
+    public void reset() {
+        if(valueAnimator != null){
+            valueAnimator.reverse();
+            rotateValueAnimator.cancel();
+        }
+    }
 
+    public interface OnJClickListener {
+        public void onClick(); //单击事件处理接口
+    }
 
 
 }

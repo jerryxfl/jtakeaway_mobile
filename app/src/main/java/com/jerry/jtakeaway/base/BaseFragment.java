@@ -2,6 +2,7 @@ package com.jerry.jtakeaway.base;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +56,18 @@ public abstract class BaseFragment extends Fragment {
         EventBus.getDefault().register(this);
     }
 
+
+    public boolean checkSelfPermission(String permissionName){
+//        "android.permission.RECORD_AUDIO"
+        PackageManager pm = context.getPackageManager();
+        boolean permission = (PackageManager.PERMISSION_GRANTED ==
+                pm.checkPermission(permissionName,"packageName"));
+        if (permission) {
+            return true;
+        }else {
+            return false;
+        }
+    }
 
     @Override
     public void onDestroyView() {

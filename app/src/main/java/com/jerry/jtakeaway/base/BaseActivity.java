@@ -10,13 +10,13 @@ import android.provider.Settings;
 import android.view.KeyEvent;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.gabrielsamojlo.keyboarddismisser.KeyboardDismisser;
 import com.jerry.jtakeaway.utils.InitApp;
 
 import org.greenrobot.eventbus.EventBus;
@@ -52,7 +52,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         /**
          * 设置全屏显示结束
          */
-
         //绑定bufferknife注解框架
         unbinder = ButterKnife.bind(this);
         InitApp.getInstance().addActivity(this);

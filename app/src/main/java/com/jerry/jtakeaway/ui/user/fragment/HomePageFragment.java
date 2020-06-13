@@ -1,24 +1,33 @@
 package com.jerry.jtakeaway.ui.user.fragment;
 
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.RelativeLayout;
+import android.Manifest;
+import android.os.Handler;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.appcompat.widget.SearchView;
+
+import com.GoRefresh.GoRefreshLayout;
+import com.GoRefresh.interfaces.RefreshListener;
+import com.gabrielsamojlo.keyboarddismisser.KeyboardDismisser;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseFragment;
-import com.jerry.jtakeaway.custom.JPullToRefresh;
+import com.jerry.jtakeaway.custom.AniImgButton;
+import com.jerry.jtakeaway.utils.GPSUtils;
 
 import butterknife.BindView;
 
 @SuppressWarnings("all")
 public class HomePageFragment extends BaseFragment {
-    @BindView(R.id.test)
-    JPullToRefresh test;
-    @BindView(R.id.activity_main)
-    RelativeLayout activity_main;
+    @BindView(R.id.goRefreshLayout)
+    GoRefreshLayout goRefreshLayout;
+    @BindView(R.id.location_tv)
+    TextView location_tv;
+    @BindView(R.id.serachview)
+    SearchView serachview;
+    @BindView(R.id.location_ain)
+    AniImgButton location_ain;
 
-    private static  final  float TOUCK_MOVE_MAX_Y = 600;
-    private float mTouchMoveStartY;
 
     @Override
     public int getLayout() {
@@ -27,6 +36,12 @@ public class HomePageFragment extends BaseFragment {
 
     @Override
     public void InitView() {
+        KeyboardDismisser.useWith(this);
+        if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)){
+            GPSUtils.getInstance(context).
+        }else{
+            Toast.makeText(context,"没有定位权限",Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -38,32 +53,19 @@ public class HomePageFragment extends BaseFragment {
 
     @Override
     public void InitListener() {
-        activity_main.setOnTouchListener(new View.OnTouchListener() {
+        // 设置下拉监听
+        goRefreshLayout.setOnRefreshListener(new RefreshListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                //得到意图
-                int action = event.getActionMasked();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN :
-                        mTouchMoveStartY = event.getY();
-                        return true;
-                    case MotionEvent.ACTION_MOVE :
-                        float y = event.getY();
-                        if(y>=mTouchMoveStartY){
-                            float moveSize = y -mTouchMoveStartY;
-                            float progress = moveSize>=TOUCK_MOVE_MAX_Y
-                                    ?1:moveSize/TOUCK_MOVE_MAX_Y;
-                            test.setProgress(progress);
-                        }
-                        return true;
-                    case MotionEvent.ACTION_UP:
-                        test.release();
-                        return true;
-                    default:
-                        break;
-                }
+            public void onRefresh() {
+                //添加你自己的代码
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //  结束刷新
+                        goRefreshLayout.finishRefresh();
 
-                return false;
+                    }
+                },3000);
             }
         });
     }

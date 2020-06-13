@@ -35,7 +35,7 @@ public class WelcomeActivity extends BaseActivity {
     @Override
     public void InitView() {
         //申请权限 放入权限数组,记得再manifests申请
-        RequestPermission(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE});
+        RequestPermission(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION});
         //设置顶部距离
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)timePicker.getLayoutParams();
         params.topMargin = PixAndDpUtil.getStatusBarHeight(this);

@@ -1,14 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.user.fragment.HomePageFragment"
-    android:id="@+id/activity_main">
-
-    <com.jerry.jtakeaway.custom.JPullToRefresh
-        android:id="@+id/test"
+    android:orientation="vertical">
+    <include layout="@layout/header_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="55dp" />
 
-</RelativeLayout>
+    <com.GoRefresh.GoRefreshLayout
+        android:id="@+id/goRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/defaultbg">
+
+
+
+    </com.GoRefresh.GoRefreshLayout>
+
+</LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
