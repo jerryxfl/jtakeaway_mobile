@@ -1,6 +1,5 @@
 package com.jerry.jtakeaway.base;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -28,7 +28,7 @@ public abstract class BaseFragment extends Fragment {
 
     public abstract void destroy();
 
-    public Activity activity;
+    public FragmentActivity activity;
     public Context context;
     private Unbinder unbinder;
 
