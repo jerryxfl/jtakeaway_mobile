@@ -7,6 +7,7 @@
     tools:context=".ui.user.activity.HomeActivity"
     android:orientation="vertical">
     <View
+        android:background="#F76B6C"
         android:id="@+id/top"
         android:layout_width="match_parent"
         android:layout_height="0dp"/>

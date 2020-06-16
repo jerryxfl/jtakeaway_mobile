@@ -44,12 +44,8 @@
             android:layout_height="wrap_content"
             android:textSize="14sp"
             android:textColor="#919191"
-            android:text="阿德撒凯撒的技法扣税
-            的计划鞍山酒店房卡剪短发快速导
-            航啊,史蒂夫卡击杀可接受的和几
-            乎都是咯技术
-            的和"
-            android:ellipsize="end"/>
+            android:text="阿德撒凯撒的技法扣税的计划鞍山酒店房卡剪短发快速导航啊,史蒂夫卡击杀可接受的和几乎都是咯技术的和"
+            android:ellipsize="marquee"/>
     </LinearLayout>
 
 </LinearLayout>
