@@ -4,14 +4,17 @@ package com.jerry.jtakeaway.utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 
-
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Administrator on 2018/4/17.
@@ -118,5 +121,27 @@ public class GPSUtils {
         void onLocationResult(Location location);
 
         void OnLocationChange(Location location);
+    }
+
+
+
+    public String[] getLocation(Context context, double latitude, double longitude) {
+        Geocoder mGeocoder = new Geocoder(context, Locale.getDefault());
+        String[] strAddress = new String[3];
+
+        try {
+            List<Address> mAddresses = mGeocoder.getFromLocation(latitude, longitude, 1);
+            if (!mAddresses.isEmpty()) {
+                Address address = mAddresses.get(0);
+                strAddress[0] = address.getCountryName();
+                strAddress[1] = address.getAdminArea();
+                strAddress[2] = address.getLocality();
+//                mStringBuilder.append(address.getCountryName()).append(", ").append(address.getAdminArea()).append(", ").append(address.getLocality());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return strAddress;
     }
 }

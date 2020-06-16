@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:customAttr="http://schemas.android.com/tools"
     android:orientation="vertical">
     <include layout="@layout/header_layout"
         android:layout_width="match_parent"
@@ -12,9 +14,98 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/defaultbg">
+       <ScrollView
+           android:fillViewport="true"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content">
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:orientation="vertical">
+               <androidx.recyclerview.widget.RecyclerView
+                   android:id="@+id/recyclerview_banner"
+                   android:layout_width="match_parent"
+                   android:layout_height="200dp" />
+               <androidx.recyclerview.widget.RecyclerView
+                   android:id="@+id/recyclerview_hot_shop"
+                   android:layout_width="match_parent"
+                   android:layout_height="200dp"/>
+               <androidx.cardview.widget.CardView
+                   android:layout_marginStart="20dp"
+                   android:layout_marginEnd="20dp"
+                   android:layout_width="match_parent"
+                   android:layout_height="70dp"
+                   app:cardElevation="0dp"
+                   app:cardCornerRadius="30dp">
+                   <RelativeLayout
+                       android:layout_width="match_parent"
+                       android:layout_height="match_parent">
+                       <com.airbnb.lottie.LottieAnimationView
+                           android:layout_width="50dp"
+                           android:layout_height="50dp"
+                           app:lottie_fileName="radio.json"
+                           app:lottie_loop="true"
+                           app:lottie_autoPlay="true"
+                           android:layout_centerVertical="true"
+                           android:layout_marginStart="20dp"
+                           android:scaleType="centerCrop"/>
+                       <!--// 滚动字幕-->
+                       <com.jerry.jtakeaway.custom.JRollingTextView
+                           android:id="@+id/JRollingTextView"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:text="这是一条测试广播,还他妈的的不滚动???,给爷滚动"
+                           android:singleLine="true"
+                           android:layout_centerInParent="true"
+                           android:layout_marginStart="120dp"
+                           android:layout_marginEnd="20dp"
+                           android:textColor="#222222"
+                           android:textStyle="bold"
+                           android:textSize="18sp"
+                           android:ellipsize="marquee"/>
 
-
-
+                   </RelativeLayout>
+               </androidx.cardview.widget.CardView>
+               <TextView
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="精品菜推荐"
+                   android:layout_marginTop="20dp"
+                   android:textSize="20sp"
+                   android:textColor="#222222"
+                   android:layout_marginStart="10dp"/>
+               <RelativeLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:descendantFocusability="blocksDescendants">
+                   <androidx.recyclerview.widget.RecyclerView
+                       android:id="@+id/menu_recommend"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:scrollbars="none"/>
+               </RelativeLayout>
+               <RelativeLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:descendantFocusability="blocksDescendants">
+                   <androidx.recyclerview.widget.RecyclerView
+                       android:id="@+id/five_shop_recyclerview"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:scrollbars="none"/>
+               </RelativeLayout>
+               <RelativeLayout
+                   android:layout_width="match_parent"
+                   android:layout_height="wrap_content"
+                   android:descendantFocusability="blocksDescendants">
+                   <androidx.recyclerview.widget.RecyclerView
+                       android:id="@+id/people_red_recyclerview"
+                       android:layout_width="match_parent"
+                       android:layout_height="wrap_content"
+                       android:scrollbars="none"/>
+               </RelativeLayout>
+           </LinearLayout>
+       </ScrollView>
     </com.GoRefresh.GoRefreshLayout>
 
 </LinearLayout>

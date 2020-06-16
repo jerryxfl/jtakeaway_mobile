@@ -63,9 +63,9 @@ public abstract class BaseFragment extends Fragment {
         boolean permission = (PackageManager.PERMISSION_GRANTED ==
                 pm.checkPermission(permissionName,"packageName"));
         if (permission) {
-            return true;
-        }else {
             return false;
+        }else {
+            return true;
         }
     }
 

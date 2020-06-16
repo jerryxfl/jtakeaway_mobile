@@ -2,7 +2,6 @@ package com.jerry.jtakeaway.base;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.gabrielsamojlo.keyboarddismisser.KeyboardDismisser;
 import com.jerry.jtakeaway.utils.InitApp;
 
 import org.greenrobot.eventbus.EventBus;
@@ -104,16 +102,14 @@ public abstract class BaseActivity extends AppCompatActivity {
                         AlertDialog.Builder builder = new AlertDialog.Builder(this);
                         builder.setTitle("permission")
                                 .setMessage("点击允许才可以使用我们的app哦")
-                                .setPositiveButton("去允许", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        if (mDialog != null && mDialog.isShowing()) {
-                                            mDialog.dismiss();
-                                        }
-                                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                                        Uri uri = Uri.fromParts("package", getPackageName(), null);//注意就是"package",不用改成自己的包名
-                                        intent.setData(uri);
-                                        startActivityForResult(intent, NOT_NOTICE);
+                                .setPositiveButton("去允许", (dialog, id) -> {
+                                    if (mDialog != null && mDialog.isShowing()) {
+                                        mDialog.dismiss();
                                     }
+                                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                    Uri uri = Uri.fromParts("package", getPackageName(), null);//注意就是"package",不用改成自己的包名
+                                    intent.setData(uri);
+                                    startActivityForResult(intent, NOT_NOTICE);
                                 });
                         mDialog = builder.create();
                         mDialog.setCanceledOnTouchOutside(false);
@@ -125,14 +121,12 @@ public abstract class BaseActivity extends AppCompatActivity {
                         AlertDialog.Builder builder = new AlertDialog.Builder(this);
                         builder.setTitle("permission")
                                 .setMessage("点击允许才可以使用我们的app哦")
-                                .setPositiveButton("去允许", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        if (alertDialog != null && alertDialog.isShowing()) {
-                                            alertDialog.dismiss();
-                                        }
-                                        ActivityCompat.requestPermissions(BaseActivity.this,
-                                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                                .setPositiveButton("去允许", (dialog, id) -> {
+                                    if (alertDialog != null && alertDialog.isShowing()) {
+                                        alertDialog.dismiss();
                                     }
+                                    ActivityCompat.requestPermissions(BaseActivity.this,
+                                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                                 });
                         alertDialog = builder.create();
                         alertDialog.setCanceledOnTouchOutside(false);

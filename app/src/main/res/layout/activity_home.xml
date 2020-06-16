@@ -10,7 +10,7 @@
         android:id="@+id/top"
         android:layout_width="match_parent"
         android:layout_height="0dp"/>
-    <androidx.viewpager.widget.ViewPager
+    <com.jerry.jtakeaway.custom.JViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
