@@ -69,6 +69,8 @@ public class HomePageFragment extends BaseFragment{
     private JAdapter<Integer> hotShopAdapter;
     private JAdapter<Integer> jBannerAdapter;
     private JAdapter<Integer> jMneuAdapter;
+    private JAdapter<Integer> peopleRedAdapter;
+    private JAdapter<Integer> fiveLevelAdapter;
 
 
     @Override
@@ -195,13 +197,52 @@ public class HomePageFragment extends BaseFragment{
 
 
         //five_shop_recommend--------------------****************---------------------------------
-        
+        JgridLayoutManager jgridLayoutManager_five_shop = new JgridLayoutManager(context,1);
+        five_shop_recyclerview.setLayoutManager(jgridLayoutManager_five_shop);
+        fiveLevelAdapter = new JAdapter<Integer>(context, five_shop_recyclerview, new int[]{R.layout.shop_item}, new JAdapter.adapterListener<Integer>() {
+            @Override
+            public void setItems(BaseViewHolder holder, int position, List<Integer> datas) {
+                Glide.with(context)
+                        .load(datas.get(position))
+                        .into((ImageView) holder.getView(R.id.shop_image));
+            }
+
+            @Override
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads) {
+
+            }
+
+            @Override
+            public int getViewType(List<Integer> datas, int position) {
+                return 0;
+            }
+        });
         //end  five_shop_recommend--------------------****************---------------------------------
 
 
 
 
         //people_red_recommend--------------------****************---------------------------------
+        JgridLayoutManager jgridLayoutManager_people_red = new JgridLayoutManager(context,1);
+        people_red_recyclerview.setLayoutManager(jgridLayoutManager_people_red);
+        peopleRedAdapter = new JAdapter<Integer>(context, people_red_recyclerview, new int[]{R.layout.shop_item}, new JAdapter.adapterListener<Integer>() {
+            @Override
+            public void setItems(BaseViewHolder holder, int position, List<Integer> datas) {
+                Glide.with(context)
+                        .load(datas.get(position))
+                        .into((ImageView) holder.getView(R.id.shop_image));
+            }
+
+            @Override
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads) {
+
+            }
+
+            @Override
+            public int getViewType(List<Integer> datas, int position) {
+                return 0;
+            }
+        });
 
         //end  prople_red_recommend--------------------****************---------------------------------
 
@@ -249,6 +290,17 @@ public class HomePageFragment extends BaseFragment{
         //menu
         jMneuAdapter.adapter.setHeader(datass);
         //end menu
+
+
+        //五星
+        fiveLevelAdapter.adapter.setHeader(datass);
+        //end五星
+
+
+
+        //网红
+        peopleRedAdapter.adapter.setHeader(datass);
+        //end 网红
     }
 
 

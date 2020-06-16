@@ -115,4 +115,8 @@ dependencies {
 
     //滚动文字
     implementation 'anylife.scrolltextview:ScrollTextviewLib:1.4.6'
+
+
+    //星级评分
+    implementation 'com.github.giswangsj:AndRatingBar:v1.0.0'
 }
