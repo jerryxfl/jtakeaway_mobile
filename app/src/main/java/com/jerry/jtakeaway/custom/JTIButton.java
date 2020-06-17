@@ -35,9 +35,7 @@ public class JTIButton extends View {
     private float mTextX,mTextY;//文字坐标
     private ScaleAnimation animation;//点击动画
 
-    private float mWidth;//控件宽度
 
-    private float progress;//动画进度
 
 
     public JTIButton(Context context) {
@@ -109,8 +107,8 @@ public class JTIButton extends View {
         super.onSizeChanged(w, h, oldw, oldh);
         //计算图片位置
         //图片宽高
-        float widthImg = mImageSrc_bitMap.getWidth()+progress;
-        float heightImg = mImageSrc_bitMap.getHeight()+progress;
+        float widthImg = mImageSrc_bitMap.getWidth();
+        float heightImg = mImageSrc_bitMap.getHeight();
 
         //控件宽高
         float width = getWidth();
@@ -122,8 +120,8 @@ public class JTIButton extends View {
         if(widthImg>heightImg){
             if(widthImg>width){
                 float com = width/widthImg;//计算图片宽度和控件跨度比列
-                targetWidth = widthImg * com  - height/4;
-                targetHeight = heightImg * com - height/4;
+                targetWidth = widthImg * com  - mTextSize*2;
+                targetHeight = heightImg * com - mTextSize*2;
             }else{
                 targetWidth = (width*3)/4;
                 targetHeight = height * targetWidth/width;
@@ -131,8 +129,8 @@ public class JTIButton extends View {
         }else{
             if(heightImg>height){
                 float com = height/heightImg;//计算图片宽度和控件跨度比列
-                targetWidth = widthImg * com  - height/4;
-                targetHeight = heightImg * com - height/4;
+                targetWidth = widthImg * com  - mTextSize*2;
+                targetHeight = heightImg * com - mTextSize*2;
             }else{
                 targetHeight = (height*3)/4;
                 targetWidth = height * targetHeight/width;
@@ -152,9 +150,8 @@ public class JTIButton extends View {
 
         //计算文字坐标
         mTextX = left+targetWidth/2-getTextWidth(mText)-mTextSize/2;
-        mTextY = top+targetHeight+mTextSize;
+        mTextY = (float) (top+targetHeight+mTextSize/1.2);
 
-        mWidth = getWidth();
         //重新布局测量
         requestLayout();
     }

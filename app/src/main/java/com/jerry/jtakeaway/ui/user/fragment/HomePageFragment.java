@@ -1,9 +1,7 @@
 package com.jerry.jtakeaway.ui.user.fragment;
 
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -11,7 +9,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.GoRefresh.GoRefreshLayout;
@@ -27,6 +24,7 @@ import com.jerry.jtakeaway.bean.events.PageEvents;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
 import com.jerry.jtakeaway.custom.JRollingTextView;
+import com.jerry.jtakeaway.custom.JgridLayoutManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -362,28 +360,4 @@ public class HomePageFragment extends BaseFragment{
     }
 
 
-    class JgridLayoutManager extends GridLayoutManager {
-        public JgridLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-            super(context, attrs, defStyleAttr, defStyleRes);
-        }
-
-        public JgridLayoutManager(Context context, int spanCount) {
-            super(context, spanCount);
-        }
-
-        public JgridLayoutManager(Context context, int spanCount, int orientation, boolean reverseLayout) {
-            super(context, spanCount, orientation, reverseLayout);
-        }
-
-
-        @Override
-        public boolean canScrollHorizontally() {
-            return false;
-        }
-
-        @Override
-        public boolean canScrollVertically() {
-            return false;
-        }
-    }
 }

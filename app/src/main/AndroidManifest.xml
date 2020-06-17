@@ -21,6 +21,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,UnusedAttribute"
         tools:replace="android:allowBackup,android:icon">
+        <activity android:name=".ui.generalActivity.AddressManagerActivity"></activity>
+        <activity android:name=".ui.generalActivity.EditAddressActivity" />
+        <activity android:name=".ui.generalActivity.AddressActivity" />
         <activity android:name=".ui.user.activity.MenuActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,9 +33,7 @@
         </activity>
         <activity
             android:name=".ui.user.activity.HomeActivity"
-            android:label="home">
-
-        </activity> <!-- flutteractivity -->
+            android:label="home" /> <!-- flutteractivity -->
         <!-- <activity -->
         <!-- android:name="io.flutter.embedding.android.FlutterActivity" -->
         <!-- android:theme="@style/TransTheme" -->
@@ -41,11 +42,11 @@
         <!-- android:windowSoftInputMode="adjustResize" /> -->
         <activity
             android:name=".ui.generalActivity.LoginActivity"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".ui.generalActivity.WebActivity"
             android:label="@string/app_name" />
-        <activity android:name=".ui.generalActivity.WelcomeActivity"></activity>
+        <activity android:name=".ui.generalActivity.WelcomeActivity" />
     </application>
 
 </manifest>

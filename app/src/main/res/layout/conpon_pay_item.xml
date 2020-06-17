@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
+        android:layout_margin="15dp"
+        app:cardElevation="7dp"
+        app:cardCornerRadius="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:padding="10dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_weight="1.2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="#F76B6C"
+                    android:text="￥15"
+                    android:textSize="25sp"
+                    android:layout_gravity="center"/>
+                <TextView
+                    android:layout_marginTop="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#F76B6C"
+                    android:text="优惠卷"
+                    android:textSize="15sp"
+                    android:layout_gravity="center"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_weight="2.2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="#222222"
+                    android:text="[美食专享]美食卷"
+                    android:textSize="16sp"
+                    android:layout_gravity="start"/>
+                <TextView
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#222222"
+                    android:text="2020-07-01 23:59到期"
+                    android:textSize="12sp"
+                    android:layout_gravity="start"/>
+                <TextView
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#222222"
+                    android:text="使用规范>"
+                    android:textSize="12sp"
+                    android:layout_gravity="start"/>
+            </LinearLayout>
+
+
+            <RelativeLayout
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:padding="10dp"
+                android:layout_height="match_parent">
+                <Button
+                    android:id="@+id/user_conpon_btn"
+                    android:paddingStart="5dp"
+                    android:paddingEnd="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:layout_centerInParent="true"
+                    android:text="立即使用"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="#ffffff"
+                    android:background="@drawable/conpon_btn_selector"/>
+            </RelativeLayout>
+
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

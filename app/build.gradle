@@ -119,4 +119,7 @@ dependencies {
 
     //星级评分
     implementation 'com.github.giswangsj:AndRatingBar:v1.0.0'
+
+    //地址选择
+    implementation 'com.smartTop:jd-address:1.0.3'
 }
