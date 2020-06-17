@@ -6,8 +6,10 @@
     </declare-styleable>
 
 
-<!--    <declare-styleable name="JTabItem">-->
-<!--        <attr name="src" format="reference"/>-->
-<!--        <attr name="text" format="string"/>-->
-<!--    </declare-styleable>-->
+    <declare-styleable name="JTIButton">
+        <attr name="jsrc" format="reference"/>
+        <attr name="jtext" format="string"/>
+        <attr name="jtextColor" format="reference"/>
+        <attr name="jtextSize" format="integer"/>
+    </declare-styleable>
 </resources>

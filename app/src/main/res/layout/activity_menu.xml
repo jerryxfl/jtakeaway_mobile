@@ -3,102 +3,355 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.user.activity.MenuActivity"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".ui.user.activity.MenuActivity">
+
     <View
         android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:background="#A89696"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
         tools:ignore="MissingConstraints" />
+
     <ScrollView
-        android:fillViewport="true"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="9">
+        android:layout_weight="9"
+        android:fillViewport="true">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+            <!--           顶部图片 -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="270dp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/dribbble_music_corner"/>
+                    android:src="@drawable/dribbble_music_corner" />
+
                 <com.jerry.jtakeaway.custom.AniImgButton
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="30dp"
+                    android:alpha="0.8"
                     android:background="@drawable/return_btn_shape"
-                    android:src="@drawable/return_btn"
                     android:scaleType="centerCrop"
-                    android:alpha="0.8"/>
+                    android:src="@drawable/return_btn" />
             </RelativeLayout>
+            <!--            价格打折-->
             <LinearLayout
-                android:background="#F76B6C"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:orientation="vertical">
+                android:background="#F76B6C"
+                android:orientation="vertical"
+                android:padding="10dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
+                        android:text="$ 16.8"
                         android:textColor="#fbfbfb"
-                        android:text="$ 16.8"/>
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
                     <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/text_shape_white"
                         android:paddingStart="5dp"
                         android:paddingEnd="5dp"
-                        android:background="@drawable/text_shape"
-                        android:layout_marginStart="10dp"
+                        android:text="疯狂价"
+                        android:textColor="#F76B6C"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        android:textColor="#F76B6C"
-                        android:text="疯狂价"/>
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/text_shape_white"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:text="01:21:36"
+                        android:textColor="#222222"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
+                        android:text="原价"
                         android:textColor="#fbfbfb"
-                        android:text="原价"/>
+                        android:textSize="12sp" />
+
                     <TextView
                         android:id="@+id/original_price_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginStart="5dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="14sp"
+                        android:text="$56.8"
                         android:textColor="#fbfbfb"
-                        android:text="$56.8"/>
+                        android:textSize="12sp" />
+
                     <TextView
-                        android:layout_marginStart="20dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp"
+                        android:layout_marginStart="60dp"
+                        android:text="该商品正在进行打折活动"
                         android:textColor="#ffffff"
-                        android:text="该商品正在进行打折活动"/>
+                        android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
+            <!--            商品描述-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/text_shape_red"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:text="精选"
+                        android:textColor="#ffffff"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:text="精选详细介绍[徐氏烤鸭] 配料原材料 文本文本 贝塞尔 塞尔贝 哈哈哈"
+                        android:textColor="#222222"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="食品类型|特征|"
+                        android:textColor="#919191"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="快递: 0.28  销量 1.5万  成都高新"
+                        android:textColor="#919191"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="疯狂外卖烤串旗舰店>"
+                        android:textColor="#222222"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/text_shape_yellow"
+                        android:paddingStart="5dp"
+                        android:paddingEnd="5dp"
+                        android:text="优惠卷"
+                        android:textColor="#F76B6C"
+                        android:textSize="10sp" />
+                </LinearLayout>
+                <!--                选择优惠卷-->
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="优惠卷"
+                        android:textColor="#919191"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="100dp"
+                        android:text="[美食专享] 美食卷 X 2"
+                        android:textColor="#F88687"
+                        android:textSize="14sp" />
+
+                    <com.jerry.jtakeaway.custom.AniImgButton
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:background="@color/float_transparent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/more_btn" />
+                </RelativeLayout>
+            </LinearLayout>
+            <!--            分割线-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="#E4E4E4" />
+            <!--            选择订单-->
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="已选"
+                    android:textColor="#919191"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="100dp"
+                    android:text="疯狂外卖套餐烤串 500g"
+                    android:textColor="#222222"
+                    android:textSize="14sp" />
+
+                <com.jerry.jtakeaway.custom.AniImgButton
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@color/float_transparent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/more_btn" />
+            </RelativeLayout>
+            <!--            分割线-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="#E4E4E4" />
+            <!--            选择地址-->
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="配送"
+                    android:textColor="#919191"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="100dp"
+                        android:text="桂溪街道 学校南门"
+                        android:textColor="#222222"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="100dp"
+                        android:layout_marginTop="10dp"
+                        android:text="16:00前下单,当天发货预计20-30分支到达"
+                        android:textColor="#222222"
+                        android:textSize="10sp" />
+                </LinearLayout>
+
+                <com.jerry.jtakeaway.custom.AniImgButton
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@color/float_transparent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/more_btn" />
+            </RelativeLayout>
+            <!--            分割线-->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="#E4E4E4" />
+            <!--精品菜搭配-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:descendantFocusability="blocksDescendants">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/goog_food_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none" />
+            </RelativeLayout>
+
         </LinearLayout>
     </ScrollView>
+
     <LinearLayout
-        android:background="#F76B6C"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:orientation="horizontal">
+       <com.jerry.jtakeaway.custom.JTIButton
+           android:id="@+id/test"
+           android:layout_width="50dp"
+           android:layout_height="50dp"
+           app:jtext="客服"
+           app:jsrc="@drawable/dribbble_music_corner"/>
+
+
 
     </LinearLayout>
 </LinearLayout>

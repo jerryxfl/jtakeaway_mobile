@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
+import com.jerry.jtakeaway.custom.JTIButton;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
 
 import butterknife.BindView;
@@ -18,6 +19,9 @@ public class MenuActivity extends BaseActivity {
     @BindView(R.id.original_price_tv)
     TextView original_price_tv;//原价
 
+//测试按钮
+    @BindView(R.id.test)
+    JTIButton test;
 
     @Override
     public int getLayout() {
@@ -44,7 +48,12 @@ public class MenuActivity extends BaseActivity {
 
     @Override
     public void InitListener() {
+        test.SetOnclickListener(new JTIButton.JTIOnclick() {
+            @Override
+            public void onClick() {
 
+            }
+        });
     }
 
     @Override
