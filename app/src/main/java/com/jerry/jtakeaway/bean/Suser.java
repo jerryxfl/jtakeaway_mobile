@@ -13,6 +13,15 @@ public class Suser {
     private String slideid;
     private Integer applyid;
     private Integer walletid;
+    private String dscr;
+
+    public String getDscr() {
+        return dscr;
+    }
+
+    public void setDscr(String dscr) {
+        this.dscr = dscr;
+    }
 
     public Integer getWalletid() {
         return walletid;
