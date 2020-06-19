@@ -26,7 +26,7 @@ import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
 import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.User;
-import com.jerry.jtakeaway.bean.responseBean.Result;
+import com.jerry.jtakeaway.bean.responseBean.Result1;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JLoginButton;
 import com.jerry.jtakeaway.ui.user.activity.HomeActivity;
@@ -96,8 +96,8 @@ public class LoginActivity extends BaseActivity {
         login_card_wapper.getBackground().setAlpha(100);
 
 
-//        username_et.setText("1072059178");
-//        password_et.setText("26521");
+        username_et.setText("1072059168");
+        password_et.setText("26521");
     }
 
     @Override
@@ -202,7 +202,7 @@ public class LoginActivity extends BaseActivity {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 try {
                     com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
-                    Result result = JsonUtils.getResult(jsonObject);
+                    Result1 result = JsonUtils.getResult1(jsonObject);
                     System.out.println("返回值" + result.toString());
                     if (result.getCode() == 10000) {
                         //success

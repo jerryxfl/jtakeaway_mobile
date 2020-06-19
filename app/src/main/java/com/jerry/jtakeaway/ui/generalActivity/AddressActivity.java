@@ -41,17 +41,17 @@ public class AddressActivity extends BaseActivity {
 
     @Override
     public void InitData() {
-        selector.setOnAddressSelectedListener((province, city, county, street) -> {
-            Intent intent = new Intent();
-            intent.putExtra("address",province.name+" "+city.name+" "+county.name+" "+street.name);
-            setResult(1,intent);
-            finish();
-        });
 
     }
 
     @Override
     public void InitListener() {
+        selector.setOnAddressSelectedListener((province, city, county, street) -> {
+            Intent intent = new Intent();
+            intent.putExtra("address",(province==null?"":province.name)+" "+(city==null?"":city.name)+" "+(county==null?"":county.name)+" "+(street==null?"":street.name));
+            setResult(1,intent);
+            finish();
+        });
 
     }
 

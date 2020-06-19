@@ -103,7 +103,7 @@ public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
             super.onBindViewHolder(holder, position, payloads);
             return;
         }
-        setItems.upDateItem(holder,position,payloads);
+        setItems.upDateItem(holder,position,payloads,datas);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
 
     public interface setItems<T> {
         void SetItems(BaseViewHolder holder, int position, List<T> datas);
-        void upDateItem(BaseViewHolder holder, int position, List<Object> payloads);
+        void upDateItem(BaseViewHolder holder, int position, List<Object> payloads,List<T> datas);
         int getViewType(List<T> datas, int position);
     }
 

@@ -36,16 +36,14 @@ public class InitApp {
 
     private void finish(Activity activity) {
         System.out.println("显示退出窗口");
-        new SweetAlertDialog(activity, SweetAlertDialog.WARNING_TYPE)
+        if(!activity.isDestroyed())new SweetAlertDialog(activity, SweetAlertDialog.WARNING_TYPE)
                 .setTitleText("你确定要退出吗?")
                 .setConfirmText("是的")
                 .setConfirmClickListener(sDialog -> {
                     System.exit(0);
                 })
                 .setCancelText("不了")
-                .setCancelClickListener(sweetAlertDialog -> {
-                    sweetAlertDialog.dismissWithAnimation();
-                })
+                .setCancelClickListener(SweetAlertDialog::dismissWithAnimation)
                 .show();
 
     }

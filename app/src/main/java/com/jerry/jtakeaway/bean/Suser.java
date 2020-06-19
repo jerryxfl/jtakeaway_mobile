@@ -1,6 +1,5 @@
 package com.jerry.jtakeaway.bean;
 
-
 import java.util.Objects;
 
 public class Suser {
@@ -14,14 +13,9 @@ public class Suser {
     private Integer applyid;
     private Integer walletid;
     private String dscr;
-
-    public String getDscr() {
-        return dscr;
-    }
-
-    public void setDscr(String dscr) {
-        this.dscr = dscr;
-    }
+    private double level;
+    private int leveltime;
+    private double alllevel;
 
     public Integer getWalletid() {
         return walletid;
@@ -112,5 +106,56 @@ public class Suser {
     @Override
     public int hashCode() {
         return Objects.hash(id, shopname, shoplicense, idcard, name, shopaddress, slideid);
+    }
+
+    public String getDscr() {
+        return dscr;
+    }
+
+    public void setDscr(String dscr) {
+        this.dscr = dscr;
+    }
+
+    public double getLevel() {
+        return level;
+    }
+
+    public void setLevel(double level) {
+        this.level = level;
+    }
+
+    public int getLeveltime() {
+        return leveltime;
+    }
+
+    public void setLeveltime(int leveltime) {
+        this.leveltime = leveltime;
+    }
+
+    public double getAlllevel() {
+        return alllevel;
+    }
+
+    public void setAlllevel(double alllevel) {
+        this.alllevel = alllevel;
+    }
+
+    @Override
+    public String toString() {
+        return "Suser{" +
+                "id=" + id +
+                ", shopname='" + shopname + '\'' +
+                ", shoplicense='" + shoplicense + '\'' +
+                ", idcard='" + idcard + '\'' +
+                ", name='" + name + '\'' +
+                ", shopaddress='" + shopaddress + '\'' +
+                ", slideid='" + slideid + '\'' +
+                ", applyid=" + applyid +
+                ", walletid=" + walletid +
+                ", dscr='" + dscr + '\'' +
+                ", level=" + level +
+                ", leveltime=" + leveltime +
+                ", alllevel=" + alllevel +
+                '}';
     }
 }

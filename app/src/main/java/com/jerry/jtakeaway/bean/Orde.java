@@ -11,7 +11,7 @@ public class Orde {
     private String menus;
     private Integer huserid;
     private int statusid;
-
+    private Double level;
 
     public int getId() {
         return id;
@@ -67,6 +67,14 @@ public class Orde {
 
     public void setStatusid(int statusid) {
         this.statusid = statusid;
+    }
+
+    public Double getLevel() {
+        return level;
+    }
+
+    public void setLevel(Double level) {
+        this.level = level;
     }
 
     @Override

@@ -9,7 +9,7 @@ import com.alibaba.fastjson.JSONObject;
  * @author: Liu
  * @Date: 10:21
  */
-public class Result {
+public class Result1 {
     /*返回体*/
     private Integer code;
     private String msg;

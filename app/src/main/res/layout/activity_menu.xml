@@ -30,12 +30,14 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
+                    android:id="@+id/foodImg"
                     android:layout_width="match_parent"
                     android:layout_height="270dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/dribbble_music_corner" />
 
                 <com.jerry.jtakeaway.custom.AniImgButton
+                    android:id="@+id/return_aib"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_marginStart="20dp"
@@ -58,6 +60,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
+                        android:id="@+id/nowPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="$ 16.8"
@@ -66,6 +69,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/DiscountLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
@@ -78,6 +82,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/DiscountTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
@@ -91,6 +96,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/priceOld"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -111,6 +117,7 @@
                         android:textSize="12sp" />
 
                     <TextView
+                        android:id="@+id/DiscountText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="60dp"
@@ -142,6 +149,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/descr_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingStart="5dp"
@@ -170,6 +178,7 @@
                     android:layout_marginTop="10dp">
 
                     <TextView
+                        android:id="@+id/moreinfo_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="快递: 0.28  销量 1.5万  成都高新"
@@ -183,6 +192,7 @@
                     android:layout_marginTop="10dp">
 
                     <TextView
+                        android:id="@+id/shopName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="疯狂外卖烤串旗舰店>"
@@ -190,6 +200,7 @@
                         android:textSize="12sp" />
 
                     <TextView
+                        android:id="@+id/conpon_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
@@ -214,6 +225,7 @@
                         android:textSize="14sp" />
 
                     <TextView
+                        android:id="@+id/conponsize_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="100dp"
@@ -252,10 +264,11 @@
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/choseFood_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="100dp"
-                    android:text="疯狂外卖套餐烤串 500g"
+                    android:text="未选择"
                     android:textColor="#222222"
                     android:textSize="14sp" />
 
@@ -299,7 +312,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="100dp"
-                        android:text="桂溪街道 学校南门"
+                        android:text="请添加收货地址"
                         android:textColor="#222222"
                         android:textSize="14sp" />
 
@@ -408,6 +421,7 @@
 
             </RelativeLayout>
             <RelativeLayout
+                android:id="@+id/pay_rel"
                 android:background="#F76B6C"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

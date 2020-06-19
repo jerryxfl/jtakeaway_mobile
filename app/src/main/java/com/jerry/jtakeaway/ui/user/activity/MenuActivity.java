@@ -1,11 +1,18 @@
 package com.jerry.jtakeaway.ui.user.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,7 +21,14 @@ import com.bumptech.glide.Glide;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
 import com.jerry.jtakeaway.base.BaseViewHolder;
-import com.jerry.jtakeaway.bean.model.Address;
+import com.jerry.jtakeaway.bean.Address;
+import com.jerry.jtakeaway.bean.Coupon;
+import com.jerry.jtakeaway.bean.JUrl;
+import com.jerry.jtakeaway.bean.Menus;
+import com.jerry.jtakeaway.bean.Suser;
+import com.jerry.jtakeaway.bean.events.AddressEvent;
+import com.jerry.jtakeaway.bean.responseBean.Result1;
+import com.jerry.jtakeaway.bean.responseBean.Result2;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
 import com.jerry.jtakeaway.custom.JBottomDialog;
@@ -22,20 +36,74 @@ import com.jerry.jtakeaway.custom.JTIButton;
 import com.jerry.jtakeaway.custom.JgridLayoutManager;
 import com.jerry.jtakeaway.ui.generalActivity.AddressManagerActivity;
 import com.jerry.jtakeaway.ui.generalActivity.EditAddressActivity;
+import com.jerry.jtakeaway.utils.GsonUtil;
+import com.jerry.jtakeaway.utils.JsonUtils;
+import com.jerry.jtakeaway.utils.OkHttp3Util;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class MenuActivity extends BaseActivity {
     @BindView(R.id.top)
     View top;
 
+    @BindView(R.id.return_aib)
+    AniImgButton return_aib;
+
     @BindView(R.id.original_price_tv)
     TextView original_price_tv;//原价
+
+    @BindView(R.id.nowPrice)
+    TextView nowPrice;//现价
+
+    @BindView(R.id.DiscountLabel)
+    TextView DiscountLabel;//打折标签
+
+    @BindView(R.id.DiscountTime)
+    TextView DiscountTime;//打折时间
+
+    @BindView(R.id.DiscountText)
+    TextView DiscountText;//打折描述
+
+    @BindView(R.id.descr_tv)
+    TextView descr_tv;
+
+    @BindView(R.id.moreinfo_tv)
+    TextView moreinfo_tv;
+
+
+    @BindView(R.id.foodImg)
+    ImageView foodImg;
+
+    @BindView(R.id.priceOld)
+    LinearLayout priceOld;
+
+    @BindView(R.id.shopName)
+    TextView shopName;
+
+    @BindView(R.id.conpon_btn)
+    TextView conpon_btn;
+
+    @BindView(R.id.conponsize_tv)
+    TextView conponsize_tv;
+
+    @BindView(R.id.choseFood_tv)
+    TextView choseFood_tv;
+
 
     @BindView(R.id.server_people_jtib)
     JTIButton server_people_jtib;//客服按钮
@@ -59,6 +127,9 @@ public class MenuActivity extends BaseActivity {
     @BindView(R.id.address_tv)
     TextView address_tv;
 
+    //支付按钮
+    @BindView(R.id.pay_rel)
+    RelativeLayout pay_rel;
 
     //3个选择dialog
     JBottomDialog mConponDialog;
@@ -66,9 +137,18 @@ public class MenuActivity extends BaseActivity {
     JBottomDialog mAddressDialog;
 
 
-    private JAdapter<Integer> goodFoodAdapter;
-    private JAdapter<Integer> conPonAdapter;
-    private List<Address> address = new ArrayList<>();;
+    private JAdapter<Menus> goodFoodAdapter;
+    private JAdapter<Coupon> conPonAdapter;
+    private List<Address> address = new ArrayList<>();
+    private List<Menus> menus = new ArrayList<>();
+    private Menus menu;
+
+
+    private List<Coupon> couponList = new ArrayList<>();
+    private Suser suser;
+    private Address setAddress;
+    private Menus setMenus;
+
 
     @Override
     public int getLayout() {
@@ -82,29 +162,37 @@ public class MenuActivity extends BaseActivity {
         top.setLayoutParams(layoutParams);
 
 
-        //设置下划线
-        original_price_tv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+        //注册事件监听
+        SignEventBus();
 
 
         //精品菜--------------------****************---------------------------------
-        JgridLayoutManager jgridLayoutManager_hotShop = new JgridLayoutManager(this,2);
+        JgridLayoutManager jgridLayoutManager_hotShop = new JgridLayoutManager(this, 2);
         good_food_recyclerview.setLayoutManager(jgridLayoutManager_hotShop);
 
-        goodFoodAdapter = new JAdapter<Integer>(this, good_food_recyclerview, new int[]{R.layout.menu_item}, new JAdapter.adapterListener<Integer>() {
+        goodFoodAdapter = new JAdapter<Menus>(this, good_food_recyclerview, new int[]{R.layout.menu_item}, new JAdapter.adapterListener<Menus>() {
             @Override
-            public void setItems(BaseViewHolder holder, int position, List<Integer> datas) {
+            public void setItems(BaseViewHolder holder, int position, List<Menus> datas) {
+                ImageView imageView = (ImageView) holder.getView(R.id.menu_img);
                 Glide.with(MenuActivity.this)
-                        .load(datas.get(position))
-                        .into((ImageView) holder.getView(R.id.menu_img));
+                        .load(datas.get(position).getFoodimg())
+                        .into(imageView);
+                imageView.setOnClickListener(v -> {
+                    Intent intent = new Intent(MenuActivity.this, MenuActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("menu", datas.get(position));
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                });
             }
 
             @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads) {
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<Menus> datas) {
 
             }
 
             @Override
-            public int getViewType(List<Integer> datas, int position) {
+            public int getViewType(List<Menus> datas, int position) {
                 return 0;
             }
         });
@@ -115,26 +203,216 @@ public class MenuActivity extends BaseActivity {
 
     @Override
     public void InitData() {
-        List<Integer> datass = new ArrayList<Integer>();
-        datass.add(R.drawable.concrete_road_between_trees_563356);
-        datass.add(R.drawable.concrete_road_between_trees_563356);
-        datass.add(R.drawable.concrete_road_between_trees_563356);
-        datass.add(R.drawable.hot_art);
-        datass.add(R.drawable.hot_art);
-        datass.add(R.drawable.dribbble_music_corner);
-        datass.add(R.drawable.dribbble_music_corner);
-        datass.add(R.drawable.icon_dark_green_by_milkinside);
-        datass.add(R.drawable.icon_dark_green_by_milkinside);
-        datass.add(R.drawable.icon_dark_green_by_milkinside);
-        goodFoodAdapter.adapter.setHeader(datass);
+        //获得intent数据
+        Intent intent = getIntent();
+        menu = (Menus) intent.getSerializableExtra("menu");
+        setData(menu);
+        getSuserInfo(menu.getSuerid());
+        getAddress();
+        getConpon();
+    }
+
+    private void getMenus() {
+        //获得推荐菜单
+        OkHttp3Util.GET(JUrl.g_menus(suser.getId(), menus.size()), this, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result2 result = JsonUtils.getResult2(jsonObject);
+                System.out.println(jsonObject.toString());
+                if (result.getCode() == 10000) {
+                    menus.addAll(GsonUtil.jsonToList(result.getData().toString(), Menus.class));
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        goodFoodAdapter.adapter.setFooter(menus);
+                    });
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(MenuActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+            }
+        });
+    }
 
 
+    private void getAddress() {
+        OkHttp3Util.GET(JUrl.address, this, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
 
-        address.add(new Address(1,"北京 天安门","正街","蒋锐1","18582672979","家"));
-        address.add(new Address(2,"北京 天安门","正街","蒋锐2","18582672979","家"));
-        address.add(new Address(3,"北京 天安门","正街","蒋锐3","18582672979","家"));
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result2 result = JsonUtils.getResult2(jsonObject);
+                if (result.getCode() == 10000) {
+                    address.addAll(GsonUtil.jsonToList(result.getData().toString(), com.jerry.jtakeaway.bean.Address.class));
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        if (!address.isEmpty())
+                            address_tv.setText(address.get(0).getAddress() + address.get(0).getDetaileaddress());
+                            setAddress = address.get(0);
+                    });
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(MenuActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+            }
+        });
+    }
+
+
+    private void getSuserInfo(int suserid) {
+
+        OkHttp3Util.GET(JUrl.shop + suserid, this, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result1 result = JsonUtils.getResult1(jsonObject);
+                if (result.getCode() == 10000) {
+                    suser = GsonUtil.gsonToBean(result.getData().toString(), Suser.class);
+                    getMenus();
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        moreinfo_tv.setText(suser.getShopaddress());
+                        shopName.setText(suser.getShopname() + ">");
+                    });
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(MenuActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+            }
+        });
 
     }
+
+    private void getConpon() {
+        OkHttp3Util.GET(JUrl.m_conpon, this, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result2 result = JsonUtils.getResult2(jsonObject);
+                if (result.getCode() == 10000) {
+                    System.out.println(result.getData().toString());
+                    couponList.clear();
+                    couponList.addAll(GsonUtil.jsonToList(result.getData().toString(), Coupon.class));
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        if (conPonAdapter != null) conPonAdapter.adapter.setData(couponList);
+                        conponsize_tv.setText("[美食专享] 美食卷 x" + couponList.size());
+                    });
+                } else if (result.getCode() == 6) {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(MenuActivity.this, "未登录", Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(MenuActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+            }
+        });
+    }
+
+
+    private void setData(Menus menu) {
+        if (menu.getFoodlowprice() != 0) {
+            //设置下划线
+            original_price_tv.setText("$" + menu.getFoodprice());
+            original_price_tv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+            nowPrice.setText("$" + menu.getFoodlowprice());
+            if(menu.getLowpricefailed()!= null){
+                setTime();
+            }else{
+                DiscountTime.setVisibility(View.GONE);
+            }
+        } else {
+            priceOld.setVisibility(View.GONE);
+            DiscountLabel.setVisibility(View.GONE);
+            DiscountTime.setVisibility(View.GONE);
+            nowPrice.setText("$" + menu.getFoodprice());
+        }
+        descr_tv.setText(menu.getFooddesc());
+        Glide.with(this)
+                .load(menu.getFoodimg())
+                .into(foodImg);
+    }
+
+
+    private void setTime(){
+        Date failTime = new Date(menu.getLowpricefailed().getTime());
+        Date now  = new Date();
+        if(now.before(failTime)){
+            long l = failTime.getTime() - now.getTime();
+            long day = l / (24 * 60 * 60 * 1000);
+            long hour = (l / (60 * 60 * 1000) - day * 24);
+            long min = ((l / (60 * 1000)) - day * 24 * 60 - hour * 60);
+            long s = (l / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60);
+            System.out.println(day + ":" + hour + ":" + min +":" + s + ":");
+            time.start();
+        }else{
+            DiscountTime.setVisibility(View.GONE);
+            menu.setLowpricefailed(null);
+            menu.setFoodlowprice(0);
+            setData(menu);
+        }
+    }
+
+    Thread time = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            Date failTime = new Date(menu.getLowpricefailed().getTime());
+            Date now  = new Date();
+            while (now.before(failTime)){
+                long l = failTime.getTime() - new Date().getTime();
+                long day = l / (24 * 60 * 60 * 1000);
+                long hour = (l / (60 * 60 * 1000) - day * 24);
+                long min = ((l / (60 * 1000)) - day * 24 * 60 - hour * 60);
+                long s = (l / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60);
+                System.out.println(day + ":" + hour + ":" + min +":" + s);
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    DiscountTime.setText(day + ":" + hour + ":" + min +":" + s);
+                });
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            DiscountTime.setVisibility(View.GONE);
+            menu.setLowpricefailed(null);
+            menu.setFoodlowprice(0);
+            setData(menu);
+        }
+    });
+
 
     @Override
     public void InitListener() {
@@ -147,67 +425,119 @@ public class MenuActivity extends BaseActivity {
 
         //选择优惠卷
         choose_conpon_aib.setOnClickListener(v -> {
-            if(mConponDialog==null){
+            if (mConponDialog == null) {
                 mConponDialog = new JBottomDialog(this, R.layout.conpon_dialog, view -> {
                     RecyclerView recyclerView = view.findViewById(R.id.conpon_recyclview);
                     LinearLayoutManager layoutManager = new LinearLayoutManager(MenuActivity.this);
                     layoutManager.setOrientation(RecyclerView.VERTICAL);
                     recyclerView.setLayoutManager(layoutManager);
-                    conPonAdapter = new JAdapter<Integer>(MenuActivity.this, recyclerView, new int[]{R.layout.conpon_pay_item}, new JAdapter.adapterListener<Integer>() {
+                    conPonAdapter = new JAdapter<>(MenuActivity.this, recyclerView, new int[]{R.layout.conpon_pay_item_nbtn}, new JAdapter.adapterListener<Coupon>() {
+                        @SuppressLint("SetTextI18n")
                         @Override
-                        public void setItems(BaseViewHolder holder, int position, List<Integer> datas) {
+                        public void setItems(BaseViewHolder holder, int position, List<Coupon> datas) {
+                            TextView discount = holder.getView(R.id.discount);//折扣
+                            TextView name = holder.getView(R.id.name);//名字
+                            TextView failtime = holder.getView(R.id.failtime);//过期时间
+
+                            discount.setText(datas.get(position).getConponprice() + "折");
+                            name.setText(datas.get(position).getConpondesc());
+                            failtime.setText(datas.get(position).getConponfailuretime() + "到期");
+                        }
+
+                        @Override
+                        public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<Coupon> datas) {
 
                         }
 
                         @Override
-                        public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads) {
-
-                        }
-
-                        @Override
-                        public int getViewType(List<Integer> datas, int position) {
+                        public int getViewType(List<Coupon> datas, int position) {
                             return 0;
                         }
                     });
-                    List<Integer> datass = new ArrayList<Integer>();
-                    for (int i = 0; i < 20; i++) {
-                        datass.add(i);
-                    }
-                    conPonAdapter.adapter.setHeader(datass);
-
-
                 });
+                getConpon();
                 mConponDialog.show();
-            }else{
+            } else {
+                getConpon();
                 mConponDialog.show();
             }
         });
 
         choose_food_aib.setOnClickListener(v -> {
-            if(mFoodDialog==null){
+            if (mFoodDialog == null) {
                 mFoodDialog = new JBottomDialog(MenuActivity.this, R.layout.food_dialog, view -> {
-                    view.findViewById(R.id.menu).setOnClickListener(v1 -> {
+                    ImageView foodImg = view.findViewById(R.id.foodImg);
+                    ImageView foodImg2 = view.findViewById(R.id.foodImg2);
+                    TextView foodName = view.findViewById(R.id.foodName);
+                    TextView foodName2 = view.findViewById(R.id.foodName2);
+                    TextView shopLocation = view.findViewById(R.id.shopLocation);
+                    TextView shopDistance = view.findViewById(R.id.shopDistance);
+                    LinearLayout menuBtn = view.findViewById(R.id.menu);
 
+                    Glide.with(MenuActivity.this)
+                            .load(menu.getFoodimg())
+                            .into(foodImg);
+
+                    Glide.with(MenuActivity.this)
+                            .load(menu.getFoodimg())
+                            .into(foodImg2);
+
+                    foodName.setText(menu.getFoodname());
+                    foodName2.setText(menu.getFoodname());
+
+                    shopLocation.setText(suser.getShopaddress());
+                    shopDistance.setText("距离:100KM");
+
+                    menuBtn.setOnClickListener(v2 -> {
+                        setMenus = menu;
+                        choseFood_tv.setText(menu.getFoodname());
+                        mFoodDialog.dismiss();
                     });
                 });
                 mFoodDialog.show();
-            }else{
+            } else {
                 mFoodDialog.show();
             }
         });
 
         //选择地址
         choose_address_aib.setOnClickListener(v -> {
-            if(address.isEmpty()){
-                startActivityForResult(new Intent(MenuActivity.this, EditAddressActivity.class),1);
-            }else {
+            if (address.isEmpty()) {
+                startActivityForResult(new Intent(MenuActivity.this, EditAddressActivity.class), 1);
+            } else {
                 Intent intent = new Intent(MenuActivity.this, AddressManagerActivity.class);
                 intent.putExtra("addres", (Serializable) address);
-                startActivityForResult(intent,1);
+                startActivity(intent);
             }
         });
 
+        //立即支付
+        pay_rel.setOnClickListener(v -> {
+            if(setMenus == null){
+                Toast.makeText(MenuActivity.this,"请选择购买物品",Toast.LENGTH_SHORT).show();
+                return;
+            }
 
+            if(setAddress == null){
+                Toast.makeText(MenuActivity.this,"请选择配送地址",Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            startActivity(new Intent(MenuActivity.this, PayActivity.class));
+        });
+
+        shopName.setOnClickListener(v -> {
+            //点击店家名字
+
+        });
+
+        conpon_btn.setOnClickListener(v -> {
+            Intent intent = new Intent(MenuActivity.this, ConponGetActivity.class);
+            intent.putExtra("targetid", suser.getId());
+            startActivity(intent);
+        });
+
+        return_aib.setOnClickListener(v -> finish());
     }
 
     @Override
@@ -219,11 +549,54 @@ public class MenuActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==1&&resultCode==1){
+        if (requestCode == 1 && resultCode == 1) {
             Address address = (Address) data.getSerializableExtra("address");
-            System.out.println("地址是:"+address.getAddress()+address.getDetaileAddress()+address.getContact()+address.getPhone()+address.getLabel());
-            this.address.add(address);
-            address_tv.setText(address.getAddress()+"  "+address.getDetaileAddress());
+            System.out.println("地址是:" + address.getAddress() + address.getDetaileaddress() + address.getContact() + address.getPhone() + address.getLabel());
+            for (int i = 0; i < this.address.size(); i++) {
+                if (address.getId() == this.address.get(i).getId()) {
+                    this.address.get(i).setAddress(address.getAddress());
+                    this.address.get(i).setDetaileaddress(address.getDetaileaddress());
+                    this.address.get(i).setContact(address.getContact());
+                    this.address.get(i).setPhone(address.getPhone());
+                    this.address.get(i).setLabel(address.getLabel());
+                }
+                ;
+            }
+
+            address_tv.setText(address.getAddress() + "  " + address.getDetaileaddress());
+        }
+    }
+
+
+    //监听地址变化
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void AddressChanged(AddressEvent address) {
+        System.out.println("菜单编辑界面收到信息:");
+        switch (address.getEventType()) {
+            case 0:
+                for (int i = 0; i < this.address.size(); i++) {
+                    if (this.address.get(i).getId() == address.getAddress().getId()) {
+                        this.address.get(i).setAddress(address.getAddress().getAddress());
+                        this.address.get(i).setDetaileaddress(address.getAddress().getDetaileaddress());
+                        this.address.get(i).setContact(address.getAddress().getContact());
+                        this.address.get(i).setPhone(address.getAddress().getPhone());
+                        this.address.get(i).setLabel(address.getAddress().getLabel());
+                        address_tv.setText(address.getAddress().getAddress() + "  " + address.getAddress().getDetaileaddress());
+                        setAddress = address.getAddress();
+                    }
+                }
+                break;
+            case 1://增加
+                this.address.add(address.getAddress());
+                address_tv.setText(address.getAddress().getAddress() + "  " + address.getAddress().getDetaileaddress());
+                setAddress = address.getAddress();
+                break;
+            case 2://减少
+                this.address.remove(address.getAddress());
+                if(address.getAddress().getId() == setAddress.getId()){
+                    address_tv.setText("请重新选择地址");
+                }
+                break;
         }
     }
 }

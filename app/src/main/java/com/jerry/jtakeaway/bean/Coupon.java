@@ -1,18 +1,25 @@
 package com.jerry.jtakeaway.bean;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 public class Coupon {
     private int id;
     private String conpondesc;
-    private BigDecimal conponprice;
+    private Double conponprice;
     private Integer conpontarget;
     private Timestamp conponfailuretime;
-
+    private int num;
     public int getId() {
         return id;
+    }
+
+    public int getNum() {
+        return num;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
     }
 
     public void setId(int id) {
@@ -27,11 +34,11 @@ public class Coupon {
         this.conpondesc = conpondesc;
     }
 
-    public BigDecimal getConponprice() {
+    public Double getConponprice() {
         return conponprice;
     }
 
-    public void setConponprice(BigDecimal conponprice) {
+    public void setConponprice(Double conponprice) {
         this.conponprice = conponprice;
     }
 

@@ -1,17 +1,34 @@
 package com.jerry.jtakeaway.bean;
 
-import java.math.BigDecimal;
+import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Objects;
 
-public class Menus {
+public class Menus implements Serializable {
     private int id;
     private int suerid;
     private String foodname;
     private String foodimg;
     private String fooddesc;
-    private BigDecimal foodprice;
-    private BigDecimal foodlowprice;
+    private double foodprice;
+    private double foodlowprice;
     private int foodstatus;
+    private Timestamp lowpricefailed;
+
+    public Menus() {
+    }
+
+    public Menus(int id, int suerid, String foodname, String foodimg, String fooddesc, double foodprice, double foodlowprice, int foodstatus,Timestamp lowpricefailed) {
+        this.id = id;
+        this.suerid = suerid;
+        this.foodname = foodname;
+        this.foodimg = foodimg;
+        this.fooddesc = fooddesc;
+        this.foodprice = foodprice;
+        this.foodlowprice = foodlowprice;
+        this.foodstatus = foodstatus;
+        this.lowpricefailed = lowpricefailed;
+    }
 
     public int getId() {
         return id;
@@ -53,19 +70,19 @@ public class Menus {
         this.fooddesc = fooddesc;
     }
 
-    public BigDecimal getFoodprice() {
+    public double getFoodprice() {
         return foodprice;
     }
 
-    public void setFoodprice(BigDecimal foodprice) {
+    public void setFoodprice(double foodprice) {
         this.foodprice = foodprice;
     }
 
-    public BigDecimal getFoodlowprice() {
+    public double getFoodlowprice() {
         return foodlowprice;
     }
 
-    public void setFoodlowprice(BigDecimal foodlowprice) {
+    public void setFoodlowprice(double foodlowprice) {
         this.foodlowprice = foodlowprice;
     }
 
@@ -75,6 +92,14 @@ public class Menus {
 
     public void setFoodstatus(int foodstatus) {
         this.foodstatus = foodstatus;
+    }
+
+    public Timestamp getLowpricefailed() {
+        return lowpricefailed;
+    }
+
+    public void setLowpricefailed(Timestamp lowpricefailed) {
+        this.lowpricefailed = lowpricefailed;
     }
 
     @Override
@@ -90,6 +115,20 @@ public class Menus {
                 Objects.equals(fooddesc, menus.fooddesc) &&
                 Objects.equals(foodprice, menus.foodprice) &&
                 Objects.equals(foodlowprice, menus.foodlowprice);
+    }
+
+    @Override
+    public String toString() {
+        return "Menus{" +
+                "id=" + id +
+                ", suerid=" + suerid +
+                ", foodname='" + foodname + '\'' +
+                ", foodimg='" + foodimg + '\'' +
+                ", fooddesc='" + fooddesc + '\'' +
+                ", foodprice=" + foodprice +
+                ", foodlowprice=" + foodlowprice +
+                ", foodstatus=" + foodstatus +
+                '}';
     }
 
     @Override

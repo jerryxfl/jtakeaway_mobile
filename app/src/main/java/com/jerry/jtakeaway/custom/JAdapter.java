@@ -26,8 +26,8 @@ public class JAdapter<T> implements BaseAdapter.setItems<T> {
     }
 
     @Override
-    public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads) {
-       adapterListener.upDateItem(holder,position,payloads);
+    public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads,List<T> datas) {
+       adapterListener.upDateItem(holder,position,payloads,datas);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class JAdapter<T> implements BaseAdapter.setItems<T> {
 
     public interface adapterListener<T>{
         void setItems(BaseViewHolder holder, int position, List<T> datas);
-        void upDateItem(BaseViewHolder holder, int position, List<Object> payloads);
+        void upDateItem(BaseViewHolder holder, int position, List<Object> payloads,List<T> datas);
         int getViewType(List<T> datas, int position);
     }
 }

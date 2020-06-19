@@ -1,8 +1,9 @@
 package com.jerry.jtakeaway.bean;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Address {
+public class Address implements Serializable {
     private int id;
     private String address;
     private String detaileaddress;
@@ -79,6 +80,19 @@ public class Address {
                 Objects.equals(contact, address1.contact) &&
                 Objects.equals(phone, address1.phone) &&
                 Objects.equals(label, address1.label);
+    }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "id=" + id +
+                ", address='" + address + '\'' +
+                ", detaileaddress='" + detaileaddress + '\'' +
+                ", contact='" + contact + '\'' +
+                ", phone='" + phone + '\'' +
+                ", label='" + label + '\'' +
+                ", user=" + user +
+                '}';
     }
 
     @Override

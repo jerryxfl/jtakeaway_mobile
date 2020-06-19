@@ -113,13 +113,13 @@ dependencies {
     implementation 'com.azoft.carousellayoutmanager:carousel:1.2.4'
 
 
-    //滚动文字
-    implementation 'anylife.scrolltextview:ScrollTextviewLib:1.4.6'
-
-
     //星级评分
     implementation 'com.github.giswangsj:AndRatingBar:v1.0.0'
 
     //地址选择
     implementation 'com.smartTop:jd-address:1.0.3'
+
+
+    //滚动文字
+    implementation 'com.xj.marqueeView:marqueeView:0.1.20'
 }

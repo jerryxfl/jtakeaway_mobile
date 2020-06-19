@@ -14,6 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <ImageView
+                android:id="@+id/foodImg"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:scaleType="centerCrop"
@@ -23,6 +24,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <TextView
+                    android:id="@+id/foodName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -31,6 +33,7 @@
                     android:textSize="18sp"
                     android:textColor="#222222"/>
                 <TextView
+                    android:id="@+id/shopLocation"
                     android:layout_marginTop="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -38,14 +41,16 @@
                     android:text="成都 | 高新"
                     android:textSize="12sp"
                     android:textColor="#919191"/>
+
                 <TextView
-                    android:layout_marginTop="10dp"
+                    android:id="@+id/shopDistance"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
                     android:text="距离: 5KM"
-                    android:textSize="12sp"
-                    android:textColor="#919191"/>
+                    android:textColor="#919191"
+                    android:textSize="12sp" />
 
             </LinearLayout>
         </LinearLayout>
@@ -65,11 +70,13 @@
             android:layout_height="wrap_content"
             android:background="@drawable/menu_choose_selector">
             <ImageView
+                android:id="@+id/foodImg2"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/dribbble_music_corner"/>
             <TextView
+                android:id="@+id/foodName2"
                 android:layout_marginStart="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

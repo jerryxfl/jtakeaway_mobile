@@ -2,6 +2,7 @@ package com.jerry.jtakeaway.custom;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +19,15 @@ public class JBottomDialog extends Dialog {
 
     public JBottomDialog(@NonNull Context context, int layout,setItem setItem) {
         super(context);
-        init(context,layout,setItem);
+        init(context,layout,setItem,null);
     }
 
+    public JBottomDialog(@NonNull Context context, int layout,setItem setItem,event event) {
+        super(context);
+        init(context,layout,setItem,event);
+    }
 
-    private  void init(Context context,int layout,setItem setItem){
+    private  void init(Context context,int layout,setItem setItem,event event){
         setCancelable(true);
         setCanceledOnTouchOutside(true);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -41,6 +46,10 @@ public class JBottomDialog extends Dialog {
         view = LayoutInflater.from(context).inflate(layout,null);
         setContentView(view);
         setItem.ItemOnCreate(view);
+
+        if(event!=null){
+            setOnDismissListener(dialog -> event.OnHideListener(dialog,view));
+        }
     }
 
 
@@ -61,5 +70,11 @@ public class JBottomDialog extends Dialog {
     public interface setItem{
         void ItemOnCreate(View view);
     }
+
+
+    public interface event{
+        void OnHideListener(DialogInterface dialog,View view);
+    }
+
 
 }

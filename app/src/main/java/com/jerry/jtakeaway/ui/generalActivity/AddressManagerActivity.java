@@ -14,15 +14,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
 import com.jerry.jtakeaway.base.BaseViewHolder;
-import com.jerry.jtakeaway.bean.model.Address;
+import com.jerry.jtakeaway.bean.Address;
+import com.jerry.jtakeaway.bean.events.AddressEvent;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class AddressManagerActivity extends BaseActivity {
     @BindView(R.id.top)
@@ -45,6 +51,7 @@ public class AddressManagerActivity extends BaseActivity {
         ViewGroup.LayoutParams layoutParams = top.getLayoutParams();
         layoutParams.height = PixAndDpUtil.getStatusBarHeight(this);
         top.setLayoutParams(layoutParams);
+        SignEventBus();
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(RecyclerView.VERTICAL);
@@ -62,27 +69,37 @@ public class AddressManagerActivity extends BaseActivity {
                 contact_tv.setText(datas.get(position).getContact());
                 phone_tv.setText(datas.get(position).getPhone());
                 label_tv.setText(datas.get(position).getLabel());
-                address_tv.setText(datas.get(position).getDetaileAddress());
+                address_tv.setText(datas.get(position).getAddress()+"  "+datas.get(position).getDetaileaddress());
 
                 edit_aib.setOnClickListener(v -> {
                     Intent intent = new Intent(AddressManagerActivity.this, EditAddressActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("address",datas.get(position));
                     intent.putExtras(bundle);
-                    startActivityForResult(intent,1);
+                    startActivity(intent);
                 });
                 container.setOnClickListener(v ->{
-                    Intent intent = new Intent();
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("address",datas.get(position));
-                    intent.putExtras(bundle);
-                    setResult(1,intent);
+                    EventBus.getDefault().post(new AddressEvent(datas.get(position),0));
                     finish();
+                });
+                container.setOnLongClickListener(v -> {
+                    new SweetAlertDialog(AddressManagerActivity.this, SweetAlertDialog.WARNING_TYPE)
+                            .setTitleText("是否要删除该地址?")
+                            .setConfirmText("是的")
+                            .setConfirmClickListener(sDialog -> {
+                                EventBus.getDefault().post(new AddressEvent(datas.get(position),2));
+                                jAdapter.adapter.removeByObject(datas.get(position));
+                                sDialog.dismissWithAnimation();
+                            })
+                            .setCancelText("不了")
+                            .setCancelClickListener(SweetAlertDialog::dismissWithAnimation)
+                            .show();
+                    return true;
                 });
             }
 
             @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads) {
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads,List<Address> datas) {
                 TextView contact_tv = holder.getView(R.id.contact_tv);
                 TextView phone_tv = holder.getView(R.id.phone_tv);
                 TextView label_tv = holder.getView(R.id.label_tv);
@@ -94,7 +111,7 @@ public class AddressManagerActivity extends BaseActivity {
                             contact_tv.setText(addres.get(position).getContact());
                             phone_tv.setText(addres.get(position).getPhone());
                             label_tv.setText(addres.get(position).getLabel());
-                            address_tv.setText(addres.get(position).getDetaileAddress());
+                            address_tv.setText(datas.get(position).getAddress()+"  "+datas.get(position).getDetaileaddress());
                     }
                 }
 
@@ -118,7 +135,9 @@ public class AddressManagerActivity extends BaseActivity {
 
     @Override
     public void InitListener() {
-        return_aib.setOnClickListener(v -> finish());
+        return_aib.setOnClickListener(v -> {
+            finish();
+        });
 
     }
 
@@ -128,24 +147,22 @@ public class AddressManagerActivity extends BaseActivity {
     }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==1&&resultCode==1){
-            Address address = (Address) data.getSerializableExtra("address");
-            int tag = 0;
-            for (int i = 0; i < this.addres.size(); i++) {
-                if(address.getId()==this.addres.get(i).getId()){
-                    tag = i;
-                    this.addres.get(i).setAddress(address.getAddress());
-                    this.addres.get(i).setDetaileAddress(address.getDetaileAddress());
-                    this.addres.get(i).setContact(address.getContact());
-                    this.addres.get(i).setPhone(address.getPhone());
-                    this.addres.get(i).setLabel(address.getLabel());
-                };
-            }
-            jAdapter.adapter.notifyItemChanged(tag,"change");
-            System.out.println("地址是:"+address.getAddress()+address.getDetaileAddress()+address.getContact()+address.getPhone()+address.getLabel()+"     "+tag);
+    //监听地址变化
+    @Subscribe(threadMode =  ThreadMode.MAIN)
+    public void AddressChanged(AddressEvent address){
+        System.out.println("地址编辑界面收到信息:"+address.toString());
+        int tag = 0;
+        for (int i = 0; i < this.addres.size(); i++) {
+            if(address.getAddress().getId()==this.addres.get(i).getId()){
+                tag = i;
+                this.addres.get(i).setAddress(address.getAddress().getAddress());
+                this.addres.get(i).setDetaileaddress(address.getAddress().getDetaileaddress());
+                this.addres.get(i).setContact(address.getAddress().getContact());
+                this.addres.get(i).setPhone(address.getAddress().getPhone());
+                this.addres.get(i).setLabel(address.getAddress().getLabel());
+            };
         }
+        jAdapter.adapter.notifyItemChanged(tag,"change");
     }
+
 }

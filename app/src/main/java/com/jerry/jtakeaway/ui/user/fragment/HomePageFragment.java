@@ -1,11 +1,15 @@
 package com.jerry.jtakeaway.ui.user.fragment;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
@@ -20,20 +24,37 @@ import com.bumptech.glide.Glide;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseFragment;
 import com.jerry.jtakeaway.base.BaseViewHolder;
+import com.jerry.jtakeaway.bean.Broadcasts;
+import com.jerry.jtakeaway.bean.JUrl;
+import com.jerry.jtakeaway.bean.Menus;
+import com.jerry.jtakeaway.bean.Slide;
 import com.jerry.jtakeaway.bean.events.PageEvents;
+import com.jerry.jtakeaway.bean.responseBean.Result2;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
-import com.jerry.jtakeaway.custom.JRollingTextView;
 import com.jerry.jtakeaway.custom.JgridLayoutManager;
+import com.jerry.jtakeaway.ui.user.activity.MenuActivity;
+import com.jerry.jtakeaway.utils.GsonUtil;
+import com.jerry.jtakeaway.utils.JsonUtils;
+import com.jerry.jtakeaway.utils.OkHttp3Util;
+import com.xj.marqueeview.MarqueeView;
+import com.xj.marqueeview.base.CommonAdapter;
+import com.xj.marqueeview.base.ViewHolder;
 
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 @SuppressWarnings("all")
 public class HomePageFragment extends BaseFragment{
@@ -52,7 +73,7 @@ public class HomePageFragment extends BaseFragment{
     @BindView(R.id.menu_recommend)
     RecyclerView menu_recommend_recyclerview;
     @BindView(R.id.JRollingTextView)
-    JRollingTextView JRollingTextView;
+    MarqueeView JRollingTextView;
 
     @BindView(R.id.five_shop_recyclerview)
     RecyclerView five_shop_recyclerview;
@@ -65,10 +86,14 @@ public class HomePageFragment extends BaseFragment{
     private int currentPosition;
     private List<Integer> datas;
     private JAdapter<Integer> hotShopAdapter;
-    private JAdapter<Integer> jBannerAdapter;
-    private JAdapter<Integer> jMneuAdapter;
+    private JAdapter<Slide> jBannerAdapter;
+    private JAdapter<Menus> jMneuAdapter;
     private JAdapter<Integer> peopleRedAdapter;
     private JAdapter<Integer> fiveLevelAdapter;
+    List<Menus> menusList = new ArrayList<Menus>();
+    List<Slide> slideList = new ArrayList<Slide>();
+
+    private List<Broadcasts> broadcastsList = new ArrayList<>();
 
 
     @Override
@@ -111,31 +136,25 @@ public class HomePageFragment extends BaseFragment{
         recyclerview_banner.addOnScrollListener(new CenterScrollListener());//监听器
         currentPosition = 0;
 
-        jBannerAdapter = new JAdapter<Integer>(context, recyclerview_banner, new int[]{R.layout.banner_item_layout}, new JAdapter.adapterListener<Integer>() {
+        jBannerAdapter = new JAdapter<Slide>(context, recyclerview_banner, new int[]{R.layout.banner_item_layout}, new JAdapter.adapterListener<Slide>() {
             @Override
-            public void setItems(BaseViewHolder holder, int position, List<Integer> datas) {
+            public void setItems(BaseViewHolder holder, int position, List<Slide> datas) {
+
                 Glide.with(context)
-                        .load(datas.get(position))
+                        .load(datas.get(position).getImg())
                         .into((ImageView) holder.getView(R.id.banner_img));
             }
 
             @Override
-            public void upDateItem(BaseViewHolder holder, int position, List payloads) {
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<Slide> datas) {
 
             }
 
             @Override
-            public int getViewType(List datas, int position) {
+            public int getViewType(List<Slide> datas, int position) {
                 return 0;
             }
         });
-
-        datas = new ArrayList<Integer>();
-        datas.add(R.drawable.concrete_road_between_trees_563356);
-        datas.add(R.drawable.hot_art);
-        datas.add(R.drawable.dribbble_music_corner);
-        datas.add(R.drawable.icon_dark_green_by_milkinside);
-        jBannerAdapter.adapter.setHeader(datas);
 //        recyclerview_banner.smoothScrollToPosition(datas.size() / 2);
         //end   顶部轮播图--------------------****************---------------------------------
 
@@ -154,7 +173,7 @@ public class HomePageFragment extends BaseFragment{
             }
 
             @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads) {
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads,List<Integer> datas) {
 
             }
 
@@ -171,21 +190,35 @@ public class HomePageFragment extends BaseFragment{
         //菜单推荐--------------------****************---------------------------------
         JgridLayoutManager jgridLayoutManager_menu = new JgridLayoutManager(context,2);
         menu_recommend_recyclerview.setLayoutManager(jgridLayoutManager_menu);
-        jMneuAdapter = new JAdapter<Integer>(context, menu_recommend_recyclerview, new int[]{R.layout.menu_item}, new JAdapter.adapterListener<Integer>() {
+        jMneuAdapter = new JAdapter<Menus>(context, menu_recommend_recyclerview, new int[]{R.layout.menu_item}, new JAdapter.adapterListener<Menus>() {
             @Override
-            public void setItems(BaseViewHolder holder, int position, List<Integer> datas) {
+            public void setItems(BaseViewHolder holder, int position, List<Menus> datas) {
+                ImageView menu_img = holder.getView(R.id.menu_img);
                 Glide.with(context)
-                        .load(datas.get(position))
-                        .into((ImageView) holder.getView(R.id.menu_img));
+                        .load(datas.get(position).getFoodimg())
+                        .into(menu_img);
+
+                menu_img.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //精品菜单推荐
+                        Intent intent = new Intent(context, MenuActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("menu",datas.get(position));
+                        intent.putExtras(bundle);
+                        context.startActivity(intent);
+
+                    }
+                });
             }
 
             @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads) {
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads,List<Menus> datas) {
 
             }
 
             @Override
-            public int getViewType(List<Integer> datas, int position) {
+            public int getViewType(List<Menus> datas, int position) {
                 return 0;
             }
         });
@@ -206,7 +239,7 @@ public class HomePageFragment extends BaseFragment{
             }
 
             @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads) {
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads,List<Integer> datas) {
 
             }
 
@@ -232,7 +265,7 @@ public class HomePageFragment extends BaseFragment{
             }
 
             @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads) {
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads,List<Integer> datas) {
 
             }
 
@@ -243,9 +276,6 @@ public class HomePageFragment extends BaseFragment{
         });
 
         //end  prople_red_recommend--------------------****************---------------------------------
-
-
-        timer.schedule(new timerTask(),0,5000);
     }
 
 
@@ -253,7 +283,7 @@ public class HomePageFragment extends BaseFragment{
     class timerTask extends TimerTask {
         @Override
         public void run() {
-            if(currentPosition+1>datas.size()){
+            if(currentPosition+1>slideList.size()){
                 currentPosition = 0;
             }else{
                 currentPosition = currentPosition+1;
@@ -269,6 +299,9 @@ public class HomePageFragment extends BaseFragment{
 
     @Override
     public void InitData() {
+        getSlider();
+        getBorCasts();
+        getHotMenus();
         //hot_shop
         List<Integer> datass = new ArrayList<Integer>();
         datass.add(R.drawable.concrete_road_between_trees_563356);
@@ -285,9 +318,7 @@ public class HomePageFragment extends BaseFragment{
         //end hot_shop
 
 
-        //menu
-        jMneuAdapter.adapter.setHeader(datass);
-        //end menu
+
 
 
         //五星
@@ -301,9 +332,109 @@ public class HomePageFragment extends BaseFragment{
         //end 网红
     }
 
+    private void getHotMenus(){
+        OkHttp3Util.GET(JUrl.hot_menus, context, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
 
+                });
+            }
 
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result2 result = JsonUtils.getResult2(jsonObject);
+                if(result.getCode() == 10000){
+                    menusList.clear();
+                    menusList.addAll(GsonUtil.jsonToList(result.getData().toString(),Menus.class));
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        jMneuAdapter.adapter.setHeader(menusList);
+                    });
+                }else{
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(context,"数据错误",Toast.LENGTH_SHORT).show();
+                    });
+                }
 
+            }
+        });
+    }
+
+    private void getSlider() {
+        OkHttp3Util.GET(JUrl.top_slides, context, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result2 result = JsonUtils.getResult2(jsonObject);
+                if(result.getCode() == 10000){
+                    slideList.clear();
+                    slideList.addAll(GsonUtil.jsonToList(result.getData().toString(),Slide.class));
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        jBannerAdapter.adapter.setHeader(slideList);
+                        timer.schedule(new timerTask(),0,5000);
+                    });
+                }else{
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(context,"数据错误",Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+            }
+        });
+    }
+
+    private void getBorCasts() {
+        OkHttp3Util.GET(JUrl.broadcasts, context, new Callback() {
+
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result2 result = JsonUtils.getResult2(jsonObject);
+                if(result.getCode() == 10000){
+                    broadcastsList.clear();
+                    broadcastsList.addAll(GsonUtil.jsonToList(result.getData().toString(),Broadcasts.class));
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        SimpleTextAdapter simpleTextAdapter = new SimpleTextAdapter(context, broadcastsList);
+                        JRollingTextView.setAdapter(simpleTextAdapter);
+                    });
+                }else{
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(context,"数据错误",Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+            }
+        });
+    }
+
+    public class SimpleTextAdapter extends CommonAdapter<Broadcasts> {
+
+        public SimpleTextAdapter(Context context, List<Broadcasts> datas) {
+            super(context, R.layout.broadcasts_item, datas);
+        }
+
+        @Override
+        protected void convert(ViewHolder viewHolder, Broadcasts item, int position) {
+            TextView tv = viewHolder.getView(R.id.msg);
+            tv.setText(item.getContent());
+        }
+
+    }
 
     @Override
     public void InitListener() {
@@ -342,6 +473,9 @@ public class HomePageFragment extends BaseFragment{
         goRefreshLayout.setOnRefreshListener(new RefreshListener() {
             @Override
             public void onRefresh() {
+                getSlider();
+                getBorCasts();
+                getHotMenus();
                 //添加你自己的代码
                 new Handler().postDelayed(new Runnable() {
                     @Override
