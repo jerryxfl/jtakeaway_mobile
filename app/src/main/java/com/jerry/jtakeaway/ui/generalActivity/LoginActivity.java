@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -21,17 +20,20 @@ import androidx.cardview.widget.CardView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gabrielsamojlo.keyboarddismisser.KeyboardDismisser;
-import com.google.gson.Gson;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
 import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.User;
+import com.jerry.jtakeaway.bean.responseBean.ResponseUser;
 import com.jerry.jtakeaway.bean.responseBean.Result1;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JLoginButton;
 import com.jerry.jtakeaway.ui.user.activity.HomeActivity;
 import com.jerry.jtakeaway.utils.BitmapBlurHelper;
+import com.jerry.jtakeaway.utils.GsonUtil;
 import com.jerry.jtakeaway.utils.JsonUtils;
+import com.jerry.jtakeaway.utils.KeyboardUtils;
+import com.jerry.jtakeaway.utils.LogPrint;
 import com.jerry.jtakeaway.utils.MMkvUtil;
 import com.jerry.jtakeaway.utils.OkHttp3Util;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
@@ -96,8 +98,8 @@ public class LoginActivity extends BaseActivity {
         login_card_wapper.getBackground().setAlpha(100);
 
 
-        username_et.setText("1072059168");
-        password_et.setText("26521");
+        username_et.setText(MMkvUtil.getInstance(LoginActivity.this, "jwts").decodeString("account") == null ? "" : MMkvUtil.getInstance(LoginActivity.this, "jwts").decodeString("account"));
+        password_et.setText(MMkvUtil.getInstance(LoginActivity.this, "jwts").decodeString("password") == null ? "" : MMkvUtil.getInstance(LoginActivity.this, "jwts").decodeString("password"));
     }
 
     @Override
@@ -105,7 +107,7 @@ public class LoginActivity extends BaseActivity {
 
     }
 
-    Handler handler = new Handler(){
+    Handler handler = new Handler() {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
@@ -114,26 +116,26 @@ public class LoginActivity extends BaseActivity {
     };
 
     /*
-    * 1成功
-    * 2失败
+     * 1成功
+     * 2失败
      */
-    private void setToast(String text,int type) {
+    private void setToast(String text, int type) {
         System.out.println(text);
         handler.removeMessages(0);
         loadtoast.setText(text);
-        loadtoast.setTranslationY(PixAndDpUtil.dip2px(this,PixAndDpUtil.getStatusBarHeight(this)));
-        switch(type){
+        loadtoast.setTranslationY(PixAndDpUtil.dip2px(this, PixAndDpUtil.getStatusBarHeight(this)));
+        switch (type) {
             case 1:
                 loadtoast.success();
                 loadtoast.setTextColor(Color.WHITE).setBackgroundColor(Color.GREEN).setProgressColor(Color.WHITE);
                 loadtoast.show();
-                handler.sendEmptyMessageDelayed(0,2000);
+                handler.sendEmptyMessageDelayed(0, 2000);
                 break;
             case 2:
                 loadtoast.error();
                 loadtoast.setTextColor(Color.WHITE).setBackgroundColor(Color.RED).setProgressColor(Color.WHITE);
                 loadtoast.show();
-                handler.sendEmptyMessageDelayed(0,3000);
+                handler.sendEmptyMessageDelayed(0, 3000);
                 break;
         }
 
@@ -144,20 +146,21 @@ public class LoginActivity extends BaseActivity {
         login_btn.setOnClickListener(new JLoginButton.OnJClickListener() {
             @Override
             public void onClick() {
-                   String username = username_et.getText().toString().trim();
-                   String password = password_et.getText().toString().trim();
+                KeyboardUtils.hideKeyboard(LoginActivity.this);
+                String username = username_et.getText().toString().trim();
+                String password = password_et.getText().toString().trim();
 
-                   if ("".equals(username)) {
-                       setToast("账号不能为空",2);
-                       login_btn.reset();
-                       return;
-                   }
-                   if ("".equals(password)) {
-                       setToast("密码不能为空",2);
-                       login_btn.reset();
-                       return;
-                   }
-                   login(username, password);
+                if ("".equals(username)) {
+                    setToast("账号不能为空", 2);
+                    login_btn.reset();
+                    return;
+                }
+                if ("".equals(password)) {
+                    setToast("密码不能为空", 2);
+                    login_btn.reset();
+                    return;
+                }
+                login(username, password);
             }
         });
 
@@ -185,15 +188,13 @@ public class LoginActivity extends BaseActivity {
         user.setAccount(username);
         user.setPassword(password);
         JSONObject json = (JSONObject) JSONObject.toJSON(user);
-        System.out.println(json.toString());
 
         OkHttp3Util.POST(JUrl.login, this, json, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 e.printStackTrace();
                 new Handler(Looper.getMainLooper()).post(() -> {
-//                    error_tv.setText("服务器链接失败");
-                    setToast("服务器链接失败",2);
+                    setToast("服务器链接失败", 2);
                     login_btn.reset();
                 });
             }
@@ -203,7 +204,6 @@ public class LoginActivity extends BaseActivity {
                 try {
                     com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
                     Result1 result = JsonUtils.getResult1(jsonObject);
-                    System.out.println("返回值" + result.toString());
                     if (result.getCode() == 10000) {
                         //success
                         if (result.getData() != null) {
@@ -211,20 +211,19 @@ public class LoginActivity extends BaseActivity {
                             MMkvUtil.getInstance(LoginActivity.this, "jwts").encode("jwt", jwt);
                             MMkvUtil.getInstance(LoginActivity.this, "jwts").encode("account", username);
                             MMkvUtil.getInstance(LoginActivity.this, "jwts").encode("password", password);
-                            Gson gson = new Gson();
-                            UserUtils.getInstance().setUser(gson.fromJson(json.getString("user"), User.class));
+                            UserUtils.getInstance().setUser(GsonUtil.gsonToBean(result.getData().getString("user"), ResponseUser.class));
                         }
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
                             login_btn.reset();
                             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                             startActivity(intent);
-                            overridePendingTransition(R.anim.anim_in,R.anim.anim_out);
-//                            goToNew();
+                            overridePendingTransition(R.anim.anim_in, R.anim.anim_out);
+                            finish();
                         }, 3000);
 
                     } else {
                         new Handler(Looper.getMainLooper()).post(() -> {
-                            setToast(result.getMsg(),2);
+                            setToast(result.getMsg(), 2);
                             login_btn.reset();
                         });
                     }
@@ -235,36 +234,4 @@ public class LoginActivity extends BaseActivity {
         });
         return false;
     }
-
-
-    private void goToNew() {
-//
-        Intent intent = new Intent(this, HomeActivity.class);
-        scaleAnimation = new ScaleAnimation(1,500,1,500, Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF, 0.5f);
-        scaleAnimation.setDuration(3000);
-        scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                handler.postDelayed(() -> {
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.anim_in,R.anim.anim_out);
-//                    finish();
-                },2800);
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        scaleAnimation.setFillAfter(true);
-        scaleAnimation.setRepeatCount(0);
-        login_btn.startAnimation(scaleAnimation);
-    }
-
 }

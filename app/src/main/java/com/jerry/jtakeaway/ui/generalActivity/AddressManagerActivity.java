@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -38,6 +39,10 @@ public class AddressManagerActivity extends BaseActivity {
 
     @BindView(R.id.return_aib)
     AniImgButton return_aib;
+
+    @BindView(R.id.add_new)
+    Button add_new;
+
     private JAdapter<Address> jAdapter;
     private List<Address> addres = new ArrayList<>();
 
@@ -139,6 +144,9 @@ public class AddressManagerActivity extends BaseActivity {
             finish();
         });
 
+        add_new.setOnClickListener(v ->{
+            startActivity(new Intent(AddressManagerActivity.this, EditAddressActivity.class));
+        });
     }
 
     @Override
@@ -150,19 +158,27 @@ public class AddressManagerActivity extends BaseActivity {
     //监听地址变化
     @Subscribe(threadMode =  ThreadMode.MAIN)
     public void AddressChanged(AddressEvent address){
-        System.out.println("地址编辑界面收到信息:"+address.toString());
-        int tag = 0;
-        for (int i = 0; i < this.addres.size(); i++) {
-            if(address.getAddress().getId()==this.addres.get(i).getId()){
-                tag = i;
-                this.addres.get(i).setAddress(address.getAddress().getAddress());
-                this.addres.get(i).setDetaileaddress(address.getAddress().getDetaileaddress());
-                this.addres.get(i).setContact(address.getAddress().getContact());
-                this.addres.get(i).setPhone(address.getAddress().getPhone());
-                this.addres.get(i).setLabel(address.getAddress().getLabel());
-            };
+        switch (address.getEventType()){
+            case 0:
+                int tag = 0;
+                for (int i = 0; i < this.addres.size(); i++) {
+                    if(address.getAddress().getId()==this.addres.get(i).getId()){
+                        tag = i;
+                        this.addres.get(i).setAddress(address.getAddress().getAddress());
+                        this.addres.get(i).setDetaileaddress(address.getAddress().getDetaileaddress());
+                        this.addres.get(i).setContact(address.getAddress().getContact());
+                        this.addres.get(i).setPhone(address.getAddress().getPhone());
+                        this.addres.get(i).setLabel(address.getAddress().getLabel());
+                    };
+                }
+                jAdapter.adapter.notifyItemChanged(tag,"change");
+                break;
+            case 1:
+                this.addres.add(address.getAddress());
+                jAdapter.adapter.setFooter(address.getAddress());
+                break;
+
         }
-        jAdapter.adapter.notifyItemChanged(tag,"change");
     }
 
 }

@@ -17,6 +17,7 @@ import android.widget.Toast;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.bumptech.glide.Glide;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
@@ -25,6 +26,7 @@ import com.jerry.jtakeaway.bean.Address;
 import com.jerry.jtakeaway.bean.Coupon;
 import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.Menus;
+import com.jerry.jtakeaway.bean.Orde;
 import com.jerry.jtakeaway.bean.Suser;
 import com.jerry.jtakeaway.bean.events.AddressEvent;
 import com.jerry.jtakeaway.bean.responseBean.Result1;
@@ -32,6 +34,7 @@ import com.jerry.jtakeaway.bean.responseBean.Result2;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
 import com.jerry.jtakeaway.custom.JBottomDialog;
+import com.jerry.jtakeaway.custom.JCenterDialog;
 import com.jerry.jtakeaway.custom.JTIButton;
 import com.jerry.jtakeaway.custom.JgridLayoutManager;
 import com.jerry.jtakeaway.ui.generalActivity.AddressManagerActivity;
@@ -50,9 +53,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import butterknife.BindView;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -145,9 +150,11 @@ public class MenuActivity extends BaseActivity {
 
 
     private List<Coupon> couponList = new ArrayList<>();
+    private List<Orde> all_orders = new ArrayList<>();
     private Suser suser;
     private Address setAddress;
     private Menus setMenus;
+    private JCenterDialog jCenterDialog;
 
 
     @Override
@@ -210,6 +217,36 @@ public class MenuActivity extends BaseActivity {
         getSuserInfo(menu.getSuerid());
         getAddress();
         getConpon();
+        getOrders();
+    }
+
+
+    //获得所有订单
+    private void getOrders() {
+        OkHttp3Util.GET(JUrl.all_no_pay_orders, this, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result2 result = JsonUtils.getResult2(jsonObject);
+                System.out.println(jsonObject.toString());
+                if (result.getCode() == 10000) {
+                    all_orders.clear();
+                    all_orders.addAll(GsonUtil.jsonToList(result.getData().toString(), Orde.class));
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(MenuActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+            }
+        });
     }
 
     private void getMenus() {
@@ -230,7 +267,7 @@ public class MenuActivity extends BaseActivity {
                 if (result.getCode() == 10000) {
                     menus.addAll(GsonUtil.jsonToList(result.getData().toString(), Menus.class));
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        goodFoodAdapter.adapter.setFooter(menus);
+                        if (goodFoodAdapter != null) goodFoodAdapter.adapter.setFooter(menus);
                     });
                 } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -260,8 +297,9 @@ public class MenuActivity extends BaseActivity {
                     address.addAll(GsonUtil.jsonToList(result.getData().toString(), com.jerry.jtakeaway.bean.Address.class));
                     new Handler(Looper.getMainLooper()).post(() -> {
                         if (!address.isEmpty())
-                            address_tv.setText(address.get(0).getAddress() + address.get(0).getDetaileaddress());
-                            setAddress = address.get(0);
+                            if (address_tv != null)
+                                address_tv.setText(address.get(0).getAddress() + address.get(0).getDetaileaddress());
+                        setAddress = address.get(0);
                     });
                 } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -292,8 +330,8 @@ public class MenuActivity extends BaseActivity {
                     suser = GsonUtil.gsonToBean(result.getData().toString(), Suser.class);
                     getMenus();
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        moreinfo_tv.setText(suser.getShopaddress());
-                        shopName.setText(suser.getShopname() + ">");
+                        if (moreinfo_tv != null) moreinfo_tv.setText(suser.getShopaddress());
+                        if (shopName != null) shopName.setText(suser.getShopname() + ">");
                     });
                 } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -325,7 +363,8 @@ public class MenuActivity extends BaseActivity {
                     couponList.addAll(GsonUtil.jsonToList(result.getData().toString(), Coupon.class));
                     new Handler(Looper.getMainLooper()).post(() -> {
                         if (conPonAdapter != null) conPonAdapter.adapter.setData(couponList);
-                        conponsize_tv.setText("[美食专享] 美食卷 x" + couponList.size());
+                        if (conponsize_tv != null)
+                            conponsize_tv.setText("[美食专享] 美食卷 x" + couponList.size());
                     });
                 } else if (result.getCode() == 6) {
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -348,9 +387,9 @@ public class MenuActivity extends BaseActivity {
             original_price_tv.setText("$" + menu.getFoodprice());
             original_price_tv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
             nowPrice.setText("$" + menu.getFoodlowprice());
-            if(menu.getLowpricefailed()!= null){
+            if (menu.getLowpricefailed() != null) {
                 setTime();
-            }else{
+            } else {
                 DiscountTime.setVisibility(View.GONE);
             }
         } else {
@@ -366,18 +405,18 @@ public class MenuActivity extends BaseActivity {
     }
 
 
-    private void setTime(){
+    private void setTime() {
         Date failTime = new Date(menu.getLowpricefailed().getTime());
-        Date now  = new Date();
-        if(now.before(failTime)){
+        Date now = new Date();
+        if (now.before(failTime)) {
             long l = failTime.getTime() - now.getTime();
             long day = l / (24 * 60 * 60 * 1000);
             long hour = (l / (60 * 60 * 1000) - day * 24);
             long min = ((l / (60 * 1000)) - day * 24 * 60 - hour * 60);
             long s = (l / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60);
-            System.out.println(day + ":" + hour + ":" + min +":" + s + ":");
+            System.out.println(day + ":" + hour + ":" + min + ":" + s + ":");
             time.start();
-        }else{
+        } else {
             DiscountTime.setVisibility(View.GONE);
             menu.setLowpricefailed(null);
             menu.setFoodlowprice(0);
@@ -389,16 +428,17 @@ public class MenuActivity extends BaseActivity {
         @Override
         public void run() {
             Date failTime = new Date(menu.getLowpricefailed().getTime());
-            Date now  = new Date();
-            while (now.before(failTime)){
+            Date now = new Date();
+            while (now.before(failTime)) {
                 long l = failTime.getTime() - new Date().getTime();
                 long day = l / (24 * 60 * 60 * 1000);
                 long hour = (l / (60 * 60 * 1000) - day * 24);
                 long min = ((l / (60 * 1000)) - day * 24 * 60 - hour * 60);
                 long s = (l / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60);
-                System.out.println(day + ":" + hour + ":" + min +":" + s);
+                System.out.println(day + ":" + hour + ":" + min + ":" + s);
                 new Handler(Looper.getMainLooper()).post(() -> {
-                    DiscountTime.setText(day + ":" + hour + ":" + min +":" + s);
+                    if (DiscountTime != null)
+                        DiscountTime.setText(day + ":" + hour + ":" + min + ":" + s);
                 });
                 try {
                     Thread.sleep(1000);
@@ -406,10 +446,12 @@ public class MenuActivity extends BaseActivity {
                     e.printStackTrace();
                 }
             }
-            DiscountTime.setVisibility(View.GONE);
-            menu.setLowpricefailed(null);
-            menu.setFoodlowprice(0);
-            setData(menu);
+            if (DiscountTime != null) DiscountTime.setVisibility(View.GONE);
+            if (menu != null) {
+                menu.setLowpricefailed(null);
+                menu.setFoodlowprice(0);
+                setData(menu);
+            }
         }
     });
 
@@ -503,7 +545,7 @@ public class MenuActivity extends BaseActivity {
         //选择地址
         choose_address_aib.setOnClickListener(v -> {
             if (address.isEmpty()) {
-                startActivityForResult(new Intent(MenuActivity.this, EditAddressActivity.class), 1);
+                startActivity(new Intent(MenuActivity.this, EditAddressActivity.class));
             } else {
                 Intent intent = new Intent(MenuActivity.this, AddressManagerActivity.class);
                 intent.putExtra("addres", (Serializable) address);
@@ -513,22 +555,26 @@ public class MenuActivity extends BaseActivity {
 
         //立即支付
         pay_rel.setOnClickListener(v -> {
-            if(setMenus == null){
-                Toast.makeText(MenuActivity.this,"请选择购买物品",Toast.LENGTH_SHORT).show();
+            if (setMenus == null) {
+                Toast.makeText(MenuActivity.this, "请选择购买物品", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            if(setAddress == null){
-                Toast.makeText(MenuActivity.this,"请选择配送地址",Toast.LENGTH_SHORT).show();
+            if (setAddress == null) {
+                Toast.makeText(MenuActivity.this, "请选择配送地址", Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            startActivity(new Intent(MenuActivity.this, PayActivity.class));
+            //生成订单
+            createOrder(suser.getId(), setMenus.getId(), 1);
         });
 
         shopName.setOnClickListener(v -> {
             //点击店家名字
-
+            Intent intent = new Intent(MenuActivity.this, ShopActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("shop", suser);
+            intent.putExtras(bundle);
+            startActivity(intent);
         });
 
         conpon_btn.setOnClickListener(v -> {
@@ -542,29 +588,89 @@ public class MenuActivity extends BaseActivity {
 
     @Override
     public void destroy() {
+        if (time.isAlive()) {
+            time.interrupt();
+        }
+    }
+
+
+    //    生成订单
+    private void createOrder(int suserid, int menuid, int size) {
+        System.out.println("本地" + suserid + "  " + menuid + "   " + size);
+        boolean tag = false;
+        for (Orde orde : all_orders) {
+            if (orde.getSuserid() == suserid  &&orde.getStatusid() == 1) {
+                com.alibaba.fastjson.JSONObject json = JSONObject.parseObject(orde.getMenus());
+                for (Map.Entry<String, Object> entry : json.entrySet()) {
+                    System.out.println("在线" + entry.getKey() + "  " + entry.getValue());
+                    if (entry.getKey().equals(String.valueOf(menuid)) && entry.getValue().equals(size)) {
+                        tag = true;
+                        //弹出框提醒
+                        new SweetAlertDialog(MenuActivity.this, SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText("你的购物车中有一个相同的订单还未支付,是否确认创建新订单??")
+                                .setConfirmText("创建")
+                                .setConfirmClickListener(sDialog -> {
+                                    createOrder_yes(suserid, menuid, size);
+                                    sDialog.dismissWithAnimation();
+                                })
+                                .setCancelText("去看看")
+                                .setCancelClickListener(SweetAlertDialog::dismissWithAnimation)
+                                .show();
+                    }
+                }
+                if (tag) break;
+            }
+        }
+        if (!tag) {
+            createOrder_yes(suserid, menuid, size);
+        }
 
     }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1 && resultCode == 1) {
-            Address address = (Address) data.getSerializableExtra("address");
-            System.out.println("地址是:" + address.getAddress() + address.getDetaileaddress() + address.getContact() + address.getPhone() + address.getLabel());
-            for (int i = 0; i < this.address.size(); i++) {
-                if (address.getId() == this.address.get(i).getId()) {
-                    this.address.get(i).setAddress(address.getAddress());
-                    this.address.get(i).setDetaileaddress(address.getDetaileaddress());
-                    this.address.get(i).setContact(address.getContact());
-                    this.address.get(i).setPhone(address.getPhone());
-                    this.address.get(i).setLabel(address.getLabel());
-                }
-                ;
+    private void createOrder_yes(int suserid, int menuid, int size) {
+        if (jCenterDialog == null)
+            jCenterDialog = new JCenterDialog(this, R.layout.loading_dialog);
+        jCenterDialog.show();
+
+        OkHttp3Util.GET(JUrl.create_order(suserid, menuid, size), this, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    jCenterDialog.dismiss();
+                });
             }
 
-            address_tv.setText(address.getAddress() + "  " + address.getDetaileaddress());
-        }
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result1 result = JsonUtils.getResult1(jsonObject);
+                if (result.getCode() == 10000) {
+                    System.out.println("生成订单-------------------------" + result.getData().toString());
+                    Orde orde = GsonUtil.gsonToBean(result.getData().toString(), Orde.class);
+                    all_orders.add(orde);
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        jCenterDialog.dismiss();
+                        Intent intent = new Intent(MenuActivity.this, PayActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("order", orde);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                    });
+                } else if (result.getCode() == 6) {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        jCenterDialog.dismiss();
+                        Toast.makeText(MenuActivity.this, "未登录", Toast.LENGTH_SHORT).show();
+                    });
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        jCenterDialog.dismiss();
+                        Toast.makeText(MenuActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+            }
+        });
     }
 
 
@@ -581,22 +687,39 @@ public class MenuActivity extends BaseActivity {
                         this.address.get(i).setContact(address.getAddress().getContact());
                         this.address.get(i).setPhone(address.getAddress().getPhone());
                         this.address.get(i).setLabel(address.getAddress().getLabel());
-                        address_tv.setText(address.getAddress().getAddress() + "  " + address.getAddress().getDetaileaddress());
-                        setAddress = address.getAddress();
+                        if (address.getAddress().getId() == setAddress.getId()) {
+                            if (address_tv != null)
+                                address_tv.setText(address.getAddress().getAddress() + "  " + address.getAddress().getDetaileaddress());
+                            setAddress = address.getAddress();
+                        }
                     }
                 }
                 break;
             case 1://增加
                 this.address.add(address.getAddress());
-                address_tv.setText(address.getAddress().getAddress() + "  " + address.getAddress().getDetaileaddress());
+                if (address_tv != null)
+                    address_tv.setText(address.getAddress().getAddress() + "  " + address.getAddress().getDetaileaddress());
                 setAddress = address.getAddress();
                 break;
             case 2://减少
                 this.address.remove(address.getAddress());
-                if(address.getAddress().getId() == setAddress.getId()){
-                    address_tv.setText("请重新选择地址");
+                if (address.getAddress().getId() == setAddress.getId()) {
+                    setAddress = null;
+                    if (address_tv != null) address_tv.setText("请重新选择地址");
                 }
                 break;
         }
     }
+
+    //监听订单变化
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void OrdersChanged(Orde orde) {
+        for (int i = 0; i < all_orders.size(); i++) {
+            if(all_orders.get(i).getId() == orde.getId()){
+                all_orders.get(i).setStatusid(orde.getStatusid());
+                all_orders.get(i).setLevel(orde.getLevel());
+            }
+        }
+    }
+
 }

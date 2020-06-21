@@ -1,10 +1,10 @@
 package com.jerry.jtakeaway.utils;
 
-import com.jerry.jtakeaway.bean.User;
+import com.jerry.jtakeaway.bean.responseBean.ResponseUser;
 
 public class UserUtils {
     private static UserUtils instance;
-    private static User user;
+    private static ResponseUser user;
 
 
     public static synchronized UserUtils getInstance() {
@@ -13,14 +13,19 @@ public class UserUtils {
     }
 
 
-    public void setUser(User user) {
+    public void setUser(ResponseUser user) {
         UserUtils.user = user;
+        System.out.println("登录成功返回值"+user.toString());
     }
 
-    public User getUser() {
+    public ResponseUser getUser() {
         return user;
     }
 
+
+    public <T> T getUserDetails(Class<T> clazz) {
+        return (T) GsonUtil.gsonToBean(user.getUserdetails(), clazz);
+    }
 
 
 

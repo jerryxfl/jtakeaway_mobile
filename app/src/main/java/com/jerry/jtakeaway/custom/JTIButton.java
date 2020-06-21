@@ -120,26 +120,42 @@ public class JTIButton extends View {
         if(widthImg>heightImg){
             if(widthImg>width){
                 float com = width/widthImg;//计算图片宽度和控件跨度比列
-                targetWidth = widthImg * com  - mTextSize*2;
-                targetHeight = heightImg * com - mTextSize*2;
+                targetWidth = widthImg * com;
+                targetHeight = heightImg * com;
+                if(targetHeight+mTextSize>height){
+                    targetHeight  = targetHeight - mTextSize;
+                    targetWidth  = (float) (targetWidth - mTextSize*1.5);
+                }
             }else{
                 targetWidth = (width*3)/4;
                 targetHeight = height * targetWidth/width;
+                if(targetHeight+mTextSize>height){
+                    targetHeight  = targetHeight - mTextSize;
+                    targetWidth  = (float) (targetWidth - mTextSize*1.5);
+                }
             }
         }else{
             if(heightImg>height){
                 float com = height/heightImg;//计算图片宽度和控件跨度比列
-                targetWidth = widthImg * com  - mTextSize*2;
-                targetHeight = heightImg * com - mTextSize*2;
+                targetWidth = widthImg * com;
+                targetHeight = heightImg * com;
+                if(targetHeight+mTextSize>height){
+                    targetHeight  = targetHeight - mTextSize;
+                    targetWidth  = (float) (targetWidth - mTextSize*1.5);
+                }
             }else{
                 targetHeight = (height*3)/4;
                 targetWidth = height * targetHeight/width;
+                if(targetHeight+mTextSize>height){
+                    targetHeight  = targetHeight - mTextSize;
+                    targetWidth  = (float) (targetWidth - mTextSize*1.5);
+                }
             }
         }
 
         //计算四个点坐标
         float left =  (width-targetWidth)/2;
-        float top =  (height-targetHeight)/2;
+        float top =  0;
         rectF = new RectF(
                 left,
                 top,
@@ -149,8 +165,8 @@ public class JTIButton extends View {
 
 
         //计算文字坐标
-        mTextX = left+targetWidth/2-getTextWidth(mText)-mTextSize/2;
-        mTextY = (float) (top+targetHeight+mTextSize/1.2);
+        mTextX = (width/2)-(mTextSize*mText.length())/2;
+        mTextY = (float) (targetHeight+mTextSize);
 
         //重新布局测量
         requestLayout();

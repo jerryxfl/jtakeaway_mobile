@@ -7,14 +7,14 @@ public class ResponseUser<T> {
     private String usernickname;
     private String useradvatar;
     private int usertype;
-    private T userdetails;
+    private String userdetails;
     private String phone;
     private String email;
 
     public ResponseUser() {
     }
 
-    public ResponseUser(int id, String account, String password, String usernickname, String useradvatar, int usertype, T userdetails, String phone, String email) {
+    public ResponseUser(int id, String account, String password, String usernickname, String useradvatar, int usertype, String userdetails, String phone, String email) {
         this.id = id;
         this.account = account;
         this.password = password;
@@ -74,11 +74,11 @@ public class ResponseUser<T> {
         this.usertype = usertype;
     }
 
-    public T getUserdetails() {
+    public String getUserdetails() {
         return userdetails;
     }
 
-    public void setUserdetails(T userdetails) {
+    public void setUserdetails(String userdetails) {
         this.userdetails = userdetails;
     }
 
@@ -96,5 +96,20 @@ public class ResponseUser<T> {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "ResponseUser{" +
+                "id=" + id +
+                ", account='" + account + '\'' +
+                ", password='" + password + '\'' +
+                ", usernickname='" + usernickname + '\'' +
+                ", useradvatar='" + useradvatar + '\'' +
+                ", usertype=" + usertype +
+                ", userdetails=" + userdetails +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

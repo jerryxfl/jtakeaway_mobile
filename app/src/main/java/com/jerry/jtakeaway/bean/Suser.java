@@ -1,8 +1,9 @@
 package com.jerry.jtakeaway.bean;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Suser {
+public class Suser implements Serializable {
     private int id;
     private String shopname;
     private String shoplicense;

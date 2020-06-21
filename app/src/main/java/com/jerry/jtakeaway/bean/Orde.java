@@ -1,9 +1,10 @@
 package com.jerry.jtakeaway.bean;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-public class Orde {
+public class Orde implements Serializable {
     private int id;
     private int nuserid;
     private Timestamp createdTime;
@@ -12,6 +13,7 @@ public class Orde {
     private Integer huserid;
     private int statusid;
     private Double level;
+    private String uuid;
 
     public int getId() {
         return id;
@@ -75,6 +77,14 @@ public class Orde {
 
     public void setLevel(Double level) {
         this.level = level;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     @Override

@@ -383,22 +383,24 @@
                 android:layout_weight="1.5"
                 android:orientation="horizontal">
                 <com.jerry.jtakeaway.custom.JTIButton
+                    android:layout_margin="5dp"
                     android:id="@+id/server_people_jtib"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     app:jsrc="@drawable/server_people"
                     app:jtext="客服"
-                    app:jtextSize="30"
+                    app:jtextSize="35"
                     tools:ignore="NestedWeights" />
                 <com.jerry.jtakeaway.custom.JTIButton
+                    android:layout_margin="5dp"
                     android:id="@+id/shopping_car_jtib"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     app:jsrc="@drawable/shopping_car"
                     app:jtext="购物车"
-                    app:jtextSize="30"/>
+                    app:jtextSize="35"/>
             </LinearLayout>
             <View
                 android:layout_marginTop="10dp"

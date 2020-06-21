@@ -1,14 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".ui.user.fragment.OrderFragment">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="0dp"
+        android:layout_weight="0.08"
+        android:gravity="center"
+        android:background="@color/pink">
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/order_serachview"
+            android:backgroundTint="@color/white"
+            android:layout_width="match_parent"
+            android:layout_marginEnd="20dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="20dp"
+            app:queryHint="搜索我的订单"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/order_search_shape"
+            app:iconifiedByDefault="false" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="1">
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/order_tab"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabSelectedTextColor="@color/black"
+            app:tabMode="scrollable"
+            app:tabGravity="center"
+            android:layout_gravity="center_horizontal"
+            app:tabIndicatorHeight="2dp"
+            app:tabIndicatorColor="@color/pink"
+            app:tabIndicatorFullWidth="false"
+            app:tabTextColor="@color/black"
+            app:tabTextAppearance="@style/TextSizeStyle"/>
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/order_tab_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
 
-</FrameLayout>
+</LinearLayout>

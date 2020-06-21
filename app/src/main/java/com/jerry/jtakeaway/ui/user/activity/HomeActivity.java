@@ -1,23 +1,39 @@
 package com.jerry.jtakeaway.ui.user.activity;
 
 import android.Manifest;
+import android.content.Intent;
 import android.graphics.Color;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
+import com.jerry.jtakeaway.bean.JUrl;
+import com.jerry.jtakeaway.bean.User;
 import com.jerry.jtakeaway.bean.events.PageEvents;
+import com.jerry.jtakeaway.bean.responseBean.ResponseUser;
+import com.jerry.jtakeaway.bean.responseBean.Result1;
+import com.jerry.jtakeaway.custom.JCenterDialog;
 import com.jerry.jtakeaway.custom.JViewPager;
+import com.jerry.jtakeaway.ui.generalActivity.LoginActivity;
 import com.jerry.jtakeaway.ui.user.adapter.ViewPagerAdapter;
 import com.jerry.jtakeaway.ui.user.fragment.EmailFragment;
 import com.jerry.jtakeaway.ui.user.fragment.HomePageFragment;
 import com.jerry.jtakeaway.ui.user.fragment.OrderFragment;
 import com.jerry.jtakeaway.ui.user.fragment.PersonalFragment;
+import com.jerry.jtakeaway.utils.GsonUtil;
+import com.jerry.jtakeaway.utils.JsonUtils;
+import com.jerry.jtakeaway.utils.LogPrint;
+import com.jerry.jtakeaway.utils.MMkvUtil;
+import com.jerry.jtakeaway.utils.OkHttp3Util;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
+import com.jerry.jtakeaway.utils.UserUtils;
 import com.jpeng.jptabbar.JPTabBar;
 import com.jpeng.jptabbar.anno.NorIcons;
 import com.jpeng.jptabbar.anno.SeleIcons;
@@ -25,11 +41,17 @@ import com.jpeng.jptabbar.anno.Titles;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class HomeActivity extends BaseActivity {
     @BindView(R.id.viewPager)
@@ -47,6 +69,7 @@ public class HomeActivity extends BaseActivity {
 
     @SeleIcons
     private static final int[] mSeleIcons = {R.drawable.homepage_selector, R.drawable.orderform_selector, R.drawable.information_selector, R.drawable.me_selector};
+    private JCenterDialog jCenterDialog;
 
     @Override
     public int getLayout() {
@@ -88,7 +111,7 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     public void InitData() {
-
+        if(UserUtils.getInstance().getUser()==null)Autologin(MMkvUtil.getInstance(HomeActivity.this, "jwts").decodeString("account"),MMkvUtil.getInstance(HomeActivity.this, "jwts").decodeString("password"));
     }
 
     @Override
@@ -115,6 +138,58 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void destroy() {
 
+    }
+
+    private void Autologin(String username, String password) {
+        if (jCenterDialog == null)
+            jCenterDialog = new JCenterDialog(this, R.layout.loading_dialog);
+        jCenterDialog.show();
+        User user = new User();
+        user.setAccount(username);
+        user.setPassword(password);
+        JSONObject json = (JSONObject) JSONObject.toJSON(user);
+
+        OkHttp3Util.POST(JUrl.login, this, json, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    jCenterDialog.dismiss();
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                try {
+                    com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                    Result1 result = JsonUtils.getResult1(jsonObject);
+                    if (result.getCode() == 10000) {
+                        //success
+                        if (result.getData() != null) {
+                            String jwt = result.getData().getString("jwt");
+                            MMkvUtil.getInstance(HomeActivity.this, "jwts").encode("jwt", jwt);
+                            MMkvUtil.getInstance(HomeActivity.this, "jwts").encode("account", username);
+                            MMkvUtil.getInstance(HomeActivity.this, "jwts").encode("password", password);
+                            UserUtils.getInstance().setUser(GsonUtil.gsonToBean(result.getData().getString("user"), ResponseUser.class));
+                        }
+                        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                            jCenterDialog.dismiss();
+                        }, 3000);
+
+                    } else {
+                        new Handler(Looper.getMainLooper()).post(() -> {
+                            jCenterDialog.dismiss();
+                            startActivity(new Intent(HomeActivity.this,LoginActivity.class));
+                            finish();
+                        });
+                    }
+                } catch (Exception e) {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        jCenterDialog.dismiss();
+                    });
+                }
+            }
+        });
     }
 
 

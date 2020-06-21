@@ -82,16 +82,17 @@ public class HomePageFragment extends BaseFragment{
     RecyclerView people_red_recyclerview;
 
     private CarouselLayoutManager layoutManager;
-    private Timer timer = new Timer();
+    private Timer timer;
     private int currentPosition;
     private List<Integer> datas;
-    private JAdapter<Integer> hotShopAdapter;
+    private JAdapter<Menus> hotShopAdapter;
     private JAdapter<Slide> jBannerAdapter;
     private JAdapter<Menus> jMneuAdapter;
     private JAdapter<Integer> peopleRedAdapter;
     private JAdapter<Integer> fiveLevelAdapter;
     List<Menus> menusList = new ArrayList<Menus>();
     List<Slide> slideList = new ArrayList<Slide>();
+    List<Menus> hot_shop_menuList = new ArrayList<Menus>();
 
     private List<Broadcasts> broadcastsList = new ArrayList<>();
 
@@ -103,7 +104,6 @@ public class HomePageFragment extends BaseFragment{
 
     @Override
     public void InitView() {
-//        KeyboardDismisser.useWith(this);
 //        if(checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)){
 //            GPSUtils.getInstance(context).getLngAndLat(new GPSUtils.OnLocationResultListener() {
 //                @Override
@@ -139,7 +139,6 @@ public class HomePageFragment extends BaseFragment{
         jBannerAdapter = new JAdapter<Slide>(context, recyclerview_banner, new int[]{R.layout.banner_item_layout}, new JAdapter.adapterListener<Slide>() {
             @Override
             public void setItems(BaseViewHolder holder, int position, List<Slide> datas) {
-
                 Glide.with(context)
                         .load(datas.get(position).getImg())
                         .into((ImageView) holder.getView(R.id.banner_img));
@@ -164,21 +163,31 @@ public class HomePageFragment extends BaseFragment{
         JgridLayoutManager jgridLayoutManager_hotShop = new JgridLayoutManager(context,5);
         recyclerview_hot_shop.setLayoutManager(jgridLayoutManager_hotShop);
 
-        hotShopAdapter = new JAdapter<Integer>(context, recyclerview_hot_shop, new int[]{R.layout.hot_shop_item}, new JAdapter.adapterListener<Integer>() {
+        hotShopAdapter = new JAdapter<Menus>(context, recyclerview_hot_shop, new int[]{R.layout.hot_shop_item}, new JAdapter.adapterListener<Menus>() {
             @Override
-            public void setItems(BaseViewHolder holder, int position, List<Integer> datas) {
+            public void setItems(BaseViewHolder holder, int position, List<Menus> datas) {
+                TextView title_tv = holder.getView(R.id.title_tv);
+                ImageView shop_image = (ImageView) holder.getView(R.id.shop_image);
                 Glide.with(context)
-                        .load(datas.get(position))
-                        .into((ImageView) holder.getView(R.id.shop_image));
+                        .load(datas.get(position).getFoodimg())
+                        .into(shop_image);
+                title_tv.setText(datas.get(position).getFoodname());
+                shop_image.setOnClickListener(v -> {
+                    Intent intent = new Intent(context, MenuActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("menu",datas.get(position));
+                    intent.putExtras(bundle);
+                    context.startActivity(intent);
+                });
             }
 
             @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads,List<Integer> datas) {
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads,List<Menus> datas) {
 
             }
 
             @Override
-            public int getViewType(List<Integer> datas, int position) {
+            public int getViewType(List<Menus> datas, int position) {
                 return 0;
             }
         });
@@ -207,7 +216,6 @@ public class HomePageFragment extends BaseFragment{
                         bundle.putSerializable("menu",datas.get(position));
                         intent.putExtras(bundle);
                         context.startActivity(intent);
-
                     }
                 });
             }
@@ -302,6 +310,7 @@ public class HomePageFragment extends BaseFragment{
         getSlider();
         getBorCasts();
         getHotMenus();
+        getHotShops();
         //hot_shop
         List<Integer> datass = new ArrayList<Integer>();
         datass.add(R.drawable.concrete_road_between_trees_563356);
@@ -314,7 +323,6 @@ public class HomePageFragment extends BaseFragment{
         datass.add(R.drawable.icon_dark_green_by_milkinside);
         datass.add(R.drawable.icon_dark_green_by_milkinside);
         datass.add(R.drawable.icon_dark_green_by_milkinside);
-        hotShopAdapter.adapter.setHeader(datass);
         //end hot_shop
 
 
@@ -331,6 +339,40 @@ public class HomePageFragment extends BaseFragment{
         peopleRedAdapter.adapter.setHeader(datass);
         //end 网红
     }
+
+    private void getHotShops(){
+        OkHttp3Util.GET(JUrl.hot_shop_menu, context, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result2 result = JsonUtils.getResult2(jsonObject);
+                if(result.getCode() == 10000){
+                    hot_shop_menuList.clear();
+                    hot_shop_menuList.addAll(GsonUtil.jsonToList(result.getData().toString(),Menus.class));
+                    System.out.println("热门商家:"+result.getData());
+                    if(hot_shop_menuList.size()>10){
+                        hot_shop_menuList.subList(11,hot_shop_menuList.size()).clear();
+                    }
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        hotShopAdapter.adapter.setData(hot_shop_menuList);
+                    });
+                }else{
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(context,"数据错误",Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+            }
+        });
+    }
+
 
     private void getHotMenus(){
         OkHttp3Util.GET(JUrl.hot_menus, context, new Callback() {
@@ -349,7 +391,7 @@ public class HomePageFragment extends BaseFragment{
                     menusList.clear();
                     menusList.addAll(GsonUtil.jsonToList(result.getData().toString(),Menus.class));
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        jMneuAdapter.adapter.setHeader(menusList);
+                        jMneuAdapter.adapter.setData(menusList);
                     });
                 }else{
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -378,8 +420,11 @@ public class HomePageFragment extends BaseFragment{
                     slideList.clear();
                     slideList.addAll(GsonUtil.jsonToList(result.getData().toString(),Slide.class));
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        jBannerAdapter.adapter.setHeader(slideList);
-                        timer.schedule(new timerTask(),0,5000);
+                        jBannerAdapter.adapter.setData(slideList);
+                        if(timer==null){
+                            timer = new Timer();
+                            timer.schedule(new timerTask(),0,5000);
+                        }
                     });
                 }else{
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -476,6 +521,7 @@ public class HomePageFragment extends BaseFragment{
                 getSlider();
                 getBorCasts();
                 getHotMenus();
+                getHotShops();
                 //添加你自己的代码
                 new Handler().postDelayed(new Runnable() {
                     @Override

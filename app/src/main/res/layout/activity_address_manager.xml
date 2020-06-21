@@ -38,7 +38,14 @@
         android:background="#F4F4F4"
         android:id="@+id/address_recyvlerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-
+        android:layout_height="0dp"
+        android:layout_weight="8"/>
+    <Button
+        android:id="@+id/add_new"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textStyle="bold"
+        android:textColor="#222222"
+        android:text="新增收货地址"
+        android:background="#F76B6C"/>
 </LinearLayout>

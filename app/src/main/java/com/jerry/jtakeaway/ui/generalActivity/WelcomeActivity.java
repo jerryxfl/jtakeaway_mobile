@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
+import com.jerry.jtakeaway.ui.user.activity.HomeActivity;
+import com.jerry.jtakeaway.utils.MMkvUtil;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
 
 import butterknife.BindView;
@@ -41,9 +43,7 @@ public class WelcomeActivity extends BaseActivity {
         countdowntimer = new MyCountdownTimer(4000, 1000);
         countdowntimer.start();
         runnable = () -> {
-            Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+            toNewActivity();
         };
 
         handler = new Handler();
@@ -82,9 +82,7 @@ public class WelcomeActivity extends BaseActivity {
         timePicker.setOnClickListener(v -> {
             handler.removeCallbacks(runnable);
             countdowntimer.cancel();
-            Intent intent = new Intent(WelcomeActivity.this,LoginActivity.class);
-            startActivity(intent);
-            finish();
+            toNewActivity();
         });
 
         advertising_iv.setOnClickListener(v -> {
@@ -97,6 +95,18 @@ public class WelcomeActivity extends BaseActivity {
         });
 
 
+    }
+
+    private void toNewActivity(){
+        if(MMkvUtil.getInstance(WelcomeActivity.this, "jwts").decodeString("jwt")==null){
+            Intent intent = new Intent(WelcomeActivity.this,LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }else{
+            Intent intent = new Intent(WelcomeActivity.this, HomeActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     @Override
