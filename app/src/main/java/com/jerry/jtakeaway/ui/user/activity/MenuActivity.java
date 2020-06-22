@@ -708,6 +708,12 @@ public class MenuActivity extends BaseActivity {
                     if (address_tv != null) address_tv.setText("请重新选择地址");
                 }
                 break;
+            case 3:
+                if (address_tv != null)
+                    address_tv.setText(address.getAddress().getAddress() + "  " + address.getAddress().getDetaileaddress());
+                setAddress = address.getAddress();
+                break;
+
         }
     }
 

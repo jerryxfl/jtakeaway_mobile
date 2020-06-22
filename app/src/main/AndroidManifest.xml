@@ -21,7 +21,10 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,UnusedAttribute"
         tools:replace="android:allowBackup,android:icon">
-        <activity android:name=".ui.user.activity.WalletActivity"></activity>
+        <activity android:name=".ui.user.activity.OpenPaymentActivity"></activity>
+        <activity android:name=".ui.user.activity.ExtractMoneyActivity" />
+        <activity android:name=".ui.user.activity.InvestActivity" />
+        <activity android:name=".ui.user.activity.WalletActivity" />
         <activity android:name=".ui.user.activity.PaySucessActivity" />
         <activity android:name=".ui.user.activity.ShopActivity" />
         <activity android:name=".ui.user.activity.ConponGetActivity" />
@@ -47,11 +50,11 @@
         <!-- android:windowSoftInputMode="adjustResize" /> -->
         <activity
             android:name=".ui.generalActivity.LoginActivity"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".ui.generalActivity.WebActivity"
             android:label="@string/app_name" />
-        <activity android:name=".ui.generalActivity.WelcomeActivity"></activity>
+        <activity android:name=".ui.generalActivity.WelcomeActivity" />
     </application>
 
 </manifest>

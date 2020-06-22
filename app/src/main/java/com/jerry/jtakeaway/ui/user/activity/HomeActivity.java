@@ -29,7 +29,6 @@ import com.jerry.jtakeaway.ui.user.fragment.OrderFragment;
 import com.jerry.jtakeaway.ui.user.fragment.PersonalFragment;
 import com.jerry.jtakeaway.utils.GsonUtil;
 import com.jerry.jtakeaway.utils.JsonUtils;
-import com.jerry.jtakeaway.utils.LogPrint;
 import com.jerry.jtakeaway.utils.MMkvUtil;
 import com.jerry.jtakeaway.utils.OkHttp3Util;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
@@ -39,6 +38,7 @@ import com.jpeng.jptabbar.anno.NorIcons;
 import com.jpeng.jptabbar.anno.SeleIcons;
 import com.jpeng.jptabbar.anno.Titles;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
@@ -171,6 +171,7 @@ public class HomeActivity extends BaseActivity {
                             MMkvUtil.getInstance(HomeActivity.this, "jwts").encode("account", username);
                             MMkvUtil.getInstance(HomeActivity.this, "jwts").encode("password", password);
                             UserUtils.getInstance().setUser(GsonUtil.gsonToBean(result.getData().getString("user"), ResponseUser.class));
+                            EventBus.getDefault().postSticky(UserUtils.getInstance().getUser());
                         }
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
                             jCenterDialog.dismiss();

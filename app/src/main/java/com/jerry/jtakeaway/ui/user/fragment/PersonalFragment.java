@@ -4,25 +4,34 @@ import android.content.Intent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseFragment;
 import com.jerry.jtakeaway.base.BaseViewHolder;
 import com.jerry.jtakeaway.bean.Nuser;
 import com.jerry.jtakeaway.bean.model.TIButton;
+import com.jerry.jtakeaway.bean.responseBean.ResponseUser;
 import com.jerry.jtakeaway.custom.JAdapter;
 import com.jerry.jtakeaway.custom.JgridLayoutManager;
+import com.jerry.jtakeaway.ui.generalActivity.LoginActivity;
+import com.jerry.jtakeaway.ui.user.activity.OpenPaymentActivity;
 import com.jerry.jtakeaway.ui.user.activity.WalletActivity;
 import com.jerry.jtakeaway.utils.UserUtils;
+
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PersonalFragment extends BaseFragment {
     @BindView(R.id.oder_recyclerview)
@@ -34,6 +43,15 @@ public class PersonalFragment extends BaseFragment {
 
     @BindView(R.id.wallet_btn)
     LinearLayout wallet_btn;
+
+    @BindView(R.id.userHeadImg)
+    CircleImageView userHeadImg;
+
+    @BindView(R.id.userNickName)
+    TextView userNickName;
+
+    @BindView(R.id.bg_img)
+    ImageView bg_img;
 
     private JAdapter<TIButton> jAdapterWallet;
     private JAdapter<TIButton> jAdapterOrder;
@@ -105,6 +123,7 @@ public class PersonalFragment extends BaseFragment {
 
     @Override
     public void InitData() {
+        SignEventBus();
         List<TIButton> orders = new ArrayList<>();
         orders.add(new TIButton(R.drawable.on_send, "进行中", new TIButton.Event() {
             @Override
@@ -147,6 +166,10 @@ public class PersonalFragment extends BaseFragment {
         }));
 
        jAdapterWallet.adapter.setData(wallets);
+       setPageData();
+    }
+
+    private void setPageData() {
 
     }
 
@@ -154,22 +177,31 @@ public class PersonalFragment extends BaseFragment {
     @Override
     public void InitListener() {
         wallet_btn.setOnClickListener(v -> {
-            if (UserUtils.getInstance().getUser().getUsertype() == 0) {
-                Nuser nuser = UserUtils.getInstance().getUserDetails(Nuser.class);
-                if (nuser.getWallet() == null) {
-                    //未开通钱包
-                    new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
-                            .setTitleText("你还未开通钱包功能,是否前去开通?")
-                            .setConfirmText("是的")
-                            .setConfirmClickListener(sDialog -> {
-                                sDialog.dismissWithAnimation();
-                            })
-                            .setCancelText("不了")
-                            .setCancelClickListener(SweetAlertDialog::dismissWithAnimation)
-                            .show();
-                } else {
+            if(UserUtils.getInstance().getUser()!= null){
+                if (UserUtils.getInstance().getUser().getUsertype() == 0) {
+                    Nuser nuser = UserUtils.getInstance().getUserDetails(Nuser.class);
+                    if (nuser.getWallet() == null) {
+                        //未开通钱包
+                        new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+                                .setTitleText("你还未开通钱包功能,是否前去开通?")
+                                .setConfirmText("是的")
+                                .setConfirmClickListener(sDialog -> {
+                                    startActivity(new Intent(context, OpenPaymentActivity.class));
+                                    sDialog.dismissWithAnimation();
+                                })
+                                .setCancelText("不了")
+                                .setCancelClickListener(SweetAlertDialog::dismissWithAnimation)
+                                .show();
+                    } else {
+                        startActivity(new Intent(context, WalletActivity.class));
+                    }
+                }else{
                     startActivity(new Intent(context, WalletActivity.class));
                 }
+            }else {
+                Toast.makeText(context,"用户信息失效,重新登录",Toast.LENGTH_LONG).show();
+                startActivity(new Intent(context, LoginActivity.class));
+                activity.finish();
             }
         });
     }
@@ -177,5 +209,14 @@ public class PersonalFragment extends BaseFragment {
     @Override
     public void destroy() {
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky =true)
+    public void LoginEvent(ResponseUser responseUser){
+        System.out.println(UserUtils.getInstance().getUser().getUseradvatar()+" :::: "+UserUtils.getInstance().getUser().getUsernickname());
+        Glide.with(context)
+                .load(responseUser.getUseradvatar())
+                .into(userHeadImg);
+        userNickName.setText(responseUser.getUsernickname());
     }
 }

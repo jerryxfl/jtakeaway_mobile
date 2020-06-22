@@ -33,7 +33,6 @@ import com.jerry.jtakeaway.utils.BitmapBlurHelper;
 import com.jerry.jtakeaway.utils.GsonUtil;
 import com.jerry.jtakeaway.utils.JsonUtils;
 import com.jerry.jtakeaway.utils.KeyboardUtils;
-import com.jerry.jtakeaway.utils.LogPrint;
 import com.jerry.jtakeaway.utils.MMkvUtil;
 import com.jerry.jtakeaway.utils.OkHttp3Util;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
@@ -41,6 +40,7 @@ import com.jerry.jtakeaway.utils.UserUtils;
 
 import net.steamcrafted.loadtoast.LoadToast;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -212,6 +212,7 @@ public class LoginActivity extends BaseActivity {
                             MMkvUtil.getInstance(LoginActivity.this, "jwts").encode("account", username);
                             MMkvUtil.getInstance(LoginActivity.this, "jwts").encode("password", password);
                             UserUtils.getInstance().setUser(GsonUtil.gsonToBean(result.getData().getString("user"), ResponseUser.class));
+                            EventBus.getDefault().postSticky(UserUtils.getInstance().getUser());
                         }
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
                             login_btn.reset();

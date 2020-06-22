@@ -84,7 +84,7 @@ public class AddressManagerActivity extends BaseActivity {
                     startActivity(intent);
                 });
                 container.setOnClickListener(v ->{
-                    EventBus.getDefault().post(new AddressEvent(datas.get(position),0));
+                    EventBus.getDefault().post(new AddressEvent(datas.get(position),3));
                     finish();
                 });
                 container.setOnLongClickListener(v -> {

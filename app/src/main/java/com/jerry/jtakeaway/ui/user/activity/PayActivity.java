@@ -493,6 +493,7 @@ public class PayActivity extends BaseActivity {
                                 .setConfirmText("好的")
                                 .setConfirmClickListener(sDialog -> {
                                     startActivity(new Intent(PayActivity.this, WalletActivity.class));
+                                    sDialog.dismissWithAnimation(); 
                                 })
                                 .setCancelText("不了")
                                 .setCancelClickListener(SweetAlertDialog::dismissWithAnimation)
@@ -574,6 +575,7 @@ public class PayActivity extends BaseActivity {
                                 .setConfirmText("好的")
                                 .setConfirmClickListener(sDialog -> {
                                     startActivity(new Intent(PayActivity.this, WalletActivity.class));
+                                    sDialog.dismissWithAnimation();
                                 })
                                 .setCancelText("不了")
                                 .setCancelClickListener(SweetAlertDialog::dismissWithAnimation)

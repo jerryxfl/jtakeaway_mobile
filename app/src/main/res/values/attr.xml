@@ -12,4 +12,9 @@
         <attr name="jtextColor" format="reference"/>
         <attr name="jtextSize" format="integer"/>
     </declare-styleable>
+
+    <declare-styleable name="JPayEditText">
+        <attr name="jpwdLength" format="integer"/>
+        <attr name="jborderWidth" format="integer"/>
+    </declare-styleable>
 </resources>

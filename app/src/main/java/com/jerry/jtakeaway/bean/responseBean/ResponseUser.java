@@ -1,6 +1,6 @@
 package com.jerry.jtakeaway.bean.responseBean;
 
-public class ResponseUser<T> {
+public class ResponseUser {
     private int id;
     private String account;
     private String password;
