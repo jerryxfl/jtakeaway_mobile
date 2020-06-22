@@ -155,6 +155,8 @@ public class HomeActivity extends BaseActivity {
                 e.printStackTrace();
                 new Handler(Looper.getMainLooper()).post(() -> {
                     jCenterDialog.dismiss();
+                    startActivity(new Intent(HomeActivity.this,LoginActivity.class));
+                    finish();
                 });
             }
 
@@ -187,6 +189,8 @@ public class HomeActivity extends BaseActivity {
                 } catch (Exception e) {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         jCenterDialog.dismiss();
+                        startActivity(new Intent(HomeActivity.this,LoginActivity.class));
+                        finish();
                     });
                 }
             }

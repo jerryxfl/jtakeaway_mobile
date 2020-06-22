@@ -536,7 +536,7 @@ public class HomePageFragment extends BaseFragment{
 
     @Override
     public void destroy() {
-        timer.cancel();
+        if(timer!=null)timer.cancel();
     }
 
 

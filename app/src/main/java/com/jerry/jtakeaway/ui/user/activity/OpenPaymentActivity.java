@@ -1,15 +1,31 @@
 package com.jerry.jtakeaway.ui.user.activity;
 
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
+import com.jerry.jtakeaway.bean.JUrl;
+import com.jerry.jtakeaway.bean.responseBean.Result1;
 import com.jerry.jtakeaway.custom.JPayEditText;
+import com.jerry.jtakeaway.utils.JsonUtils;
+import com.jerry.jtakeaway.utils.OkHttp3Util;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+import java.util.Objects;
+
 import butterknife.BindView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class OpenPaymentActivity extends BaseActivity implements View.OnClickListener{
     @BindView(R.id.top)
@@ -82,7 +98,40 @@ public class OpenPaymentActivity extends BaseActivity implements View.OnClickLis
         num_8.setOnClickListener(this);
         num_9.setOnClickListener(this);
         delete.setOnClickListener(this);
+        payEdit.setOnTextFinishListener(str -> {
+            System.out.println("密码为:"+str);
+
+        });
+
     }
+
+    private void createWallet(String payPassword) {
+        OkHttp3Util.GET(JUrl.o_wallet(payPassword), this, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    Toast.makeText(OpenPaymentActivity.this, "链接服务器失败", Toast.LENGTH_SHORT).show();
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result1 result = JsonUtils.getResult1(jsonObject);
+                if (result.getCode() == 10000) {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        startActivity(new Intent(OpenPaymentActivity.this,WalletActivity.class));
+                        finish();
+                    });
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(OpenPaymentActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        });
+    }
+
 
     @Override
     public void destroy() {
@@ -97,7 +146,7 @@ public class OpenPaymentActivity extends BaseActivity implements View.OnClickLis
                 break;
             default:
                 Button button = (Button) v;
-                payEdit.setText(button.getText().toString());
+                payEdit.setJText(button.getText().toString());
         }
     }
 }

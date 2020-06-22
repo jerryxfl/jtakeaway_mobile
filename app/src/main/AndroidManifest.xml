@@ -21,7 +21,9 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,UnusedAttribute"
         tools:replace="android:allowBackup,android:icon">
-        <activity android:name=".ui.user.activity.OpenPaymentActivity"></activity>
+        <activity android:name=".ui.user.activity.SettingActivity"></activity>
+        <activity android:name=".ui.user.activity.OpenPaymentActivity" />
+        <activity android:name=".ui.user.activity.MapActivity" />
         <activity android:name=".ui.user.activity.ExtractMoneyActivity" />
         <activity android:name=".ui.user.activity.InvestActivity" />
         <activity android:name=".ui.user.activity.WalletActivity" />
@@ -35,13 +37,7 @@
         <activity android:name=".ui.user.activity.MenuActivity" />
         <activity
             android:name=".ui.user.activity.HomeActivity"
-            android:label="home">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity> <!-- flutteractivity -->
+            android:label="home"></activity> <!-- flutteractivity -->
         <!-- <activity -->
         <!-- android:name="io.flutter.embedding.android.FlutterActivity" -->
         <!-- android:theme="@style/TransTheme" -->
@@ -54,7 +50,13 @@
         <activity
             android:name=".ui.generalActivity.WebActivity"
             android:label="@string/app_name" />
-        <activity android:name=".ui.generalActivity.WelcomeActivity" />
+        <activity android:name=".ui.generalActivity.WelcomeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

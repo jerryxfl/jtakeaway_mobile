@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-public class Transaction {
+public class Jtransaction {
     private int id;
     private Timestamp paytime;
     private BigDecimal paymoney;
@@ -75,7 +75,7 @@ public class Transaction {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Transaction that = (Transaction) o;
+        Jtransaction that = (Jtransaction) o;
         return id == that.id &&
                 userid == that.userid &&
                 Objects.equals(paytime, that.paytime) &&

@@ -7,15 +7,12 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.text.InputType;
 import android.util.AttributeSet;
-import android.widget.Toast;
-
-import androidx.annotation.Nullable;
+import android.view.View;
 
 import com.jerry.jtakeaway.R;
 
-public class JPayEditText extends androidx.appcompat.widget.AppCompatEditText {
+public class JPayEditText extends View {
     private Paint pwdbgPaint;
     private Paint pwdBorderPaint;
     private Paint pwdPaint;
@@ -27,6 +24,10 @@ public class JPayEditText extends androidx.appcompat.widget.AppCompatEditText {
     private float itemWidth,itemHeight;
 
     private String text = "";
+
+    private OnTextFinishListener onTextFinishListener;
+
+    private OnTextChangeListener onTextChangeListener;
 
     public JPayEditText(Context context) {
         this(context,null);
@@ -42,11 +43,6 @@ public class JPayEditText extends androidx.appcompat.widget.AppCompatEditText {
     }
 
     private void init(AttributeSet attrs) {
-        setInputType(InputType.TYPE_NULL);
-        setFocusable(true);
-        setFocusableInTouchMode(true);
-        requestFocus();
-
         if(attrs!=null){
             TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.JPayEditText);
             pwdLength = a.getInt(R.styleable.JPayEditText_jpwdLength,6);
@@ -129,26 +125,42 @@ public class JPayEditText extends androidx.appcompat.widget.AppCompatEditText {
         }
     }
 
-
-    @Override
-    public void setOnClickListener(@Nullable OnClickListener l) {
-        super.setOnClickListener(l);
-        System.out.println("被点击");
+    public void setOnTextFinishListener(OnTextFinishListener onTextFinishListener){
+        this.onTextFinishListener = onTextFinishListener;
     }
 
-    public void setText(String text){
+    public void setOnTextChangeListener(OnTextChangeListener onTextChangeListener){
+        this.onTextChangeListener = onTextChangeListener;
+    }
+
+    public void setJText(String text){
         if(this.text.length()<pwdLength){
             this.text = this.text+text;
             invalidate();
+            if(onTextChangeListener!=null)onTextChangeListener.onChange(this.text);
+            if(this.text.length()==pwdLength){
+                if(onTextFinishListener!=null)onTextFinishListener.onFinish(this.text);
+            }
+        }else{
+            if(onTextFinishListener!=null)onTextFinishListener.onFinish(this.text);
         }
-        Toast.makeText(getContext(),this.text, Toast.LENGTH_SHORT).show();
     }
 
     public void delete(){
         if(this.text.length()>0){
             this.text = this.text.substring(0,this.text.length()-1);
             invalidate();
+            if(onTextChangeListener!=null)onTextChangeListener.onChange(this.text);
         }
-        Toast.makeText(getContext(),this.text, Toast.LENGTH_SHORT).show();
+    }
+
+    public interface OnTextFinishListener
+    {
+        void onFinish(String str);
+    }
+
+    public interface OnTextChangeListener
+    {
+        void onChange(String str);
     }
 }

@@ -16,6 +16,7 @@ import com.jerry.jtakeaway.base.BaseViewHolder;
 import com.jerry.jtakeaway.bean.Nuser;
 import com.jerry.jtakeaway.bean.model.TIButton;
 import com.jerry.jtakeaway.bean.responseBean.ResponseUser;
+import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
 import com.jerry.jtakeaway.custom.JgridLayoutManager;
 import com.jerry.jtakeaway.ui.generalActivity.LoginActivity;
@@ -52,6 +53,9 @@ public class PersonalFragment extends BaseFragment {
 
     @BindView(R.id.bg_img)
     ImageView bg_img;
+
+    @BindView(R.id.settingAib)
+    AniImgButton settingAib;
 
     private JAdapter<TIButton> jAdapterWallet;
     private JAdapter<TIButton> jAdapterOrder;
@@ -166,11 +170,6 @@ public class PersonalFragment extends BaseFragment {
         }));
 
        jAdapterWallet.adapter.setData(wallets);
-       setPageData();
-    }
-
-    private void setPageData() {
-
     }
 
 
@@ -203,6 +202,10 @@ public class PersonalFragment extends BaseFragment {
                 startActivity(new Intent(context, LoginActivity.class));
                 activity.finish();
             }
+        });
+
+        settingAib.setOnClickListener(v -> {
+            
         });
     }
 
