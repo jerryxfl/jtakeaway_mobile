@@ -1,6 +1,8 @@
 package com.jerry.jtakeaway.ui.user.fragment;
 
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -13,26 +15,41 @@ import com.bumptech.glide.Glide;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseFragment;
 import com.jerry.jtakeaway.base.BaseViewHolder;
+import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.Nuser;
 import com.jerry.jtakeaway.bean.model.TIButton;
 import com.jerry.jtakeaway.bean.responseBean.ResponseUser;
+import com.jerry.jtakeaway.bean.responseBean.Result1;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
 import com.jerry.jtakeaway.custom.JgridLayoutManager;
 import com.jerry.jtakeaway.ui.generalActivity.LoginActivity;
+import com.jerry.jtakeaway.ui.user.activity.ExtractMoneyActivity;
+import com.jerry.jtakeaway.ui.user.activity.InvestActivity;
 import com.jerry.jtakeaway.ui.user.activity.OpenPaymentActivity;
+import com.jerry.jtakeaway.ui.user.activity.SettingActivity;
 import com.jerry.jtakeaway.ui.user.activity.WalletActivity;
+import com.jerry.jtakeaway.utils.GsonUtil;
+import com.jerry.jtakeaway.utils.JsonUtils;
+import com.jerry.jtakeaway.utils.OkHttp3Util;
 import com.jerry.jtakeaway.utils.UserUtils;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class PersonalFragment extends BaseFragment {
     @BindView(R.id.oder_recyclerview)
@@ -108,7 +125,7 @@ public class PersonalFragment extends BaseFragment {
                 img.setImageDrawable(ContextCompat.getDrawable(context,datas.get(position).getImg()));
                 text.setText(datas.get(position).getText());
                 container.setOnClickListener(v -> {
-                    datas.get(position).getEvent();
+                    datas.get(position).getEvent().onClick();
                 });
             }
 
@@ -157,10 +174,10 @@ public class PersonalFragment extends BaseFragment {
 
        List<TIButton> wallets = new ArrayList<>();
        wallets.add(new TIButton(R.drawable.invest, "充值", () -> {
-
+            startActivity(new Intent(context, InvestActivity.class));
        }));
         wallets.add(new TIButton(R.drawable.wallet, "提现", () -> {
-
+            startActivity(new Intent(context, ExtractMoneyActivity.class));
         }));
         wallets.add(new TIButton(R.drawable.transaction, "交易记录", () -> {
 
@@ -205,7 +222,7 @@ public class PersonalFragment extends BaseFragment {
         });
 
         settingAib.setOnClickListener(v -> {
-            
+            startActivity(new Intent(context, SettingActivity.class));
         });
     }
 
@@ -221,5 +238,40 @@ public class PersonalFragment extends BaseFragment {
                 .load(responseUser.getUseradvatar())
                 .into(userHeadImg);
         userNickName.setText(responseUser.getUsernickname());
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void userChange(String tag){
+        if(tag.equals("userChange")){
+            getUserInfo();
+        }
+    }
+
+    private void getUserInfo() {
+        OkHttp3Util.GET(JUrl.user_info, context, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    Toast.makeText(context, "链接服务器失败", Toast.LENGTH_SHORT).show();
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result1 result = JsonUtils.getResult1(jsonObject);
+                if (result.getCode() == 10000) {
+                    System.out.println("用户信息:"+result.getData().toString());
+                    UserUtils.getInstance().setUser(GsonUtil.gsonToBean(result.getData().toString(), ResponseUser.class));
+                    EventBus.getDefault().postSticky(UserUtils.getInstance().getUser());
+                    EventBus.getDefault().post("userChangeSuccess");
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(context, "数据错误", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        });
     }
 }

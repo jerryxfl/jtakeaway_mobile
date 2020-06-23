@@ -8,27 +8,19 @@
     android:background="@drawable/startimg"
     tools:context=".ui.generalActivity.LoginActivity">
 
-    <androidx.cardview.widget.CardView
-        android:padding="0dp"
-        android:clipChildren="false"
-        android:id="@+id/login_card"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="70dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="70dp"
-        app:cardBackgroundColor="#919191"
-        app:cardCornerRadius="10dp">
+
 
         <LinearLayout
-            android:layout_margin="0dp"
+            android:background="@drawable/logincard_shape"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="70dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="70dp"
             android:id="@+id/login_card_wapper"
-            android:clipChildren="false"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#919191"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -143,6 +135,5 @@
            </RelativeLayout>
         </LinearLayout>
 
-    </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

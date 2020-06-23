@@ -33,6 +33,7 @@ public class MapActivity extends BaseActivity implements OnGetPoiSearchResultLis
 
     @Override
     public void InitView() {
+
     }
 
     @Override
@@ -54,28 +55,21 @@ public class MapActivity extends BaseActivity implements OnGetPoiSearchResultLis
 
     @Override
     public void destroy() {
-
+        if(bMapView!=null)bMapView.onDestroy();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         //在activity执行onResume时执行mMapView. onResume ()，实现地图生命周期管理
-        bMapView.onResume();
+        if(bMapView!=null)bMapView.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理
-        bMapView.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
-        bMapView.onDestroy();
+        if(bMapView!=null)bMapView.onPause();
     }
 
     @Override

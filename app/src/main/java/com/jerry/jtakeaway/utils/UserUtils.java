@@ -15,7 +15,7 @@ public class UserUtils {
 
     public void setUser(ResponseUser user) {
         UserUtils.user = user;
-        System.out.println("登录成功返回值"+user.toString());
+        if(user != null)System.out.println("登录成功返回值"+user.toString());
     }
 
     public ResponseUser getUser() {

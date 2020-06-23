@@ -98,7 +98,7 @@ public class WelcomeActivity extends BaseActivity {
     }
 
     private void toNewActivity(){
-        if(MMkvUtil.getInstance(WelcomeActivity.this, "jwts").decodeString("jwt")==null){
+        if(MMkvUtil.getInstance(WelcomeActivity.this, "jwts").decodeString("jwt")==null||MMkvUtil.getInstance(WelcomeActivity.this, "jwts").decodeString("jwt").equals("")){
             Intent intent = new Intent(WelcomeActivity.this,LoginActivity.class);
             startActivity(intent);
             finish();

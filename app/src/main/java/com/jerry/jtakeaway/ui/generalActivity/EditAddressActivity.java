@@ -238,16 +238,18 @@ public class EditAddressActivity extends BaseActivity {
         company_tv.setBackground(ContextCompat.getDrawable(this,R.drawable.address_shape));
         school_tv.setBackground(ContextCompat.getDrawable(this,R.drawable.address_shape));
 
-        if(!label.equals("")){
-            if(label.contentEquals(home_tv.getText())){
-                home_tv.setBackground(ContextCompat.getDrawable(this,R.drawable.address_select_shape));
-                home_tv.setTextColor(Color.WHITE);
-            }else if(label.contentEquals(company_tv.getText())){
-                company_tv.setBackground(ContextCompat.getDrawable(this,R.drawable.address_select_shape));
-                company_tv.setTextColor(Color.WHITE);
-            }else if(label.contentEquals(school_tv.getText())){
-                school_tv.setBackground(ContextCompat.getDrawable(this,R.drawable.address_select_shape));
-                school_tv.setTextColor(Color.WHITE);
+        if(label!=null){
+            if(!label.equals("")){
+                if(label.contentEquals(home_tv.getText())){
+                    home_tv.setBackground(ContextCompat.getDrawable(this,R.drawable.address_select_shape));
+                    home_tv.setTextColor(Color.WHITE);
+                }else if(label.contentEquals(company_tv.getText())){
+                    company_tv.setBackground(ContextCompat.getDrawable(this,R.drawable.address_select_shape));
+                    company_tv.setTextColor(Color.WHITE);
+                }else if(label.contentEquals(school_tv.getText())){
+                    school_tv.setBackground(ContextCompat.getDrawable(this,R.drawable.address_select_shape));
+                    school_tv.setTextColor(Color.WHITE);
+                }
             }
         }
         this.label = label;

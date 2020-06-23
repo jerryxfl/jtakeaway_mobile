@@ -511,7 +511,8 @@ public class PayActivity extends BaseActivity {
                                 .setTitleText("你还未开通钱包功能,是否前去开通?")
                                 .setConfirmText("好的")
                                 .setConfirmClickListener(sDialog -> {
-
+                                    startActivity(new Intent(PayActivity.this, OpenPaymentActivity.class));
+                                    sDialog.dismissWithAnimation();
                                 })
                                 .setCancelText("不了")
                                 .setCancelClickListener(SweetAlertDialog::dismissWithAnimation)
@@ -593,7 +594,8 @@ public class PayActivity extends BaseActivity {
                                 .setTitleText("你还未开通钱包功能,是否前去开通?")
                                 .setConfirmText("好的")
                                 .setConfirmClickListener(sDialog -> {
-
+                                    startActivity(new Intent(PayActivity.this, OpenPaymentActivity.class));
+                                    sDialog.dismissWithAnimation();
                                 })
                                 .setCancelText("不了")
                                 .setCancelClickListener(SweetAlertDialog::dismissWithAnimation)

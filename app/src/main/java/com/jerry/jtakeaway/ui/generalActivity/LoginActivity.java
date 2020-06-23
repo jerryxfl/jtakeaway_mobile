@@ -16,7 +16,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 
 import com.alibaba.fastjson.JSONObject;
 import com.gabrielsamojlo.keyboarddismisser.KeyboardDismisser;
@@ -55,8 +54,6 @@ import okhttp3.Response;
 public class LoginActivity extends BaseActivity {
     @BindView(R.id.container)
     RelativeLayout container;
-    @BindView(R.id.login_card)
-    CardView login_card;
     @BindView(R.id.username_et)
     EditText username_et;
     @BindView(R.id.password_et)
@@ -94,7 +91,6 @@ public class LoginActivity extends BaseActivity {
         Drawable drawable = new BitmapDrawable(bitmap);
         container.setBackground(drawable);
 
-        login_card.getBackground().setAlpha(100);
         login_card_wapper.getBackground().setAlpha(100);
 
 

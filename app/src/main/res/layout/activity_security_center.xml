@@ -24,18 +24,24 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="设置"
+            android:text="安全中心"
             android:layout_centerInParent="true"
             android:textColor="#222222"
             android:textStyle="bold"
             android:textSize="18sp"/>
     </RelativeLayout>
-    <View
+    <LinearLayout
+        android:padding="10dp"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:background="#F4F4F4"/>
+        android:layout_height="wrap_content"
+        android:background="#F4F4F4">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="账号" />
+    </LinearLayout>
     <RelativeLayout
-        android:id="@+id/selfInfo"
+        android:id="@+id/pwdChange"
         android:background="?android:attr/selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -48,17 +54,38 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="个人信息"
+                android:text="登录密码"
                 android:textColor="#5a5a5a"
                 android:textStyle="bold"
                 android:textSize="16sp"/>
-            <TextView
-                android:layout_marginTop="5dp"
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="头像,昵称,收货地址"
-                android:textSize="14sp"/>
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="安全等级:"
+                    android:textSize="12sp"/>
+                <TextView
+                    android:id="@+id/pwdLevel"
+                    android:layout_marginTop="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="高"
+                    android:textColor="#FD5959"
+                    android:textSize="14sp"/>
+            </LinearLayout>
         </LinearLayout>
+        <TextView
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="修改"
+            android:textSize="14sp"/>
         <ImageView
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
@@ -73,30 +100,28 @@
         android:background="#B4B4B4"/>
 
     <RelativeLayout
-        android:id="@+id/accountSafe"
+        android:id="@+id/emailChange"
         android:background="?android:attr/selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:orientation="horizontal">
-        <LinearLayout
-            android:orientation="vertical"
+        <TextView
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="账号与安全"
-                android:textColor="#5a5a5a"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
-            <TextView
-                android:layout_marginTop="5dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="修改密码,修改手机号码,账号绑定管理"
-                android:textSize="14sp"/>
-        </LinearLayout>
+            android:text="账号绑定管理"
+            android:textColor="#5a5a5a"
+            android:textStyle="bold"
+            android:textSize="16sp"/>
+        <TextView
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="绑定/解绑"
+            android:textSize="14sp"/>
         <ImageView
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
@@ -107,10 +132,71 @@
     </RelativeLayout>
     <View
         android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:background="#F4F4F4"/>
+        android:layout_height="0.5dp"
+        android:background="#B4B4B4"/>
     <RelativeLayout
-        android:id="@+id/SoundEffectsAndNotifications"
+        android:id="@+id/phoneChange"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="修改手机号码"
+            android:textColor="#5a5a5a"
+            android:textStyle="bold"
+            android:textSize="16sp"/>
+        <TextView
+            android:id="@+id/phone_tv"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="176****4525"
+            android:textSize="14sp"/>
+        <ImageView
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/arrow_right"/>
+    </RelativeLayout>
+    <RelativeLayout
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F4F4F4">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="安全" />
+        <TextView
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="40dp"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:text="风险等级:" />
+        <TextView
+            android:id="@+id/accountLevel"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="高"
+            android:textColor="#FD5959"
+            android:textSize="14sp"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/loginRecord"
         android:background="?android:attr/selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -123,7 +209,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="音效与通知"
+                android:text="最近登录记录"
                 android:textColor="#5a5a5a"
                 android:textStyle="bold"
                 android:textSize="16sp"/>
@@ -141,7 +227,7 @@
         android:layout_height="0.5dp"
         android:background="#B4B4B4"/>
     <RelativeLayout
-        android:id="@+id/privacy"
+        android:id="@+id/accountQuestion"
         android:background="?android:attr/selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -154,7 +240,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="隐私"
+                android:text="账号相关答疑"
                 android:textColor="#5a5a5a"
                 android:textStyle="bold"
                 android:textSize="16sp"/>
@@ -172,55 +258,28 @@
         android:layout_height="0.5dp"
         android:background="#B4B4B4"/>
     <RelativeLayout
-        android:id="@+id/bugReport"
+        android:id="@+id/accountCancel"
         android:background="?android:attr/selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="20dp"
         android:orientation="horizontal">
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="问题反馈"
-                android:textColor="#5a5a5a"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
-        </LinearLayout>
-        <ImageView
-            android:layout_alignParentEnd="true"
+        <TextView
             android:layout_centerVertical="true"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/arrow_right"/>
-    </RelativeLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:background="#F4F4F4"/>
-    <RelativeLayout
-        android:id="@+id/aboutUs"
-        android:background="?android:attr/selectableItemBackground"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:orientation="horizontal">
-        <LinearLayout
-            android:orientation="vertical"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="关于疯狂外卖"
-                android:textColor="#5a5a5a"
-                android:textStyle="bold"
-                android:textSize="16sp"/>
-        </LinearLayout>
+            android:text="注销账号"
+            android:textColor="#5a5a5a"
+            android:textStyle="bold"
+            android:textSize="16sp"/>
+        <TextView
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="注销后无法恢复,请谨慎操作"
+            android:textSize="14sp"/>
         <ImageView
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
@@ -232,17 +291,5 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F4F4F4">
-        <Button
-            android:id="@+id/logOut"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:text="退出账号"
-            android:textStyle="bold"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:background="@drawable/logout_btn_selector"
-            android:layout_marginBottom="20dp"/>
-    </RelativeLayout>
+        android:background="#F4F4F4"/>
 </LinearLayout>

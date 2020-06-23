@@ -2,20 +2,20 @@ package com.jerry.jtakeaway.utils;
 
 import android.app.Activity;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class InitApp {
-    private Set<Activity> activities;//保存所有界面
+    private List<Activity> activities;//保存所有界面
     private static InitApp instance = new InitApp();
     public static InitApp getInstance() {
         return instance;
     }
     public void addActivity(Activity activity){
         if(activities == null) {
-            activities = new HashSet<>();
+            activities = new ArrayList<>();
         }
         activities.add(activity);
         System.out.println("添加窗口"+activities.size());
@@ -47,4 +47,14 @@ public class InitApp {
                 .show();
 
     }
+
+
+    public void finishAll() {
+        for ( Activity activity : activities ) {
+            if ( !activity.isFinishing() ) {
+                activity.finish();
+            }
+        }
+    }
+
 }

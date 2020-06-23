@@ -2,6 +2,8 @@ package com.jerry.jtakeaway.application;
 
 import android.app.Application;
 
+import com.jerry.jtakeaway.UncaughtExceptionHandler.JUncaughtExceptionHandler;
+
 public class JApplication extends Application {
 //    FlutterEngine flutterEngine;
     @Override
@@ -16,5 +18,9 @@ public class JApplication extends Application {
 //        FlutterEngineCache
 //                .getInstance()
 //                .put("jEngine", flutterEngine);
+//        SDKInitializer.initialize(this);
+//        SDKInitializer.setCoordType(CoordType.BD09LL);
+        //异常捕获 防止崩溃
+        JUncaughtExceptionHandler.getInstance().init(getApplicationContext());
     }
 }

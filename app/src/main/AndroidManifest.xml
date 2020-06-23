@@ -21,7 +21,17 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,UnusedAttribute"
         tools:replace="android:allowBackup,android:icon">
-        <activity android:name=".ui.user.activity.SettingActivity"></activity>
+        <activity android:name=".ui.user.activity.NewEmailActivity"></activity>
+        <activity android:name=".ui.user.activity.ChangeEmailActivity" />
+        <activity android:name=".ui.user.activity.ChangePwdActivity" />
+        <activity android:name=".ui.user.activity.SecurityCenterActivity" />
+        <activity android:name=".ui.user.activity.SelfInfoActivity" />
+
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="ykMlpgEXFsW0hUrbNvh2zsUvfMUuU3Rj" />
+
+        <activity android:name=".ui.user.activity.SettingActivity" />
         <activity android:name=".ui.user.activity.OpenPaymentActivity" />
         <activity android:name=".ui.user.activity.MapActivity" />
         <activity android:name=".ui.user.activity.ExtractMoneyActivity" />
@@ -37,7 +47,9 @@
         <activity android:name=".ui.user.activity.MenuActivity" />
         <activity
             android:name=".ui.user.activity.HomeActivity"
-            android:label="home"></activity> <!-- flutteractivity -->
+            android:label="home">
+
+        </activity> <!-- flutteractivity -->
         <!-- <activity -->
         <!-- android:name="io.flutter.embedding.android.FlutterActivity" -->
         <!-- android:theme="@style/TransTheme" -->

@@ -17,6 +17,7 @@ import com.jerry.jtakeaway.utils.JsonUtils;
 import com.jerry.jtakeaway.utils.OkHttp3Util;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -100,7 +101,7 @@ public class OpenPaymentActivity extends BaseActivity implements View.OnClickLis
         delete.setOnClickListener(this);
         payEdit.setOnTextFinishListener(str -> {
             System.out.println("密码为:"+str);
-
+            createWallet(str);
         });
 
     }
@@ -120,6 +121,7 @@ public class OpenPaymentActivity extends BaseActivity implements View.OnClickLis
                 Result1 result = JsonUtils.getResult1(jsonObject);
                 if (result.getCode() == 10000) {
                     new Handler(Looper.getMainLooper()).post(() -> {
+                        EventBus.getDefault().post("userChange");
                         startActivity(new Intent(OpenPaymentActivity.this,WalletActivity.class));
                         finish();
                     });

@@ -3,33 +3,48 @@ package com.jerry.jtakeaway.ui.generalActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
 import com.jerry.jtakeaway.base.BaseViewHolder;
 import com.jerry.jtakeaway.bean.Address;
+import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.events.AddressEvent;
+import com.jerry.jtakeaway.bean.responseBean.Result1;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
+import com.jerry.jtakeaway.custom.JCenterDialog;
+import com.jerry.jtakeaway.utils.JsonUtils;
+import com.jerry.jtakeaway.utils.OkHttp3Util;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class AddressManagerActivity extends BaseActivity {
     @BindView(R.id.top)
@@ -45,6 +60,7 @@ public class AddressManagerActivity extends BaseActivity {
 
     private JAdapter<Address> jAdapter;
     private List<Address> addres = new ArrayList<>();
+    private JCenterDialog jCenterDialog;
 
     @Override
     public int getLayout() {
@@ -92,8 +108,7 @@ public class AddressManagerActivity extends BaseActivity {
                             .setTitleText("是否要删除该地址?")
                             .setConfirmText("是的")
                             .setConfirmClickListener(sDialog -> {
-                                EventBus.getDefault().post(new AddressEvent(datas.get(position),2));
-                                jAdapter.adapter.removeByObject(datas.get(position));
+                                deleteAddress(datas.get(position));
                                 sDialog.dismissWithAnimation();
                             })
                             .setCancelText("不了")
@@ -129,6 +144,42 @@ public class AddressManagerActivity extends BaseActivity {
             }
         });
     }
+
+    private void deleteAddress(Address address){
+        if (jCenterDialog == null)
+            jCenterDialog = new JCenterDialog(this, R.layout.loading_dialog);
+        jCenterDialog.show();
+        JSONObject json = (JSONObject) JSONObject.toJSON(address);
+        System.out.println(json.toString());
+        OkHttp3Util.POST(JUrl.d_address, this, json, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    jCenterDialog.dismiss();
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result1 result = JsonUtils.getResult1(jsonObject);
+                if(result.getCode() == 10000){
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        jCenterDialog.dismiss();
+                        EventBus.getDefault().post(new AddressEvent(address,2));
+                        jAdapter.adapter.removeByObject(address);
+                    });
+                }else{
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        jCenterDialog.dismiss();
+                        Toast.makeText(AddressManagerActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+            }
+        });
+    }
+
 
     @Override
     public void InitData() {

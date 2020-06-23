@@ -139,7 +139,6 @@ public class MenuActivity extends BaseActivity {
     //3个选择dialog
     JBottomDialog mConponDialog;
     JBottomDialog mFoodDialog;
-    JBottomDialog mAddressDialog;
 
 
     private JAdapter<Menus> goodFoodAdapter;
@@ -296,10 +295,11 @@ public class MenuActivity extends BaseActivity {
                 if (result.getCode() == 10000) {
                     address.addAll(GsonUtil.jsonToList(result.getData().toString(), com.jerry.jtakeaway.bean.Address.class));
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        if (!address.isEmpty())
+                        if (!address.isEmpty()){
                             if (address_tv != null)
                                 address_tv.setText(address.get(0).getAddress() + address.get(0).getDetaileaddress());
-                        setAddress = address.get(0);
+                            setAddress = address.get(0);
+                        }
                     });
                 } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
