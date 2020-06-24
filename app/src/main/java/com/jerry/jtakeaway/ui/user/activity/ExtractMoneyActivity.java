@@ -86,7 +86,7 @@ public class ExtractMoneyActivity extends BaseActivity {
                 money.setError("请填写充值金额");
                 return;
             }
-            KeyboardUtils.hideKeyboard(ExtractMoneyActivity.this);
+            KeyboardUtils.hideKeyboard(ExtractMoneyActivity.this,Invest);
             showPayDialog(Integer.parseInt(money_num));
         });
     }

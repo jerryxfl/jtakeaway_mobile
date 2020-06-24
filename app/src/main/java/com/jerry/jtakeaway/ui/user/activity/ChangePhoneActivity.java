@@ -1,13 +1,11 @@
 package com.jerry.jtakeaway.ui.user.activity;
 
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.jerry.jtakeaway.R;
@@ -17,7 +15,6 @@ import com.jerry.jtakeaway.bean.responseBean.Result1;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JCenterDialog;
 import com.jerry.jtakeaway.utils.JsonUtils;
-import com.jerry.jtakeaway.utils.MMkvUtil;
 import com.jerry.jtakeaway.utils.OkHttp3Util;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
 
@@ -32,32 +29,23 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class ChangePwdActivity extends BaseActivity {
+public class ChangePhoneActivity extends BaseActivity {
     @BindView(R.id.top)
     View top;
     @BindView(R.id.return_aib)
     AniImgButton return_aib;
 
-    @BindView(R.id.oldPwd)
-    EditText oldPwd;
-    @BindView(R.id.oldPwdEye)
-    ImageView oldPwdEye;
-
-    @BindView(R.id.newPwd)
-    EditText newPwd;
-    @BindView(R.id.newPwdEye)
-    ImageView newPwdEye;
+    @BindView(R.id.newPhone)
+    EditText newPhone;
 
     @BindView(R.id.ok)
     Button ok;
-
-    private boolean oldPwdIsShowing = false;
-    private boolean newPwdIsShowing = false;
     private JCenterDialog jCenterDialog;
+
 
     @Override
     public int getLayout() {
-        return R.layout.activity_change_pwd;
+        return R.layout.activity_change_phone;
     }
 
     @Override
@@ -65,6 +53,7 @@ public class ChangePwdActivity extends BaseActivity {
         ViewGroup.LayoutParams layoutParams = top.getLayoutParams();
         layoutParams.height = PixAndDpUtil.getStatusBarHeight(this);
         top.setLayoutParams(layoutParams);
+
     }
 
     @Override
@@ -72,53 +61,24 @@ public class ChangePwdActivity extends BaseActivity {
 
     }
 
-
     @Override
     public void InitListener() {
         return_aib.setOnClickListener(v -> finish());
-        oldPwdEye.setOnClickListener(v ->{
-            oldPwdIsShowing = !oldPwdIsShowing;
-            if(oldPwdIsShowing){
-                oldPwd.setInputType(128);
-                oldPwdEye.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.open_eyes));
-            }else{
-                oldPwd.setInputType(129);
-                oldPwdEye.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.close_eyes));
-            }
-            oldPwd.setSelection(oldPwd.getText().length());
-        });
-        newPwdEye.setOnClickListener(v -> {
-            newPwdIsShowing = !newPwdIsShowing;
-            if(newPwdIsShowing){
-                newPwd.setInputType(128);
-                newPwdEye.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.open_eyes));
-            }else{
-                newPwd.setInputType(129);
-                newPwdEye.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.close_eyes));
-            }
-            newPwd.setSelection(newPwd.getText().length());
-        });
         ok.setOnClickListener(v ->{
-            String oldPwdText = oldPwd.getText().toString().trim();
-            String newPwdText = newPwd.getText().toString().trim();
-
-            if(oldPwdText.equals("")){
-                oldPwd.setError("请先输入旧密码");
-                return;
-            }
-            if(newPwdText.equals("")){
-                newPwd.setError("请填写新密码");
-                return;
-            }
-            changePwd(oldPwdText, newPwdText);
+           String newPhoneText = newPhone.getText().toString().trim();
+           if(!newPhoneText.equals("")){
+               changePhone(newPhoneText);
+           }else{
+               newPhone.setError("请输入新号码");
+           }
         });
     }
-
-    private void changePwd(String oldPwd, String newPwd){
+    private void changePhone(String newPhone){
         if (jCenterDialog == null)
             jCenterDialog = new JCenterDialog(this, R.layout.loading_dialog);
         jCenterDialog.show();
-        OkHttp3Util.GET(JUrl.change_password(oldPwd,newPwd), this, new Callback() {
+        OkHttp3Util.GET(JUrl.change_phone(newPhone), this, new Callback() {
+
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 new Handler(Looper.getMainLooper()).post(() -> {
@@ -132,26 +92,26 @@ public class ChangePwdActivity extends BaseActivity {
                 Result1 result = JsonUtils.getResult1(jsonObject);
                 if(result.getCode() == 10000){
                     new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(ChangePhoneActivity.this, "修改成功", Toast.LENGTH_SHORT).show();
                         jCenterDialog.dismiss();
-                        MMkvUtil.getInstance(ChangePwdActivity.this, "jwts").encode("password", newPwd);
                         EventBus.getDefault().post("userChange");
                         finish();
                     });
                 }else if(result.getCode()==4){
                     new Handler(Looper.getMainLooper()).post(() -> {
                         jCenterDialog.dismiss();
-                        ChangePwdActivity.this.oldPwd.setError("密码错误");
                     });
                 }else{
                     new Handler(Looper.getMainLooper()).post(() -> {
                         jCenterDialog.dismiss();
-                        Toast.makeText(ChangePwdActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ChangePhoneActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
                     });
                 }
 
             }
         });
     }
+
 
     @Override
     public void destroy() {

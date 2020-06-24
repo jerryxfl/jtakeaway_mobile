@@ -142,7 +142,7 @@ public class LoginActivity extends BaseActivity {
         login_btn.setOnClickListener(new JLoginButton.OnJClickListener() {
             @Override
             public void onClick() {
-                KeyboardUtils.hideKeyboard(LoginActivity.this);
+                KeyboardUtils.hideKeyboard(LoginActivity.this,login_btn);
                 String username = username_et.getText().toString().trim();
                 String password = password_et.getText().toString().trim();
 

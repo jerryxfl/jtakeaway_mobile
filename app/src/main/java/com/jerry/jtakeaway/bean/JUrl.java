@@ -20,6 +20,7 @@ public class JUrl {
     public static final String user_info = host+"U/user_info";
     public static final String user_wallet_money = host+"U/user_wallet_money";
     public static final String jwtLogout = host+"authen/jwtLogout";
+    public static final String g_login_reord = host+"U/g_login_reord";
     public static final String o_wallet(String payPassword){
         return host+"U/o_wallet?payPassword="+payPassword;
     }
@@ -58,7 +59,9 @@ public class JUrl {
         return host+"U/change_email?code="+code+"&newEmail="+newEmail+"&tag="+tag;
     }
 
-
+   public static final String change_phone(String newPhone) {
+        return host+"U/change_phone?newPhone="+newPhone;
+    }
 
 
 
@@ -70,8 +73,7 @@ public class JUrl {
     public static final String a_address = host+"U/a_address";
     public static final String conpon_pay= host+"N/coupon_pay";
     public static final String pay= host+"N/pay";
-
     public static final String t_wallet_money= host + "U/t_wallet_money";
     public static final String d_address =host + "U/d_address";
-
+    public static final String u_advater =host + "U/u_advater";
 }

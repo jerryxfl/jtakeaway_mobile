@@ -5,7 +5,9 @@ import android.app.Application;
 import com.jerry.jtakeaway.UncaughtExceptionHandler.JUncaughtExceptionHandler;
 
 public class JApplication extends Application {
-//    FlutterEngine flutterEngine;
+    private static JApplication jApplication;
+
+    //    FlutterEngine flutterEngine;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -21,6 +23,11 @@ public class JApplication extends Application {
 //        SDKInitializer.initialize(this);
 //        SDKInitializer.setCoordType(CoordType.BD09LL);
         //异常捕获 防止崩溃
+        jApplication =this;
         JUncaughtExceptionHandler.getInstance().init(getApplicationContext());
+    }
+
+    public static JApplication getContext() {
+        return jApplication;
     }
 }

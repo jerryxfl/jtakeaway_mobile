@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
@@ -152,6 +153,12 @@ public class SecurityCenterActivity extends BaseActivity {
             }else{
                 startActivity(new Intent(SecurityCenterActivity.this,ChangeEmailActivity.class));
             }
+        });
+        phoneChange.setOnClickListener(v -> startActivity(new Intent(SecurityCenterActivity.this,ChangePhoneActivity.class)));
+        loginRecord.setOnClickListener(v ->startActivity(new Intent(SecurityCenterActivity.this,RecentlLoginRecordActivity.class)));
+        accountQuestion.setOnClickListener(v ->startActivity(new Intent(SecurityCenterActivity.this,AboutAccountActivity.class)));
+        accountCancel.setOnClickListener(v ->{
+            Toast.makeText(SecurityCenterActivity.this,"暂不支持此操作", Toast.LENGTH_SHORT).show();
         });
     }
 

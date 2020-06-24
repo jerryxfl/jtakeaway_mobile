@@ -17,4 +17,20 @@
         <attr name="jpwdLength" format="integer"/>
         <attr name="jborderWidth" format="integer"/>
     </declare-styleable>
+    <declare-styleable name="JCropImgView">
+        <attr name="jImgSrc" format="reference"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="ClipImageView">
+        <attr name="civHeight" format="integer" />
+        <attr name="civWidth" format="integer" />
+        <attr name="civTipText" format="string" />
+        <attr name="civTipTextSize" format="dimension" />
+        <attr name="civMaskColor" format="color" />
+        <attr name="civClipPadding" format="dimension" />
+        <attr name="civClipRoundCorner" format="dimension|reference" />
+        <attr name="civClipCircle" format="boolean" />
+    </declare-styleable>
+
 </resources>

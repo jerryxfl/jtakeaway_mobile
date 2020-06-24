@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.user.activity.ImgActivity">
+    <androidx.recyclerview.widget.RecyclerView
+        android:background="#222222"
+        android:id="@+id/img_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+    <TextView
+        android:id="@+id/num_tv"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:background="@drawable/text_shape_1"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        tools:text="1/9"
+        android:alpha="0.7"
+        android:textColor="#fbfbfb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+</RelativeLayout>

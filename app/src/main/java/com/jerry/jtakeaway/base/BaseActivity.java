@@ -19,8 +19,6 @@ import com.jerry.jtakeaway.utils.InitApp;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.Objects;
-
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
@@ -42,7 +40,6 @@ public abstract class BaseActivity extends AppCompatActivity {
          */
         getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
         setContentView(getLayout());
-        Objects.requireNonNull(getSupportActionBar()).hide();
         Window window = getWindow();
         window.setFlags(
                 WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
