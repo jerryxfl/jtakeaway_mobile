@@ -63,6 +63,10 @@ public class JUrl {
         return host+"U/change_phone?newPhone="+newPhone;
     }
 
+   public static final String change_nickname(String userNickName) {
+        return host+"U/change_nickname?userNickName="+userNickName;
+    }
+
 
 
 

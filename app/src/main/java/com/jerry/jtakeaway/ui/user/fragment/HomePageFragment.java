@@ -293,15 +293,22 @@ public class HomePageFragment extends BaseFragment{
         public void run() {
             if(currentPosition+1>slideList.size()){
                 currentPosition = 0;
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(recyclerview_banner!=null)recyclerview_banner.scrollToPosition(currentPosition);
+                    }
+                });
             }else{
                 currentPosition = currentPosition+1;
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(recyclerview_banner!=null)recyclerview_banner.smoothScrollToPosition(currentPosition);
+                    }
+                });
             }
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    if(recyclerview_banner!=null)recyclerview_banner.smoothScrollToPosition(currentPosition);
-                }
-            });
+
         }
     };
 

@@ -1,12 +1,15 @@
 package com.jerry.jtakeaway.ui.user.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.jerry.jtakeaway.R;
@@ -15,14 +18,11 @@ import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.responseBean.Result1;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JCenterDialog;
-import com.jerry.jtakeaway.ui.generalActivity.LoginActivity;
-import com.jerry.jtakeaway.utils.InitApp;
 import com.jerry.jtakeaway.utils.JsonUtils;
-import com.jerry.jtakeaway.utils.MMkvUtil;
 import com.jerry.jtakeaway.utils.OkHttp3Util;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
-import com.jerry.jtakeaway.utils.UserUtils;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -33,39 +33,24 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class SettingActivity extends BaseActivity {
+public class ChangeNewNickNameActivity extends BaseActivity {
     @BindView(R.id.top)
     View top;
-
     @BindView(R.id.return_aib)
     AniImgButton return_aib;
 
-    @BindView(R.id.selfInfo)
-    RelativeLayout selfInfo;//个人信息
+    @BindView(R.id.SaveBtn)
+    Button save_btn;
+    @BindView(R.id.NickName)
+    EditText NickName;
 
-    @BindView(R.id.accountSafe)
-    RelativeLayout accountSafe;//账号与安全
 
-    @BindView(R.id.SoundEffectsAndNotifications)
-    RelativeLayout SoundEffectsAndNotifications;//音效与通知
-
-    @BindView(R.id.privacy)
-    RelativeLayout privacy;//隐私
-
-    @BindView(R.id.bugReport)
-    RelativeLayout bugReport;//问题反馈
-
-    @BindView(R.id.aboutUs)
-    RelativeLayout aboutUs;//关于疯狂外卖
-
-    @BindView(R.id.logOut)
-    Button logout;//登出
+    private String nickname;
     private JCenterDialog jCenterDialog;
-
 
     @Override
     public int getLayout() {
-        return R.layout.activity_setting;
+        return R.layout.activity_change_new_nick_name;
     }
 
     @Override
@@ -73,33 +58,57 @@ public class SettingActivity extends BaseActivity {
         ViewGroup.LayoutParams layoutParams = top.getLayoutParams();
         layoutParams.height = PixAndDpUtil.getStatusBarHeight(this);
         top.setLayoutParams(layoutParams);
-
     }
 
     @Override
     public void InitData() {
+        Intent intent = getIntent();
+        nickname = intent.getStringExtra("NICKNAME");
 
+        NickName.setText(nickname);
     }
 
     @Override
     public void InitListener() {
-        logout.setOnClickListener(v -> {
-            logout();
-        });
-        selfInfo.setOnClickListener(v -> startActivity(new Intent(SettingActivity.this,SelfInfoActivity.class)));
-        accountSafe.setOnClickListener(v -> startActivity(new Intent(SettingActivity.this,SecurityCenterActivity.class)));
         return_aib.setOnClickListener(v -> finish());
-        SoundEffectsAndNotifications.setOnClickListener(v->{
-//            Notifications.sendNormalNotification(SettingActivity.this,R.drawable.dribbble_music_corner,"蒋锐","hhhhhh");
-            startActivity(new Intent(SettingActivity.this,NotifySoundActivity.class));
+        NickName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(NickName.getText().toString().trim().equals("")){
+                    save_btn.setEnabled(false);
+                    save_btn.setTextColor(Color.parseColor("#919191"));
+                }else{
+                    save_btn.setEnabled(true);
+                    save_btn.setTextColor(Color.WHITE);
+                }
+            }
+        });
+
+        save_btn.setOnClickListener(v -> {
+            String nicknameText = NickName.getText().toString().trim();
+            if(nicknameText.equals("")){
+                NickName.setText("昵称不能设置为空");
+            }else{
+                changeNickname(nicknameText);
+            }
         });
     }
 
-    private void logout() {
+    private void changeNickname(String nickname){
         if (jCenterDialog == null)
             jCenterDialog = new JCenterDialog(this, R.layout.loading_dialog);
         jCenterDialog.show();
-        OkHttp3Util.GET(JUrl.jwtLogout, this, new Callback() {
+        OkHttp3Util.GET(JUrl.change_nickname(nickname), this, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 new Handler(Looper.getMainLooper()).post(() -> {
@@ -112,18 +121,15 @@ public class SettingActivity extends BaseActivity {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
                 Result1 result = JsonUtils.getResult1(jsonObject);
                 if(result.getCode() == 10000){
-                    System.out.println("退出登录"+result.toString());
                     new Handler(Looper.getMainLooper()).post(() -> {
                         jCenterDialog.dismiss();
-                        UserUtils.getInstance().setUser(null);
-                        MMkvUtil.getInstance(SettingActivity.this, "jwts").encode("jwt","");
-                        startActivity( new Intent(SettingActivity.this, LoginActivity.class));
-                        InitApp.getInstance().finishAll();
+                        EventBus.getDefault().post("userChange");
+                        finish();
                     });
                 }else{
                     new Handler(Looper.getMainLooper()).post(() -> {
                         jCenterDialog.dismiss();
-                        Toast.makeText(SettingActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ChangeNewNickNameActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
                     });
                 }
 
@@ -131,10 +137,9 @@ public class SettingActivity extends BaseActivity {
         });
     }
 
+
     @Override
     public void destroy() {
-        if(jCenterDialog != null){
-            if(jCenterDialog.isShowing())jCenterDialog.dismiss();
-        }
+
     }
 }

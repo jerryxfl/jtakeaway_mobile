@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    xmlns:tools="http://schemas.android.com/tools">
+    <ImageView
+        android:layout_marginStart="10dp"
+        android:layout_centerVertical="true"
+        android:id="@+id/headImg"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/dribbble_music_corner"
+        android:scaleType="centerCrop"/>
+    <TextView
+        android:id="@+id/title"
+        tools:text="测试"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="10dp"
+        android:textColor="#222222"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/content"
+        tools:text="内容"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:singleLine="true"
+        android:maxEms="20"
+        android:layout_marginBottom="10dp"/>
+</RelativeLayout>

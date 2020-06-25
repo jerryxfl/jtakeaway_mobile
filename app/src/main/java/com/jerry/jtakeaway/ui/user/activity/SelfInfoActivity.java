@@ -95,10 +95,14 @@ public class SelfInfoActivity extends BaseActivity {
     }
 
     private void setPageDatas() {
-        Glide.with(this)
-                .load(UserUtils.getInstance().getUser().getUseradvatar())
-                .into(headImg);
-        userNickName.setText(UserUtils.getInstance().getUser().getUsernickname());
+        if(UserUtils.getInstance().getUser().getUseradvatar()!= null){
+            Glide.with(this)
+                    .load(UserUtils.getInstance().getUser().getUseradvatar())
+                    .into(headImg);
+        }
+        if(UserUtils.getInstance().getUser().getUsernickname()!= null){
+            userNickName.setText(UserUtils.getInstance().getUser().getUsernickname());
+        }
     }
 
     @Override
@@ -147,6 +151,11 @@ public class SelfInfoActivity extends BaseActivity {
             }else{
                 albumOrCameraDialog.show();
             }
+        });
+        userNickNameWrapper.setOnClickListener(v -> {
+            Intent intent = new Intent(SelfInfoActivity.this,ChangeNewNickNameActivity.class);
+            intent.putExtra("NICKNAME",UserUtils.getInstance().getUser().getUsernickname());
+            startActivity(intent);
         });
     }
 

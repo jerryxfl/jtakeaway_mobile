@@ -133,4 +133,7 @@ dependencies {
 
     //选择图片
     implementation 'com.lcw.library:imagepicker:2.1.2'
+
+    //label
+    implementation 'com.github.linger1216:labelview:v1.1.0'
 }
