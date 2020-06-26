@@ -1,10 +1,12 @@
 package com.jerry.jtakeaway.application;
 
 import android.app.Application;
+import android.content.Intent;
 
 import com.jerry.jtakeaway.Notification.NotificationAudios;
 import com.jerry.jtakeaway.Notification.NotificationChannels;
 import com.jerry.jtakeaway.UncaughtExceptionHandler.JUncaughtExceptionHandler;
+import com.jerry.jtakeaway.service.NotificationService;
 import com.jerry.jtakeaway.utils.MMkvUtil;
 
 public class JApplication extends Application {
@@ -34,11 +36,14 @@ public class JApplication extends Application {
         }
         NotificationAudios.getInstance().init(this);
         NotificationChannels.createAllNotificationChannels(this);
+        startService(new Intent(this, NotificationService.class));
     }
 
     public static JApplication getContext() {
         return jApplication;
     }
+
+
 
 
 }

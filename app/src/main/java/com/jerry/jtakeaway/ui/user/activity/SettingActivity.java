@@ -15,6 +15,8 @@ import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.responseBean.Result1;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JCenterDialog;
+import com.jerry.jtakeaway.eventBusEvents.WebSocketEvent;
+import com.jerry.jtakeaway.eventBusEvents.WebSocketEventType;
 import com.jerry.jtakeaway.ui.generalActivity.LoginActivity;
 import com.jerry.jtakeaway.utils.InitApp;
 import com.jerry.jtakeaway.utils.JsonUtils;
@@ -23,6 +25,7 @@ import com.jerry.jtakeaway.utils.OkHttp3Util;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
 import com.jerry.jtakeaway.utils.UserUtils;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -115,6 +118,7 @@ public class SettingActivity extends BaseActivity {
                     System.out.println("退出登录"+result.toString());
                     new Handler(Looper.getMainLooper()).post(() -> {
                         jCenterDialog.dismiss();
+                        EventBus.getDefault().post(new WebSocketEvent(WebSocketEventType.CLOSE));
                         UserUtils.getInstance().setUser(null);
                         MMkvUtil.getInstance(SettingActivity.this, "jwts").encode("jwt","");
                         startActivity( new Intent(SettingActivity.this, LoginActivity.class));

@@ -13,7 +13,7 @@ import com.jerry.jtakeaway.ui.user.activity.HomeActivity;
 public class Notifications {
 
 
-    public static void sendNormalNotification(Context context,int img,String title,String content){
+    public static void sendNormalNotification(Context context,String title,String content){
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Notification.Builder builder = new Notification.Builder(context).setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_LIGHTS|Notification.DEFAULT_VIBRATE);
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){

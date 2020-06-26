@@ -136,4 +136,7 @@ dependencies {
 
     //label
     implementation 'com.github.linger1216:labelview:v1.1.0'
+
+    //websocket
+    implementation "org.java-websocket:Java-WebSocket:1.5.1"
 }

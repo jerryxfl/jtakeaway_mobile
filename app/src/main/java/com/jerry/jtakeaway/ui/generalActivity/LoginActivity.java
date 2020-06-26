@@ -27,6 +27,8 @@ import com.jerry.jtakeaway.bean.responseBean.ResponseUser;
 import com.jerry.jtakeaway.bean.responseBean.Result1;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JLoginButton;
+import com.jerry.jtakeaway.eventBusEvents.WebSocketEvent;
+import com.jerry.jtakeaway.eventBusEvents.WebSocketEventType;
 import com.jerry.jtakeaway.ui.user.activity.HomeActivity;
 import com.jerry.jtakeaway.utils.BitmapBlurHelper;
 import com.jerry.jtakeaway.utils.GsonUtil;
@@ -212,6 +214,7 @@ public class LoginActivity extends BaseActivity {
                         }
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
                             login_btn.reset();
+                            EventBus.getDefault().post(new WebSocketEvent(WebSocketEventType.OPEN));
                             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                             startActivity(intent);
                             overridePendingTransition(R.anim.anim_in, R.anim.anim_out);

@@ -21,6 +21,8 @@ import com.jerry.jtakeaway.bean.responseBean.ResponseUser;
 import com.jerry.jtakeaway.bean.responseBean.Result1;
 import com.jerry.jtakeaway.custom.JCenterDialog;
 import com.jerry.jtakeaway.custom.JViewPager;
+import com.jerry.jtakeaway.eventBusEvents.WebSocketEvent;
+import com.jerry.jtakeaway.eventBusEvents.WebSocketEventType;
 import com.jerry.jtakeaway.ui.generalActivity.LoginActivity;
 import com.jerry.jtakeaway.ui.user.adapter.ViewPagerAdapter;
 import com.jerry.jtakeaway.ui.user.fragment.EmailFragment;
@@ -177,6 +179,7 @@ public class HomeActivity extends BaseActivity {
                         }
                         new Handler(Looper.getMainLooper()).postDelayed(() -> {
                             jCenterDialog.dismiss();
+                            EventBus.getDefault().post(new WebSocketEvent(WebSocketEventType.OPEN));
                         }, 3000);
 
                     } else {

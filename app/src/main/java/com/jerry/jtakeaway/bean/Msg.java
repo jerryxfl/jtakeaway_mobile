@@ -5,8 +5,8 @@ import java.util.Objects;
 
 public class Msg {
     private int id;
-    private int acceptuserid;
-    private int senduserid;
+    private Integer acceptuserid;
+    private Integer senduserid;
     private String content;
     private Timestamp sendTime;
 
@@ -18,19 +18,19 @@ public class Msg {
         this.id = id;
     }
 
-    public int getAcceptuserid() {
+    public Integer getAcceptuserid() {
         return acceptuserid;
     }
 
-    public void setAcceptuserid(int acceptuserid) {
+    public void setAcceptuserid(Integer acceptuserid) {
         this.acceptuserid = acceptuserid;
     }
 
-    public int getSenduserid() {
+    public Integer getSenduserid() {
         return senduserid;
     }
 
-    public void setSenduserid(int senduserid) {
+    public void setSenduserid(Integer senduserid) {
         this.senduserid = senduserid;
     }
 
@@ -56,8 +56,8 @@ public class Msg {
         if (o == null || getClass() != o.getClass()) return false;
         Msg msg = (Msg) o;
         return id == msg.id &&
-                acceptuserid == msg.acceptuserid &&
-                senduserid == msg.senduserid &&
+                acceptuserid.equals(msg.acceptuserid) &&
+                senduserid.equals(msg.senduserid) &&
                 Objects.equals(content, msg.content) &&
                 Objects.equals(sendTime, msg.sendTime);
     }

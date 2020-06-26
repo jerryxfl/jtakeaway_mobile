@@ -117,7 +117,7 @@ public class AudioStyleActivity extends BaseActivity {
     public void InitListener() {
         return_aib.setOnClickListener(v -> finish());
         show.setOnClickListener(v ->{
-            Notifications.sendNormalNotification(AudioStyleActivity.this,0,"疯狂外卖","你的订单已送达");
+            Notifications.sendNormalNotification(AudioStyleActivity.this,"疯狂外卖","你的订单已送达");
         });
     }
 

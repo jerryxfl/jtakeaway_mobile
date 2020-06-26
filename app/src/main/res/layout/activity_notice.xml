@@ -35,5 +35,9 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:background="#B4B4B4"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/noticeStyle_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

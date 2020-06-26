@@ -27,7 +27,12 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,UnusedAttribute"
         tools:replace="android:allowBackup,android:icon">
-        <activity android:name=".ui.user.activity.NoticeStyleActivity"></activity>
+        <service
+            android:name=".service.NotificationService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <activity android:name=".ui.user.activity.NoticeStyleActivity" />
         <activity android:name=".ui.user.activity.AudioStyleActivity" />
         <activity android:name=".ui.user.activity.NotifySoundActivity" />
         <activity android:name=".ui.user.activity.ChangeNewNickNameActivity" />
