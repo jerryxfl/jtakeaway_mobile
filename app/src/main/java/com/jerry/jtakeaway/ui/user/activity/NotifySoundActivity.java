@@ -3,11 +3,16 @@ package com.jerry.jtakeaway.ui.user.activity;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import androidx.core.content.ContextCompat;
+
+import com.jerry.jtakeaway.Notification.NotificationAudios;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
 import com.jerry.jtakeaway.custom.AniImgButton;
+import com.jerry.jtakeaway.utils.MMkvUtil;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
 
 import butterknife.BindView;
@@ -24,7 +29,8 @@ public class NotifySoundActivity extends BaseActivity {
     @BindView(R.id.noticeStyle)
     RelativeLayout noticeStyle;
 
-
+    @BindView(R.id.selectAudio)
+    ImageView selectAudio;
 
 
     @Override
@@ -41,14 +47,20 @@ public class NotifySoundActivity extends BaseActivity {
 
     @Override
     public void InitData() {
-
+        setPageDatas();
     }
+
+    private void setPageDatas() {
+        selectAudio.setImageDrawable(ContextCompat.getDrawable(this, NotificationAudios.getInstance().getAudio(MMkvUtil.getInstance("Configuration").decodeString("Audio")).getImg()));
+    }
+
+
 
     @Override
     public void InitListener() {
         return_aib.setOnClickListener(v -> finish());
         audioStyle.setOnClickListener(v ->{
-            startActivity(new Intent(NotifySoundActivity.this,AudioStyleActivity.class));
+            startActivityForResult(new Intent(NotifySoundActivity.this,AudioStyleActivity.class),0);
         });
         noticeStyle.setOnClickListener(v ->{
             startActivity(new Intent(NotifySoundActivity.this,NoticeStyleActivity.class));
@@ -59,5 +71,13 @@ public class NotifySoundActivity extends BaseActivity {
     @Override
     public void destroy() {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode== 0){
+            setPageDatas();
+        }
     }
 }

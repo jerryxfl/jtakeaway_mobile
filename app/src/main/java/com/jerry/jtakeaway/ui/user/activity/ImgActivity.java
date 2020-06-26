@@ -44,9 +44,11 @@ public class ImgActivity extends BaseActivity {
         jAdapter = new JAdapter<>(this, img_recyclerview, new int[]{R.layout.img_item}, new JAdapter.adapterListener<String>() {
             @Override
             public void setItems(BaseViewHolder holder, int position, List<String> datas) {
+                ImageView imageView = (ImageView) holder.getView(R.id.PhotoView);
                 Glide.with(ImgActivity.this)
                         .load(datas.get(position))
-                        .into((ImageView) holder.getView(R.id.PhotoView));
+                        .into(imageView);
+                imageView.setOnClickListener(v -> finish());
             }
 
             @Override

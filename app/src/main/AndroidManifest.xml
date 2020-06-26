@@ -28,7 +28,7 @@
         tools:ignore="AllowBackup,UnusedAttribute"
         tools:replace="android:allowBackup,android:icon">
         <activity android:name=".ui.user.activity.NoticeStyleActivity"></activity>
-        <activity android:name=".ui.user.activity.AudioActivity" />
+        <activity android:name=".ui.user.activity.AudioStyleActivity" />
         <activity android:name=".ui.user.activity.NotifySoundActivity" />
         <activity android:name=".ui.user.activity.ChangeNewNickNameActivity" />
         <activity android:name=".ui.user.activity.AlbumActivity" />

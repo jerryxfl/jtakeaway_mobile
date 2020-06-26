@@ -9,8 +9,10 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="#f5f5f5"
         android:id="@+id/top"/>
     <RelativeLayout
+        android:background="#f5f5f5"
         android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -30,17 +32,17 @@
             android:textColor="#222222"
             android:textStyle="bold"
             android:textSize="18sp"/>
+        <Button
+            android:id="@+id/show"
+            android:layout_width="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="演示"
+            android:background="@drawable/logout_btn_selector"
+            android:layout_height="wrap_content"/>
+
     </RelativeLayout>
-    <View
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/Audio_recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="#B4B4B4"/>
-
-    <Button
-        android:id="@+id/btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="弹出通知"/>
-
-
+        android:layout_height="match_parent"/>
 </LinearLayout>
