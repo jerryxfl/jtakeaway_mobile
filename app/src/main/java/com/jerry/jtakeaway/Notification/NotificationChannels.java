@@ -17,10 +17,8 @@ public class NotificationChannels {
 
 
 
-
     public static void createAllNotificationChannels(Context context){
-        SYSTEM_ID = "JERRY"+System.currentTimeMillis();
-        System.out.println("音效名称"+MMkvUtil.getInstance("Configuration").decodeString("Audio"));
+        SYSTEM_ID = "JERRY_SYSTEM"+System.currentTimeMillis();
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
             AudioAttributes  att = new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)

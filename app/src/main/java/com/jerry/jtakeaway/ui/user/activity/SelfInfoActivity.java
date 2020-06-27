@@ -95,12 +95,12 @@ public class SelfInfoActivity extends BaseActivity {
     }
 
     private void setPageDatas() {
-        if(UserUtils.getInstance().getUser().getUseradvatar()!= null){
+        if (UserUtils.getInstance().getUser().getUseradvatar() != null) {
             Glide.with(this)
                     .load(UserUtils.getInstance().getUser().getUseradvatar())
                     .into(headImg);
         }
-        if(UserUtils.getInstance().getUser().getUsernickname()!= null){
+        if (UserUtils.getInstance().getUser().getUsernickname() != null) {
             userNickName.setText(UserUtils.getInstance().getUser().getUsernickname());
         }
     }
@@ -108,19 +108,19 @@ public class SelfInfoActivity extends BaseActivity {
     @Override
     public void InitListener() {
         return_aib.setOnClickListener(v -> finish());
-        addressWrapper.setOnClickListener(v ->{
+        addressWrapper.setOnClickListener(v -> {
             getAddress();
         });
-        headImg.setOnClickListener(v ->{
-            Intent intent = new Intent(SelfInfoActivity.this,ImgActivity.class);
+        headImg.setOnClickListener(v -> {
+            Intent intent = new Intent(SelfInfoActivity.this, ImgActivity.class);
             List<String> list = new ArrayList<String>();
             list.add(UserUtils.getInstance().getUser().getUseradvatar());
             intent.putExtra("IMGS", (Serializable) list);
             ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(SelfInfoActivity.this, v, "img");
-            startActivity(intent,optionsCompat.toBundle());
+            startActivity(intent, optionsCompat.toBundle());
         });
         headImgWrapper.setOnClickListener(v -> {
-            if(albumOrCameraDialog==null){
+            if (albumOrCameraDialog == null) {
                 albumOrCameraDialog = new JBottomDialog(SelfInfoActivity.this, R.layout.albumorcamera_dialog, view -> {
                     RelativeLayout album = view.findViewById(R.id.album);
                     RelativeLayout camera = view.findViewById(R.id.camera);
@@ -137,27 +137,31 @@ public class SelfInfoActivity extends BaseActivity {
                                 .setImageLoader(new GlideLoader())//设置自定义图片加载器
                                 .start(SelfInfoActivity.this, REQUEST_SELECT_IMAGES_CODE);//REQEST_SELECT_IMAGES_CODE为Intent调用的requestCode
                     });
-                    camera.setOnClickListener(v1->{
+                    camera.setOnClickListener(v1 -> {
                         //相机
                         albumOrCameraDialog.dismiss();
-
-
+                        openCamera();
                     });
-                    cancel.setOnClickListener(v1->{
-                       albumOrCameraDialog.dismiss();
+                    cancel.setOnClickListener(v1 -> {
+                        albumOrCameraDialog.dismiss();
                     });
                 });
                 albumOrCameraDialog.show();
-            }else{
+            } else {
                 albumOrCameraDialog.show();
             }
         });
         userNickNameWrapper.setOnClickListener(v -> {
-            Intent intent = new Intent(SelfInfoActivity.this,ChangeNewNickNameActivity.class);
-            intent.putExtra("NICKNAME",UserUtils.getInstance().getUser().getUsernickname());
+            Intent intent = new Intent(SelfInfoActivity.this, ChangeNewNickNameActivity.class);
+            intent.putExtra("NICKNAME", UserUtils.getInstance().getUser().getUsernickname());
             startActivity(intent);
         });
     }
+
+    void openCamera() {
+        startActivity(new Intent(SelfInfoActivity.this, CameraActivity.class));
+    }
+
 
     public static class GlideLoader implements ImageLoader {
 
@@ -231,6 +235,10 @@ public class SelfInfoActivity extends BaseActivity {
         });
     }
 
+
+
+
+
     @Override
     public void destroy() {
 
@@ -240,11 +248,11 @@ public class SelfInfoActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode== REQUEST_SELECT_IMAGES_CODE && resultCode == RESULT_OK){
+        if (requestCode == REQUEST_SELECT_IMAGES_CODE && resultCode == RESULT_OK) {
             List<String> mImagePaths = data.getStringArrayListExtra(ImagePicker.EXTRA_SELECT_IMAGES);
             for (int i = 0; i < mImagePaths.size(); i++) {
-                Intent intent = new Intent(SelfInfoActivity.this,AlbumActivity.class);
-                intent.putExtra("IMG",mImagePaths.get(i));
+                Intent intent = new Intent(SelfInfoActivity.this, AlbumActivity.class);
+                intent.putExtra("IMG", mImagePaths.get(i));
                 startActivity(intent);
             }
 
@@ -252,8 +260,8 @@ public class SelfInfoActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void userChange(String tag){
-        if(tag.equals("userChangeSuccess")){
+    public void userChange(String tag) {
+        if (tag.equals("userChangeSuccess")) {
             setPageDatas();
         }
     }

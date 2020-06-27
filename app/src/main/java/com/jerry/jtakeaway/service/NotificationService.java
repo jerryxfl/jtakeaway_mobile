@@ -1,14 +1,24 @@
 package com.jerry.jtakeaway.service;
 
+import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 
+import androidx.core.app.NotificationCompat;
+
 import com.jerry.jtakeaway.Notification.Notifications;
+import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.Msg;
 import com.jerry.jtakeaway.eventBusEvents.WebSocketEvent;
 import com.jerry.jtakeaway.eventBusEvents.WebSocketEventType;
+import com.jerry.jtakeaway.ui.user.activity.HomeActivity;
 import com.jerry.jtakeaway.utils.MMkvUtil;
 import com.jerry.jtakeaway.websocket.WebSocketClient;
 
@@ -19,9 +29,11 @@ import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 public class NotificationService extends Service {
     private WebSocketClient webSocketClient;
+    private static int index = 1;
 
     public NotificationService() {
     }
@@ -29,9 +41,8 @@ public class NotificationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        System.out.println("通知服务启动#####################################################################################################");
         EventBus.getDefault().register(this);
-
+        startNotification();
     }
 
 
@@ -39,6 +50,36 @@ public class NotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         return super.onStartCommand(intent, flags, startId);
     }
+
+
+
+    @SuppressLint("WrongConstant")
+    private void startNotification() {//开启通知栏提示
+        NotificationManager mnotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);//获得系统通知服务
+        NotificationCompat.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel chan1 = new NotificationChannel("static", "Primary Channel", NotificationManager.IMPORTANCE_LOW);
+            assert mnotificationManager != null;
+            mnotificationManager.createNotificationChannel(chan1);
+            builder = new NotificationCompat.Builder(getApplicationContext(), "static");
+            builder.setChannelId(chan1.getId());
+        } else {
+            builder = new NotificationCompat.Builder(getApplicationContext());
+        }
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,new Intent(this,HomeActivity.class),0);
+        builder.setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.logo_app)
+                .setOngoing(true)
+                .setContentTitle("疯狂外卖")
+                .setContentText("保活策略")
+                .setPriority(NotificationCompat.BADGE_ICON_LARGE)
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .build();
+        Notification notification = builder.build();
+        Objects.requireNonNull(mnotificationManager).notify(0, notification);
+        startForeground(1, notification);
+    }
+
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -54,7 +95,8 @@ public class NotificationService extends Service {
 
                 @Override
                 public void onMessage(Msg message) {
-                    Notifications.sendNormalNotification(NotificationService.this,"系统信息",message.getContent());
+                    Notifications.sendNormalNotification(NotificationService.this,"系统信息",message.getContent(),new Intent(NotificationService.this, HomeActivity.class),index);
+                    index++;
                 }
 
                 @Override
@@ -85,6 +127,7 @@ public class NotificationService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         if(webSocketClient!=null) {
             try {
                 webSocketClient.closeBlocking();

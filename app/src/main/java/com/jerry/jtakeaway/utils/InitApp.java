@@ -10,33 +10,35 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 public class InitApp {
     private List<Activity> activities;//保存所有界面
     private static InitApp instance = new InitApp();
+
     public static InitApp getInstance() {
         return instance;
     }
-    public void addActivity(Activity activity){
-        if(activities == null) {
+
+    public void addActivity(Activity activity) {
+        if (activities == null) {
             activities = new ArrayList<>();
         }
         activities.add(activity);
-        System.out.println("添加窗口"+activities.size());
+        System.out.println("添加窗口" + activities.size());
     }
 
-    public void removeActivity(Activity activity){
-        if(activities!=null){
-               if(activities.size()==1){
-                   finish(activity);
-               }else{
-                   activities.remove(activity);
-                   activity.finish();
-                   System.out.println("移除窗口"+activities.size());
-               }
+    public void removeActivity(Activity activity) {
+        if (activities != null) {
+            if (activities.size() == 1) {
+                finish(activity);
+            } else {
+                activities.remove(activity);
+                activity.finish();
+                System.out.println("移除窗口" + activities.size());
+            }
         }
     }
 
 
     private void finish(Activity activity) {
         System.out.println("显示退出窗口");
-        if(!activity.isDestroyed())new SweetAlertDialog(activity, SweetAlertDialog.WARNING_TYPE)
+        if (!activity.isDestroyed()) new SweetAlertDialog(activity, SweetAlertDialog.WARNING_TYPE)
                 .setTitleText("你确定要退出吗?")
                 .setConfirmText("是的")
                 .setConfirmClickListener(sDialog -> {
@@ -50,8 +52,8 @@ public class InitApp {
 
 
     public void finishAll() {
-        for ( Activity activity : activities ) {
-            if ( !activity.isFinishing() ) {
+        for (Activity activity : activities) {
+            if (!activity.isFinishing()) {
                 activity.finish();
             }
         }

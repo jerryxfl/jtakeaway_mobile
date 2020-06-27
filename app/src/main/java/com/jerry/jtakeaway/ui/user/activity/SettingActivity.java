@@ -93,9 +93,11 @@ public class SettingActivity extends BaseActivity {
         accountSafe.setOnClickListener(v -> startActivity(new Intent(SettingActivity.this,SecurityCenterActivity.class)));
         return_aib.setOnClickListener(v -> finish());
         SoundEffectsAndNotifications.setOnClickListener(v->{
-//            Notifications.sendNormalNotification(SettingActivity.this,R.drawable.dribbble_music_corner,"蒋锐","hhhhhh");
             startActivity(new Intent(SettingActivity.this,NotifySoundActivity.class));
         });
+        privacy.setOnClickListener(v -> startActivity(new Intent(SettingActivity.this,PrivacyActivity.class)));
+        bugReport.setOnClickListener(v -> startActivity(new Intent(SettingActivity.this,BugReportActivity.class)));
+        aboutUs.setOnClickListener(v ->startActivity(new Intent(SettingActivity.this,AboutActivity.class)));
     }
 
     private void logout() {

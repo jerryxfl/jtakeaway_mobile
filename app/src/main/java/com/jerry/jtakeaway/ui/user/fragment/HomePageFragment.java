@@ -1,10 +1,14 @@
 package com.jerry.jtakeaway.ui.user.fragment;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -34,6 +38,7 @@ import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
 import com.jerry.jtakeaway.custom.JgridLayoutManager;
 import com.jerry.jtakeaway.ui.user.activity.MenuActivity;
+import com.jerry.jtakeaway.utils.GPSUtils;
 import com.jerry.jtakeaway.utils.GsonUtil;
 import com.jerry.jtakeaway.utils.JsonUtils;
 import com.jerry.jtakeaway.utils.OkHttp3Util;
@@ -52,12 +57,20 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import butterknife.BindView;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.OnNeverAskAgain;
+import permissions.dispatcher.OnPermissionDenied;
+import permissions.dispatcher.OnShowRationale;
+import permissions.dispatcher.PermissionRequest;
+import permissions.dispatcher.RuntimePermissions;
 
 @SuppressWarnings("all")
-public class HomePageFragment extends BaseFragment{
+@RuntimePermissions
+public class HomePageFragment extends BaseFragment {
     @BindView(R.id.goRefreshLayout)
     GoRefreshLayout goRefreshLayout;
     @BindView(R.id.location_tv)
@@ -96,6 +109,8 @@ public class HomePageFragment extends BaseFragment{
 
     private List<Broadcasts> broadcastsList = new ArrayList<>();
 
+    private String mLocation ="";
+
 
     @Override
     public int getLayout() {
@@ -104,27 +119,8 @@ public class HomePageFragment extends BaseFragment{
 
     @Override
     public void InitView() {
-//        if(checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)){
-//            GPSUtils.getInstance(context).getLngAndLat(new GPSUtils.OnLocationResultListener() {
-//                @Override
-//                public void onLocationResult(Location location) {
-//                    System.out.println("位置:");
-//                    String[] location1 = GPSUtils.getInstance(context).getLocation(context, location.getLatitude(), location.getLongitude());
-//                    for (int i = 0; i < location1.length; i++) {
-//                        System.out.println(location1[i]);
-//                    }
-//                }
-//
-//                @Override
-//                public void OnLocationChange(Location location) {
-//                    System.out.println("位置:");
-//                    System.out.println(location.getLatitude());
-//
-//                }
-//            });
-//        }else{
-//            Toast.makeText(context,"没有定位权限",Toast.LENGTH_SHORT).show();
-//        }
+        HomePageFragmentPermissionsDispatcher.getLocationWithPermissionCheck(this);
+        getLocation();
 
 
         //顶部轮播图--------------------****************---------------------------------
@@ -158,9 +154,8 @@ public class HomePageFragment extends BaseFragment{
         //end   顶部轮播图--------------------****************---------------------------------
 
 
-
         //热门商家--------------------****************---------------------------------
-        JgridLayoutManager jgridLayoutManager_hotShop = new JgridLayoutManager(context,5);
+        JgridLayoutManager jgridLayoutManager_hotShop = new JgridLayoutManager(context, 5);
         recyclerview_hot_shop.setLayoutManager(jgridLayoutManager_hotShop);
 
         hotShopAdapter = new JAdapter<Menus>(context, recyclerview_hot_shop, new int[]{R.layout.hot_shop_item}, new JAdapter.adapterListener<Menus>() {
@@ -175,14 +170,14 @@ public class HomePageFragment extends BaseFragment{
                 shop_image.setOnClickListener(v -> {
                     Intent intent = new Intent(context, MenuActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("menu",datas.get(position));
+                    bundle.putSerializable("menu", datas.get(position));
                     intent.putExtras(bundle);
                     context.startActivity(intent);
                 });
             }
 
             @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads,List<Menus> datas) {
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<Menus> datas) {
 
             }
 
@@ -194,10 +189,8 @@ public class HomePageFragment extends BaseFragment{
         //end 热门商家--------------------****************---------------------------------
 
 
-
-
         //菜单推荐--------------------****************---------------------------------
-        JgridLayoutManager jgridLayoutManager_menu = new JgridLayoutManager(context,2);
+        JgridLayoutManager jgridLayoutManager_menu = new JgridLayoutManager(context, 2);
         menu_recommend_recyclerview.setLayoutManager(jgridLayoutManager_menu);
         jMneuAdapter = new JAdapter<Menus>(context, menu_recommend_recyclerview, new int[]{R.layout.menu_item}, new JAdapter.adapterListener<Menus>() {
             @Override
@@ -213,7 +206,7 @@ public class HomePageFragment extends BaseFragment{
                         //精品菜单推荐
                         Intent intent = new Intent(context, MenuActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable("menu",datas.get(position));
+                        bundle.putSerializable("menu", datas.get(position));
                         intent.putExtras(bundle);
                         context.startActivity(intent);
                     }
@@ -221,7 +214,7 @@ public class HomePageFragment extends BaseFragment{
             }
 
             @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads,List<Menus> datas) {
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<Menus> datas) {
 
             }
 
@@ -233,10 +226,8 @@ public class HomePageFragment extends BaseFragment{
         //end menu_recommend--------------------****************---------------------------------
 
 
-
-
         //five_shop_recommend--------------------****************---------------------------------
-        JgridLayoutManager jgridLayoutManager_five_shop = new JgridLayoutManager(context,1);
+        JgridLayoutManager jgridLayoutManager_five_shop = new JgridLayoutManager(context, 1);
         five_shop_recyclerview.setLayoutManager(jgridLayoutManager_five_shop);
         fiveLevelAdapter = new JAdapter<Integer>(context, five_shop_recyclerview, new int[]{R.layout.shop_item}, new JAdapter.adapterListener<Integer>() {
             @Override
@@ -247,7 +238,7 @@ public class HomePageFragment extends BaseFragment{
             }
 
             @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads,List<Integer> datas) {
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<Integer> datas) {
 
             }
 
@@ -259,10 +250,8 @@ public class HomePageFragment extends BaseFragment{
         //end  five_shop_recommend--------------------****************---------------------------------
 
 
-
-
         //people_red_recommend--------------------****************---------------------------------
-        JgridLayoutManager jgridLayoutManager_people_red = new JgridLayoutManager(context,1);
+        JgridLayoutManager jgridLayoutManager_people_red = new JgridLayoutManager(context, 1);
         people_red_recyclerview.setLayoutManager(jgridLayoutManager_people_red);
         peopleRedAdapter = new JAdapter<Integer>(context, people_red_recyclerview, new int[]{R.layout.shop_item}, new JAdapter.adapterListener<Integer>() {
             @Override
@@ -273,7 +262,7 @@ public class HomePageFragment extends BaseFragment{
             }
 
             @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads,List<Integer> datas) {
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<Integer> datas) {
 
             }
 
@@ -286,31 +275,116 @@ public class HomePageFragment extends BaseFragment{
         //end  prople_red_recommend--------------------****************---------------------------------
     }
 
+    @NeedsPermission({Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION})
+    void getLocation() {
+        GPSUtils.getInstance(context).getLngAndLat(new GPSUtils.OnLocationResultListener() {
+            @Override
+            public void onLocationResult(Location location) {
+                String[] location1 = GPSUtils.getInstance(context).getLocation(context, location.getLatitude(), location.getLongitude());
+                for (int i = 0; i < location1.length; i++) {
+                    System.out.println(location1[i]);
+                    mLocation = mLocation + " " + location1[i];
+                    if(i==2){
+                        location_tv.setText(location1[i]);
+                    }
+                }
+            }
+
+            @Override
+            public void OnLocationChange(Location location) {
+                String[] location1 = GPSUtils.getInstance(context).getLocation(context, location.getLatitude(), location.getLongitude());
+                for (int i = 0; i < location1.length; i++) {
+                    System.out.println(location1[i]);
+                    mLocation = mLocation + " " + location1[i];
+                    if(i==2){
+                        location_tv.setText(location1[i]);
+                    }
+                }
+
+            }
+        });
+    }
+
+    @OnShowRationale({Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION})
+    void showWhy(final PermissionRequest request) {
+        new SweetAlertDialog(activity, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("我们需要此权限才能给你提供附近的店铺信息?")
+                .setConfirmText("好")
+                .setConfirmClickListener(sDialog -> {
+                    request.proceed();
+                    sDialog.dismissWithAnimation();
+                })
+                .setCancelText("拒绝")
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        request.cancel();
+                        location_tv.setText("无");
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                })
+                .show();
+    }
+
+    @OnPermissionDenied({Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION})
+    void showDenied() {
+        location_tv.setText("无");
+        Toast.makeText(context, "无法获得权限", Toast.LENGTH_SHORT).show();
+    }
+
+
+    @OnNeverAskAgain({Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION})
+    void showNeverAskAgain() {
+        new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("定位权限被拒绝,为了不影响你的使用请前往设置开启权限?")
+                .setConfirmText("好")
+                .setConfirmClickListener(sDialog -> {
+                    sDialog.dismissWithAnimation();
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                })
+                .setCancelText("拒绝")
+                .setCancelClickListener(sweetAlertDialog -> {
+                    sweetAlertDialog.dismissWithAnimation();
+                })
+                .show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        HomePageFragmentPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    }
 
 
     class timerTask extends TimerTask {
         @Override
         public void run() {
-            if(currentPosition+1>slideList.size()){
+            if (currentPosition + 1 > slideList.size()) {
                 currentPosition = 0;
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        if(recyclerview_banner!=null)recyclerview_banner.scrollToPosition(currentPosition);
+                        if (recyclerview_banner != null)
+                            recyclerview_banner.scrollToPosition(currentPosition);
                     }
                 });
-            }else{
-                currentPosition = currentPosition+1;
+            } else {
+                currentPosition = currentPosition + 1;
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        if(recyclerview_banner!=null)recyclerview_banner.smoothScrollToPosition(currentPosition);
+                        if (recyclerview_banner != null)
+                            recyclerview_banner.smoothScrollToPosition(currentPosition);
                     }
                 });
             }
 
         }
-    };
+    }
+
+    ;
 
     @Override
     public void InitData() {
@@ -333,13 +407,9 @@ public class HomePageFragment extends BaseFragment{
         //end hot_shop
 
 
-
-
-
         //五星
         fiveLevelAdapter.adapter.setHeader(datass);
         //end五星
-
 
 
         //网红
@@ -347,7 +417,7 @@ public class HomePageFragment extends BaseFragment{
         //end 网红
     }
 
-    private void getHotShops(){
+    private void getHotShops() {
         OkHttp3Util.GET(JUrl.hot_shop_menu, context, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -360,19 +430,19 @@ public class HomePageFragment extends BaseFragment{
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
                 Result2 result = JsonUtils.getResult2(jsonObject);
-                if(result.getCode() == 10000){
+                if (result.getCode() == 10000) {
                     hot_shop_menuList.clear();
-                    hot_shop_menuList.addAll(GsonUtil.jsonToList(result.getData().toString(),Menus.class));
-                    System.out.println("热门商家:"+result.getData());
-                    if(hot_shop_menuList.size()>10){
-                        hot_shop_menuList.subList(11,hot_shop_menuList.size()).clear();
+                    hot_shop_menuList.addAll(GsonUtil.jsonToList(result.getData().toString(), Menus.class));
+                    System.out.println("热门商家:" + result.getData());
+                    if (hot_shop_menuList.size() > 10) {
+                        hot_shop_menuList.subList(11, hot_shop_menuList.size()).clear();
                     }
                     new Handler(Looper.getMainLooper()).post(() -> {
                         hotShopAdapter.adapter.setData(hot_shop_menuList);
                     });
-                }else{
+                } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        Toast.makeText(context,"数据错误",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "数据错误", Toast.LENGTH_SHORT).show();
                     });
                 }
 
@@ -381,7 +451,7 @@ public class HomePageFragment extends BaseFragment{
     }
 
 
-    private void getHotMenus(){
+    private void getHotMenus() {
         OkHttp3Util.GET(JUrl.hot_menus, context, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
@@ -394,15 +464,15 @@ public class HomePageFragment extends BaseFragment{
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
                 Result2 result = JsonUtils.getResult2(jsonObject);
-                if(result.getCode() == 10000){
+                if (result.getCode() == 10000) {
                     menusList.clear();
-                    menusList.addAll(GsonUtil.jsonToList(result.getData().toString(),Menus.class));
+                    menusList.addAll(GsonUtil.jsonToList(result.getData().toString(), Menus.class));
                     new Handler(Looper.getMainLooper()).post(() -> {
                         jMneuAdapter.adapter.setData(menusList);
                     });
-                }else{
+                } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        Toast.makeText(context,"数据错误",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "数据错误", Toast.LENGTH_SHORT).show();
                     });
                 }
 
@@ -423,19 +493,19 @@ public class HomePageFragment extends BaseFragment{
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
                 Result2 result = JsonUtils.getResult2(jsonObject);
-                if(result.getCode() == 10000){
+                if (result.getCode() == 10000) {
                     slideList.clear();
-                    slideList.addAll(GsonUtil.jsonToList(result.getData().toString(),Slide.class));
+                    slideList.addAll(GsonUtil.jsonToList(result.getData().toString(), Slide.class));
                     new Handler(Looper.getMainLooper()).post(() -> {
                         jBannerAdapter.adapter.setData(slideList);
-                        if(timer==null){
+                        if (timer == null) {
                             timer = new Timer();
-                            timer.schedule(new timerTask(),0,5000);
+                            timer.schedule(new timerTask(), 0, 5000);
                         }
                     });
-                }else{
+                } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        Toast.makeText(context,"数据错误",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "数据错误", Toast.LENGTH_SHORT).show();
                     });
                 }
 
@@ -457,16 +527,16 @@ public class HomePageFragment extends BaseFragment{
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
                 Result2 result = JsonUtils.getResult2(jsonObject);
-                if(result.getCode() == 10000){
+                if (result.getCode() == 10000) {
                     broadcastsList.clear();
-                    broadcastsList.addAll(GsonUtil.jsonToList(result.getData().toString(),Broadcasts.class));
+                    broadcastsList.addAll(GsonUtil.jsonToList(result.getData().toString(), Broadcasts.class));
                     new Handler(Looper.getMainLooper()).post(() -> {
                         SimpleTextAdapter simpleTextAdapter = new SimpleTextAdapter(context, broadcastsList);
                         JRollingTextView.setAdapter(simpleTextAdapter);
                     });
-                }else{
+                } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        Toast.makeText(context,"数据错误",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "数据错误", Toast.LENGTH_SHORT).show();
                     });
                 }
 
@@ -493,7 +563,7 @@ public class HomePageFragment extends BaseFragment{
         recyclerview_banner.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     EventBus.getDefault().postSticky(new PageEvents(false));
                 }
                 return false;
@@ -515,7 +585,7 @@ public class HomePageFragment extends BaseFragment{
         goRefreshLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     EventBus.getDefault().postSticky(new PageEvents(true));
                 }
                 return false;
@@ -536,14 +606,14 @@ public class HomePageFragment extends BaseFragment{
                         //  结束刷新
                         goRefreshLayout.finishRefresh();
                     }
-                },3000);
+                }, 3000);
             }
         });
     }
 
     @Override
     public void destroy() {
-        if(timer!=null)timer.cancel();
+        if (timer != null) timer.cancel();
     }
 
 

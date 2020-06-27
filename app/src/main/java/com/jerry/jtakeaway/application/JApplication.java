@@ -2,7 +2,9 @@ package com.jerry.jtakeaway.application;
 
 import android.app.Application;
 import android.content.Intent;
+import android.os.Build;
 
+import com.jerry.jtakeaway.Notification.NoticeStyles;
 import com.jerry.jtakeaway.Notification.NotificationAudios;
 import com.jerry.jtakeaway.Notification.NotificationChannels;
 import com.jerry.jtakeaway.UncaughtExceptionHandler.JUncaughtExceptionHandler;
@@ -34,16 +36,23 @@ public class JApplication extends Application {
         if(MMkvUtil.getInstance(this,"Configuration").decodeString("Audio")== null){
             MMkvUtil.getInstance(this,"Configuration").encode("Audio",NotificationAudios.AUDIO_8);
         }
+
         NotificationAudios.getInstance().init(this);
+        NoticeStyles.init();
+        if(MMkvUtil.getInstance(this,"Configuration").decodeString("NoticeStyle")== null){
+            MMkvUtil.getInstance(this,"Configuration").encode("NoticeStyle", 0);
+        }
+
         NotificationChannels.createAllNotificationChannels(this);
-        startService(new Intent(this, NotificationService.class));
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            startForegroundService(new Intent(this, NotificationService.class));
+        }else{
+            startService(new Intent(this, NotificationService.class));
+        }
     }
 
     public static JApplication getContext() {
         return jApplication;
     }
-
-
-
 
 }

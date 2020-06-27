@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
+    android:layout_height="60dp"
+    android:background="#b5f5ec"
+    android:id="@+id/background"
     xmlns:tools="http://schemas.android.com/tools">
     <ImageView
         android:layout_marginStart="10dp"
         android:layout_centerVertical="true"
-        android:id="@+id/headImg"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/dribbble_music_corner"
+        android:src="@drawable/logo_app"
         android:scaleType="centerCrop"/>
     <TextView
         android:id="@+id/title"
@@ -29,5 +30,6 @@
         android:layout_marginStart="70dp"
         android:singleLine="true"
         android:maxEms="20"
+        android:textColor="#B4B4B4"
         android:layout_marginBottom="10dp"/>
 </RelativeLayout>

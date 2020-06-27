@@ -3,9 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    tools:context=".ui.user.activity.ChangePwdActivity">
+    tools:context=".ui.user.activity.SettingActivity"
+    android:orientation="vertical">
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -25,26 +24,29 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="通知样式"
+            android:text="隐私政策"
             android:layout_centerInParent="true"
             android:textColor="#222222"
             android:textStyle="bold"
             android:textSize="18sp"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:text="演示"
-            android:background="@drawable/logout_btn_selector"
-            android:id="@+id/show"/>
     </RelativeLayout>
     <View
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="#B4B4B4"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/noticeStyle_recyclerView"
+        android:layout_height="20dp"
+        android:background="#F4F4F4"/>
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:padding="10dp"
+        android:layout_height="match_parent">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </ScrollView>
+    </LinearLayout>
+
 
 </LinearLayout>

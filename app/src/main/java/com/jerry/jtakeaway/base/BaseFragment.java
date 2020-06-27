@@ -63,17 +63,6 @@ public abstract class BaseFragment extends Fragment {
     }
 
 
-    public boolean checkSelfPermission(String permissionName){
-//        "android.permission.RECORD_AUDIO"
-        PackageManager pm = context.getPackageManager();
-        boolean permission = (PackageManager.PERMISSION_GRANTED ==
-                pm.checkPermission(permissionName,"packageName"));
-        if (permission) {
-            return false;
-        }else {
-            return true;
-        }
-    }
 
     @Override
     public void onDestroyView() {

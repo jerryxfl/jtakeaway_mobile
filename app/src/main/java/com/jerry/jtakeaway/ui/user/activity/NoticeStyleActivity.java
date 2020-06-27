@@ -1,17 +1,28 @@
 package com.jerry.jtakeaway.ui.user.activity;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.jerry.jtakeaway.Notification.NoticeStyles;
+import com.jerry.jtakeaway.Notification.Notifications;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
 import com.jerry.jtakeaway.base.BaseViewHolder;
 import com.jerry.jtakeaway.bean.model.NoticeStyle;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
+import com.jerry.jtakeaway.utils.MMkvUtil;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
 
 import java.util.List;
@@ -27,6 +38,12 @@ public class NoticeStyleActivity extends BaseActivity {
     @BindView(R.id.noticeStyle_recyclerView)
     RecyclerView noticeStyle_recyclerView;
 
+    @BindView(R.id.show)
+    Button show;
+
+    private int currentPosition = -1;
+    private JAdapter<NoticeStyle> noticeStyleJAdapter;
+
     @Override
     public int getLayout() {
         return R.layout.activity_notice;
@@ -39,12 +56,28 @@ public class NoticeStyleActivity extends BaseActivity {
         top.setLayoutParams(layoutParams);
 
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this,RecyclerView.VERTICAL,false);
+        GridLayoutManager layoutManager = new GridLayoutManager(this,2);
         noticeStyle_recyclerView.setLayoutManager(layoutManager);
-        JAdapter<NoticeStyle> noticeStyleJAdapter = new JAdapter<>(this, noticeStyle_recyclerView, new int[]{}, new JAdapter.adapterListener<NoticeStyle>() {
+        noticeStyleJAdapter = new JAdapter<>(this, noticeStyle_recyclerView, new int[]{R.layout.notice_style_item}, new JAdapter.adapterListener<NoticeStyle>() {
             @Override
             public void setItems(BaseViewHolder holder, int position, List<NoticeStyle> datas) {
-
+                TextView nameStyle = holder.getView(R.id.nameStyle);
+                RelativeLayout imgStyleWrapper = holder.getView(R.id.imgStyleWrapper);
+                CardView wrapper = holder.getView(R.id.wrapper);
+                ImageView imgStyle = holder.getView(R.id.imgStyle);
+                nameStyle.setText(datas.get(position).getName());
+                imgStyle.setImageDrawable(ContextCompat.getDrawable(NoticeStyleActivity.this,datas.get(position).getImg()));
+                if(currentPosition==position){
+                    imgStyleWrapper.setBackgroundColor(Color.parseColor("#ffa39e"));
+                }else{
+                    imgStyleWrapper.setBackgroundColor(Color.parseColor("#ffffff"));
+                }
+                wrapper.setOnClickListener(v -> {
+                    imgStyleWrapper.setBackgroundColor(Color.parseColor("#ffa39e"));
+                    MMkvUtil.getInstance("Configuration").encode("NoticeStyle", position);
+                    if(currentPosition!=position)noticeStyleJAdapter.adapter.notifyItemChanged(currentPosition);
+                    currentPosition = position;
+                });
             }
 
             @Override
@@ -62,13 +95,16 @@ public class NoticeStyleActivity extends BaseActivity {
 
     @Override
     public void InitData() {
-
+        currentPosition = MMkvUtil.getInstance(this,"Configuration").decodeInt("NoticeStyle");
+        noticeStyleJAdapter.adapter.setData(NoticeStyles.noticeStyles);
     }
 
     @Override
     public void InitListener() {
         return_aib.setOnClickListener(v -> finish());
-
+        show.setOnClickListener(v ->{
+            Notifications.sendNormalNotification(NoticeStyleActivity.this,"疯狂外卖","样式测试",new Intent(NoticeStyleActivity.this,HomeActivity.class),1);
+        });
     }
 
     @Override

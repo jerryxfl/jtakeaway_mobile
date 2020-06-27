@@ -42,6 +42,9 @@ public class SoundUtil {
     }
 
     public static void release() {
-        if(soundPool != null)soundPool.release();
+        if(soundPool != null){
+            soundPool.release();
+            soundPool = null;
+        }
     }
 }

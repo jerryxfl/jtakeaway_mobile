@@ -1,6 +1,5 @@
 package com.jerry.jtakeaway.ui.user.activity;
 
-import android.Manifest;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
@@ -82,10 +81,10 @@ public class HomeActivity extends BaseActivity {
     public void InitView() {
         SignEventBus();
         //申请权限 放入权限数组,记得再manifests申请
-        RequestPermission(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION});
+//        RequestPermission(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                Manifest.permission.READ_EXTERNAL_STORAGE,
+//                Manifest.permission.ACCESS_COARSE_LOCATION,
+//                Manifest.permission.ACCESS_FINE_LOCATION});
         ViewGroup.LayoutParams layoutParams = top.getLayoutParams();
         layoutParams.height = PixAndDpUtil.getStatusBarHeight(this);
         top.setLayoutParams(layoutParams);
