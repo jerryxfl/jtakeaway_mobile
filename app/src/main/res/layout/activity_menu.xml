@@ -131,7 +131,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="10dp">
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="10dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -213,6 +215,7 @@
                 </LinearLayout>
                 <!--                选择优惠卷-->
                 <RelativeLayout
+                    android:background="?android:selectableItemBackground"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp">
@@ -251,9 +254,10 @@
                 android:background="#E4E4E4" />
             <!--            选择订单-->
             <RelativeLayout
+                android:background="?android:selectableItemBackground"
+                android:id="@+id/choose_food_aib"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:padding="10dp">
 
                 <TextView
@@ -273,7 +277,6 @@
                     android:textSize="14sp" />
 
                 <com.jerry.jtakeaway.custom.AniImgButton
-                    android:id="@+id/choose_food_aib"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_alignParentEnd="true"
@@ -289,9 +292,10 @@
                 android:background="#E4E4E4" />
             <!--            选择地址-->
             <RelativeLayout
+                android:background="?android:selectableItemBackground"
+                android:id="@+id/choose_address_aib"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:padding="10dp">
 
                 <TextView
@@ -327,7 +331,6 @@
                 </LinearLayout>
 
                 <com.jerry.jtakeaway.custom.AniImgButton
-                    android:id="@+id/choose_address_aib"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_alignParentEnd="true"

@@ -3,8 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="10dp">
+    android:padding="10dp"
+    android:id="@+id/container">
     <androidx.cardview.widget.CardView
+        android:id="@+id/shop_image_wrapper"
         app:cardCornerRadius="20dp"
         android:layout_width="0dp"
         android:layout_weight="1.2"

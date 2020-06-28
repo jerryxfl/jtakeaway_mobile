@@ -9,6 +9,8 @@ public class Msg {
     private Integer senduserid;
     private String content;
     private Timestamp sendTime;
+    private int readalready;
+    private int pushalready;
 
     public int getId() {
         return id;
@@ -56,8 +58,8 @@ public class Msg {
         if (o == null || getClass() != o.getClass()) return false;
         Msg msg = (Msg) o;
         return id == msg.id &&
-                acceptuserid.equals(msg.acceptuserid) &&
-                senduserid.equals(msg.senduserid) &&
+                acceptuserid == msg.acceptuserid &&
+                senduserid == msg.senduserid &&
                 Objects.equals(content, msg.content) &&
                 Objects.equals(sendTime, msg.sendTime);
     }
@@ -65,5 +67,21 @@ public class Msg {
     @Override
     public int hashCode() {
         return Objects.hash(id, acceptuserid, senduserid, content, sendTime);
+    }
+
+    public int getReadalready() {
+        return readalready;
+    }
+
+    public void setReadalready(int readalready) {
+        this.readalready = readalready;
+    }
+
+    public int getPushalready() {
+        return pushalready;
+    }
+
+    public void setPushalready(int pushalready) {
+        this.pushalready = pushalready;
     }
 }

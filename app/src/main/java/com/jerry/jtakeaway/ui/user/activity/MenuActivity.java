@@ -37,6 +37,7 @@ import com.jerry.jtakeaway.custom.JBottomDialog;
 import com.jerry.jtakeaway.custom.JCenterDialog;
 import com.jerry.jtakeaway.custom.JTIButton;
 import com.jerry.jtakeaway.custom.JgridLayoutManager;
+import com.jerry.jtakeaway.eventBusEvents.PagePositionEvent;
 import com.jerry.jtakeaway.ui.generalActivity.AddressManagerActivity;
 import com.jerry.jtakeaway.ui.generalActivity.EditAddressActivity;
 import com.jerry.jtakeaway.utils.GsonUtil;
@@ -44,6 +45,7 @@ import com.jerry.jtakeaway.utils.JsonUtils;
 import com.jerry.jtakeaway.utils.OkHttp3Util;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
 
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
@@ -124,9 +126,9 @@ public class MenuActivity extends BaseActivity {
     @BindView(R.id.choose_conpon_aib)
     AniImgButton choose_conpon_aib;
     @BindView(R.id.choose_food_aib)
-    AniImgButton choose_food_aib;
+    RelativeLayout choose_food_aib;
     @BindView(R.id.choose_address_aib)
-    AniImgButton choose_address_aib;
+    RelativeLayout choose_address_aib;
 
     //地址
     @BindView(R.id.address_tv)
@@ -153,6 +155,7 @@ public class MenuActivity extends BaseActivity {
     private Suser suser;
     private Address setAddress;
     private Menus setMenus;
+    private int setSize = 0;
     private JCenterDialog jCenterDialog;
 
 
@@ -519,22 +522,15 @@ public class MenuActivity extends BaseActivity {
                     Glide.with(MenuActivity.this)
                             .load(menu.getFoodimg())
                             .into(foodImg);
-
-                    Glide.with(MenuActivity.this)
-                            .load(menu.getFoodimg())
-                            .into(foodImg2);
-
                     foodName.setText(menu.getFoodname());
-                    foodName2.setText(menu.getFoodname());
-
                     shopLocation.setText(suser.getShopaddress());
                     shopDistance.setText("距离:100KM");
 
-                    menuBtn.setOnClickListener(v2 -> {
-                        setMenus = menu;
-                        choseFood_tv.setText(menu.getFoodname());
-                        mFoodDialog.dismiss();
-                    });
+
+
+                    setMenuItem(foodImg2,foodName2,menu,menuBtn,1);
+                    setMenuItem(view.findViewById(R.id.foodImg3),view.findViewById(R.id.foodName3),menu,view.findViewById(R.id.menu3),1);
+                    setMenuItem(view.findViewById(R.id.foodImg4),view.findViewById(R.id.foodName4),menu,view.findViewById(R.id.menu4),2);
                 });
                 mFoodDialog.show();
             } else {
@@ -565,7 +561,7 @@ public class MenuActivity extends BaseActivity {
                 return;
             }
             //生成订单
-            createOrder(suser.getId(), setMenus.getId(), 1);
+            createOrder(suser.getId(), setMenus.getId(), setSize);
         });
 
         shopName.setOnClickListener(v -> {
@@ -585,6 +581,20 @@ public class MenuActivity extends BaseActivity {
 
         return_aib.setOnClickListener(v -> finish());
     }
+
+    private void setMenuItem(ImageView foodImg,TextView foodName,Menus menu,LinearLayout menuBtn,int size) {
+        Glide.with(MenuActivity.this)
+                .load(menu.getFoodimg())
+                .into(foodImg);
+        foodName.setText(menu.getFoodname()+"x"+size);
+        menuBtn.setOnClickListener(v2 -> {
+            setMenus = menu;
+            choseFood_tv.setText(menu.getFoodname());
+            mFoodDialog.dismiss();
+        });
+        setSize = size;
+    }
+
 
     @Override
     public void destroy() {
@@ -614,7 +624,14 @@ public class MenuActivity extends BaseActivity {
                                     sDialog.dismissWithAnimation();
                                 })
                                 .setCancelText("去看看")
-                                .setCancelClickListener(SweetAlertDialog::dismissWithAnimation)
+                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                    @Override
+                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                        EventBus.getDefault().post(new PagePositionEvent(1,2));
+                                        sweetAlertDialog.dismissWithAnimation();
+                                        startActivity(new Intent(MenuActivity.this,HomeActivity.class));
+                                    }
+                                })
                                 .show();
                     }
                 }
@@ -633,7 +650,7 @@ public class MenuActivity extends BaseActivity {
             jCenterDialog = new JCenterDialog(this, R.layout.loading_dialog);
         jCenterDialog.show();
 
-        OkHttp3Util.GET(JUrl.create_order(suserid, menuid, size), this, new Callback() {
+        OkHttp3Util.GET(JUrl.create_order(suserid, menuid, size,setAddress.getId()), this, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 new Handler(Looper.getMainLooper()).post(() -> {

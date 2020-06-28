@@ -18,7 +18,12 @@ public class NotificationChannels {
 
 
     public static void createAllNotificationChannels(Context context){
-        SYSTEM_ID = "JERRY_SYSTEM"+System.currentTimeMillis();
+        if(MMkvUtil.getInstance(context,"Configuration").decodeString("SYSTEM_ID")==null||MMkvUtil.getInstance(context,"Configuration").decodeString("SYSTEM_ID").equals("")){
+            SYSTEM_ID = "JERRY_SYSTEM"+System.currentTimeMillis();
+            MMkvUtil.getInstance(context,"Configuration").encode("SYSTEM_ID",SYSTEM_ID);
+        }else{
+            SYSTEM_ID = MMkvUtil.getInstance(context,"Configuration").decodeString("SYSTEM_ID");
+        }
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
             AudioAttributes  att = new AudioAttributes.Builder().setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -46,7 +51,7 @@ public class NotificationChannels {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager.deleteNotificationChannel(SYSTEM_ID);
+            notificationManager.deleteNotificationChannel(MMkvUtil.getInstance(context,"Configuration").decodeString("SYSTEM_ID"));
         }
     }
 

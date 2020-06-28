@@ -1,5 +1,6 @@
 package com.jerry.jtakeaway.ui.user.activity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,9 +27,11 @@ import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.Menus;
 import com.jerry.jtakeaway.bean.Slide;
 import com.jerry.jtakeaway.bean.Suser;
+import com.jerry.jtakeaway.bean.model.Barrage;
 import com.jerry.jtakeaway.bean.responseBean.Result2;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
+import com.jerry.jtakeaway.custom.JBarrageView;
 import com.jerry.jtakeaway.custom.JgridLayoutManager;
 import com.jerry.jtakeaway.utils.GsonUtil;
 import com.jerry.jtakeaway.utils.JsonUtils;
@@ -48,6 +51,7 @@ import okhttp3.Callback;
 import okhttp3.Response;
 import per.wsj.library.AndRatingBar;
 
+@SuppressLint("all")
 public class ShopActivity extends BaseActivity {
     @BindView(R.id.top)
     View top;
@@ -80,12 +84,15 @@ public class ShopActivity extends BaseActivity {
     @BindView(R.id.menu_recyclerview)
     RecyclerView menu_recyclerview;
 
+
+
     private Suser suser;
     private JAdapter<Slide> bannerAdapter;
     private List<Slide> slideList = new ArrayList<Slide>();
     private LinearLayoutManager banner_layoutManager;
     private JAdapter<Menus> menusJAdapter;
     private List<Menus> menusList = new ArrayList<Menus>();
+    private List<Barrage> barrageList = new ArrayList<Barrage>();
 
     @Override
     public int getLayout() {
@@ -170,7 +177,26 @@ public class ShopActivity extends BaseActivity {
         setData(suser);
         getSlider(suser.getId());//获得轮播图
         getMenus(suser.getId());
+
+
+        setBarrage();
+
     }
+
+    private void setBarrage() {
+        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
+        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
+        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
+        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
+        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
+        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
+        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
+        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
+        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
+    }
+
+
+
 
     //获得商家菜单
     private void getMenus(int id) {
@@ -252,6 +278,5 @@ public class ShopActivity extends BaseActivity {
 
     @Override
     public void destroy() {
-
     }
 }

@@ -141,4 +141,3 @@ public class AlbumActivity extends BaseActivity {
     }
 }
 
-//http://121.199.9.234:8080/api-0.1/advatar/1072059168/1592993503156.png

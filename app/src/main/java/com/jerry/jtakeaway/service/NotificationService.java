@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Build;
@@ -18,7 +17,6 @@ import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.Msg;
 import com.jerry.jtakeaway.eventBusEvents.WebSocketEvent;
 import com.jerry.jtakeaway.eventBusEvents.WebSocketEventType;
-import com.jerry.jtakeaway.ui.user.activity.HomeActivity;
 import com.jerry.jtakeaway.utils.MMkvUtil;
 import com.jerry.jtakeaway.websocket.WebSocketClient;
 
@@ -66,7 +64,6 @@ public class NotificationService extends Service {
         } else {
             builder = new NotificationCompat.Builder(getApplicationContext());
         }
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,new Intent(this,HomeActivity.class),0);
         builder.setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.logo_app)
                 .setOngoing(true)
@@ -95,7 +92,8 @@ public class NotificationService extends Service {
 
                 @Override
                 public void onMessage(Msg message) {
-                    Notifications.sendNormalNotification(NotificationService.this,"系统信息",message.getContent(),new Intent(NotificationService.this, HomeActivity.class),index);
+                    System.out.println("消息id"+message.getId());
+                    Notifications.sendNormalNotification(NotificationService.this,"系统信息",message.getContent(),index,message.getId());
                     index++;
                 }
 
@@ -107,6 +105,7 @@ public class NotificationService extends Service {
                 @Override
                 public void onError(Exception ex) {
                     ex.printStackTrace();
+                    EventBus.getDefault().post(new WebSocketEvent(WebSocketEventType.OPEN));
                 }
             });
             webSocketClient.connectBlocking();

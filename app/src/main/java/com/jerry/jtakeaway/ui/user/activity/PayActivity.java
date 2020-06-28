@@ -183,7 +183,6 @@ public class PayActivity extends BaseActivity {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
                 Result2 result = JsonUtils.getResult2(jsonObject);
                 if (result.getCode() == 10000) {
-                    System.out.println(result.getData().toString());
                     couponList.clear();
                     couponList.addAll(GsonUtil.jsonToList(result.getData().toString(), Coupon.class));
                     new Handler(Looper.getMainLooper()).post(() -> {

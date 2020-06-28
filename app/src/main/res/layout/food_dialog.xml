@@ -60,28 +60,90 @@
             android:layout_height="1dp"
             android:background="#919191"/>
         <LinearLayout
-            android:id="@+id/menu"
-            android:layout_marginTop="20dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/menu_choose_selector">
-            <ImageView
-                android:id="@+id/foodImg2"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/dribbble_music_corner"/>
-            <TextView
-                android:id="@+id/foodName2"
-                android:layout_marginStart="5dp"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/menu"
+                android:layout_marginTop="20dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="500g"/>
+                android:background="@drawable/menu_choose_selector">
+                <ImageView
+                    android:id="@+id/foodImg2"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/dribbble_music_corner"/>
+                <TextView
+                    android:maxEms="4"
+                    android:singleLine="true"
+                    android:id="@+id/foodName2"
+                    android:layout_marginStart="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="x1"/>
 
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginStart="20dp"
+                android:id="@+id/menu3"
+                android:layout_marginTop="20dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/menu_choose_selector">
+                <ImageView
+                    android:id="@+id/foodImg3"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/dribbble_music_corner"/>
+                <TextView
+                    android:singleLine="true"
+                    android:maxEms="4"
+                    android:id="@+id/foodName3"
+                    android:layout_marginStart="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="x2"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginStart="20dp"
+                android:id="@+id/menu4"
+                android:layout_marginTop="20dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/menu_choose_selector">
+                <ImageView
+                    android:id="@+id/foodImg4"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/dribbble_music_corner"/>
+                <TextView
+                    android:singleLine="true"
+                    android:id="@+id/foodName4"
+                    android:maxEms="4"
+                    android:layout_marginStart="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="x3"/>
+
+            </LinearLayout>
         </LinearLayout>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

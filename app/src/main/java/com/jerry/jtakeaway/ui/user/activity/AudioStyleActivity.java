@@ -1,6 +1,5 @@
 package com.jerry.jtakeaway.ui.user.activity;
 
-import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -118,7 +117,7 @@ public class AudioStyleActivity extends BaseActivity {
     public void InitListener() {
         return_aib.setOnClickListener(v -> finish());
         show.setOnClickListener(v ->{
-            Notifications.sendNormalNotification(AudioStyleActivity.this,"疯狂外卖","音效测试",new Intent(AudioStyleActivity.this,HomeActivity.class),1);
+            Notifications.sendNormalNotification(AudioStyleActivity.this,"疯狂外卖","音效测试",1,-1);
         });
     }
 

@@ -14,8 +14,8 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="#ffffff"/>
-        <androidx.camera.view.PreviewView
-            android:id="@+id/preview"
+        <SurfaceView
+            android:id="@+id/SurfaceView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </RelativeLayout>
@@ -69,13 +69,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1">
-                <ImageView
-                    android:id="@+id/album"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_centerInParent="true"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/bg_special_disease_circle" />
+
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

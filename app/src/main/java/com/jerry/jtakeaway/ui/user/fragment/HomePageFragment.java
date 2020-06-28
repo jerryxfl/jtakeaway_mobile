@@ -12,11 +12,13 @@ import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.GoRefresh.GoRefreshLayout;
@@ -34,10 +36,12 @@ import com.jerry.jtakeaway.bean.Menus;
 import com.jerry.jtakeaway.bean.Slide;
 import com.jerry.jtakeaway.bean.events.PageEvents;
 import com.jerry.jtakeaway.bean.responseBean.Result2;
+import com.jerry.jtakeaway.bean.responseBean.ShopHaveMenu;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
 import com.jerry.jtakeaway.custom.JgridLayoutManager;
 import com.jerry.jtakeaway.ui.user.activity.MenuActivity;
+import com.jerry.jtakeaway.ui.user.activity.ShopActivity;
 import com.jerry.jtakeaway.utils.GPSUtils;
 import com.jerry.jtakeaway.utils.GsonUtil;
 import com.jerry.jtakeaway.utils.JsonUtils;
@@ -61,6 +65,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import per.wsj.library.AndRatingBar;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnNeverAskAgain;
 import permissions.dispatcher.OnPermissionDenied;
@@ -97,15 +102,16 @@ public class HomePageFragment extends BaseFragment {
     private CarouselLayoutManager layoutManager;
     private Timer timer;
     private int currentPosition;
-    private List<Integer> datas;
     private JAdapter<Menus> hotShopAdapter;
     private JAdapter<Slide> jBannerAdapter;
     private JAdapter<Menus> jMneuAdapter;
-    private JAdapter<Integer> peopleRedAdapter;
-    private JAdapter<Integer> fiveLevelAdapter;
+    private JAdapter<ShopHaveMenu> peopleRedAdapter;
+    private JAdapter<ShopHaveMenu> fiveLevelAdapter;
     List<Menus> menusList = new ArrayList<Menus>();
     List<Slide> slideList = new ArrayList<Slide>();
     List<Menus> hot_shop_menuList = new ArrayList<Menus>();
+    List<ShopHaveMenu> five_shopList = new ArrayList<ShopHaveMenu>();
+    List<ShopHaveMenu> red_people_shopList = new ArrayList<ShopHaveMenu>();
 
     private List<Broadcasts> broadcastsList = new ArrayList<>();
 
@@ -229,21 +235,47 @@ public class HomePageFragment extends BaseFragment {
         //five_shop_recommend--------------------****************---------------------------------
         JgridLayoutManager jgridLayoutManager_five_shop = new JgridLayoutManager(context, 1);
         five_shop_recyclerview.setLayoutManager(jgridLayoutManager_five_shop);
-        fiveLevelAdapter = new JAdapter<Integer>(context, five_shop_recyclerview, new int[]{R.layout.shop_item}, new JAdapter.adapterListener<Integer>() {
+        fiveLevelAdapter = new JAdapter<ShopHaveMenu>(context, five_shop_recyclerview, new int[]{R.layout.shop_item}, new JAdapter.adapterListener<ShopHaveMenu>() {
             @Override
-            public void setItems(BaseViewHolder holder, int position, List<Integer> datas) {
-                Glide.with(context)
-                        .load(datas.get(position))
-                        .into((ImageView) holder.getView(R.id.shop_image));
+            public void setItems(BaseViewHolder holder, int position, List<ShopHaveMenu> datas) {
+                ImageView shop_image = holder.getView(R.id.shop_image);
+                LinearLayout container = holder.getView(R.id.container);
+                CardView shop_image_wrapper = holder.getView(R.id.shop_image_wrapper);
+                TextView shopname_tv = holder.getView(R.id.shopname_tv);
+                AndRatingBar shopleve_rating = holder.getView(R.id.shopleve_rating);
+                TextView decr_tv = holder.getView(R.id.decr_tv);
+                if(datas.get(position).getMenu()!=null){
+                    Glide.with(context)
+                            .load(datas.get(position).getMenu().getFoodimg())
+                            .into(shop_image);
+                }else{
+                    shop_image_wrapper.setVisibility(View.GONE);
+                }
+                if(datas.get(position).getSuser().getLevel()>5){
+                    shopleve_rating.setRating(5);
+                }else{
+                    shopleve_rating.setRating((float) datas.get(position).getSuser().getLevel());
+                }
+
+                shopname_tv.setText(datas.get(position).getSuser().getShopname());
+                decr_tv.setText(datas.get(position).getSuser().getDscr());
+
+                container.setOnClickListener(v -> {
+                    Intent intent = new Intent(context, ShopActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("shop", datas.get(position).getSuser());
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                });
             }
 
             @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<Integer> datas) {
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<ShopHaveMenu> datas) {
 
             }
 
             @Override
-            public int getViewType(List<Integer> datas, int position) {
+            public int getViewType(List<ShopHaveMenu> datas, int position) {
                 return 0;
             }
         });
@@ -253,21 +285,47 @@ public class HomePageFragment extends BaseFragment {
         //people_red_recommend--------------------****************---------------------------------
         JgridLayoutManager jgridLayoutManager_people_red = new JgridLayoutManager(context, 1);
         people_red_recyclerview.setLayoutManager(jgridLayoutManager_people_red);
-        peopleRedAdapter = new JAdapter<Integer>(context, people_red_recyclerview, new int[]{R.layout.shop_item}, new JAdapter.adapterListener<Integer>() {
+        peopleRedAdapter = new JAdapter<ShopHaveMenu>(context, people_red_recyclerview, new int[]{R.layout.shop_item}, new JAdapter.adapterListener<ShopHaveMenu>() {
             @Override
-            public void setItems(BaseViewHolder holder, int position, List<Integer> datas) {
-                Glide.with(context)
-                        .load(datas.get(position))
-                        .into((ImageView) holder.getView(R.id.shop_image));
+            public void setItems(BaseViewHolder holder, int position, List<ShopHaveMenu> datas) {
+                ImageView shop_image = holder.getView(R.id.shop_image);
+                LinearLayout container = holder.getView(R.id.container);
+                CardView shop_image_wrapper = holder.getView(R.id.shop_image_wrapper);
+                TextView shopname_tv = holder.getView(R.id.shopname_tv);
+                AndRatingBar shopleve_rating = holder.getView(R.id.shopleve_rating);
+                TextView decr_tv = holder.getView(R.id.decr_tv);
+                if(datas.get(position).getMenu()!=null){
+                    Glide.with(context)
+                            .load(datas.get(position).getMenu().getFoodimg())
+                            .into(shop_image);
+                }else{
+                    shop_image_wrapper.setVisibility(View.GONE);
+                }
+                if(datas.get(position).getSuser().getLevel()>5){
+                    shopleve_rating.setRating(5);
+                }else{
+                    shopleve_rating.setRating((float) datas.get(position).getSuser().getLevel());
+                }
+
+                shopname_tv.setText(datas.get(position).getSuser().getShopname());
+                decr_tv.setText(datas.get(position).getSuser().getDscr());
+
+                container.setOnClickListener(v -> {
+                    Intent intent = new Intent(context, ShopActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("shop", datas.get(position).getSuser());
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                });
             }
 
             @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<Integer> datas) {
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<ShopHaveMenu> datas) {
 
             }
 
             @Override
-            public int getViewType(List<Integer> datas, int position) {
+            public int getViewType(List<ShopHaveMenu> datas, int position) {
                 return 0;
             }
         });
@@ -285,7 +343,7 @@ public class HomePageFragment extends BaseFragment {
                     System.out.println(location1[i]);
                     mLocation = mLocation + " " + location1[i];
                     if(i==2){
-                        location_tv.setText(location1[i]);
+                        if(location_tv!=null)location_tv.setText(location1[i]);
                     }
                 }
             }
@@ -297,7 +355,7 @@ public class HomePageFragment extends BaseFragment {
                     System.out.println(location1[i]);
                     mLocation = mLocation + " " + location1[i];
                     if(i==2){
-                        location_tv.setText(location1[i]);
+                        if(location_tv!=null)location_tv.setText(location1[i]);
                     }
                 }
 
@@ -392,29 +450,68 @@ public class HomePageFragment extends BaseFragment {
         getBorCasts();
         getHotMenus();
         getHotShops();
-        //hot_shop
-        List<Integer> datass = new ArrayList<Integer>();
-        datass.add(R.drawable.concrete_road_between_trees_563356);
-        datass.add(R.drawable.concrete_road_between_trees_563356);
-        datass.add(R.drawable.concrete_road_between_trees_563356);
-        datass.add(R.drawable.hot_art);
-        datass.add(R.drawable.hot_art);
-        datass.add(R.drawable.dribbble_music_corner);
-        datass.add(R.drawable.dribbble_music_corner);
-        datass.add(R.drawable.icon_dark_green_by_milkinside);
-        datass.add(R.drawable.icon_dark_green_by_milkinside);
-        datass.add(R.drawable.icon_dark_green_by_milkinside);
-        //end hot_shop
+        getFiveShops();
+        getRedPeopleShops();
+    }
 
+    private void getRedPeopleShops() {
+        OkHttp3Util.GET(JUrl.red_people_shop(0), context, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
 
-        //五星
-        fiveLevelAdapter.adapter.setHeader(datass);
-        //end五星
+                });
+            }
 
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result2 result = JsonUtils.getResult2(jsonObject);
+                if (result.getCode() == 10000) {
+                    red_people_shopList.clear();
+                    red_people_shopList.addAll(GsonUtil.jsonToList(result.getData().toString(), ShopHaveMenu.class));
+                    System.out.println("热门商家:" + result.getData());
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        peopleRedAdapter.adapter.setData(red_people_shopList);
+                    });
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(context, "数据错误", Toast.LENGTH_SHORT).show();
+                    });
+                }
 
-        //网红
-        peopleRedAdapter.adapter.setHeader(datass);
-        //end 网红
+            }
+        });
+    }
+
+    private void getFiveShops() {
+        OkHttp3Util.GET(JUrl.five_level_shop(0), context, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result2 result = JsonUtils.getResult2(jsonObject);
+                if (result.getCode() == 10000) {
+                    five_shopList.clear();
+                    five_shopList.addAll(GsonUtil.jsonToList(result.getData().toString(), ShopHaveMenu.class));
+                    System.out.println("热门商家:" + result.getData());
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        fiveLevelAdapter.adapter.setData(five_shopList);
+                    });
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(context, "数据错误", Toast.LENGTH_SHORT).show();
+                    });
+                }
+
+            }
+        });
     }
 
     private void getHotShops() {
@@ -599,6 +696,8 @@ public class HomePageFragment extends BaseFragment {
                 getBorCasts();
                 getHotMenus();
                 getHotShops();
+                getFiveShops();
+                getRedPeopleShops();
                 //添加你自己的代码
                 new Handler().postDelayed(new Runnable() {
                     @Override

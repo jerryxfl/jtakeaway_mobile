@@ -20,6 +20,7 @@ import com.jerry.jtakeaway.bean.responseBean.ResponseUser;
 import com.jerry.jtakeaway.bean.responseBean.Result1;
 import com.jerry.jtakeaway.custom.JCenterDialog;
 import com.jerry.jtakeaway.custom.JViewPager;
+import com.jerry.jtakeaway.eventBusEvents.PagePositionEvent;
 import com.jerry.jtakeaway.eventBusEvents.WebSocketEvent;
 import com.jerry.jtakeaway.eventBusEvents.WebSocketEventType;
 import com.jerry.jtakeaway.ui.generalActivity.LoginActivity;
@@ -71,6 +72,7 @@ public class HomeActivity extends BaseActivity {
     @SeleIcons
     private static final int[] mSeleIcons = {R.drawable.homepage_selector, R.drawable.orderform_selector, R.drawable.information_selector, R.drawable.me_selector};
     private JCenterDialog jCenterDialog;
+    private List<Fragment> fragments;
 
     @Override
     public int getLayout() {
@@ -80,16 +82,11 @@ public class HomeActivity extends BaseActivity {
     @Override
     public void InitView() {
         SignEventBus();
-        //申请权限 放入权限数组,记得再manifests申请
-//        RequestPermission(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-//                Manifest.permission.READ_EXTERNAL_STORAGE,
-//                Manifest.permission.ACCESS_COARSE_LOCATION,
-//                Manifest.permission.ACCESS_FINE_LOCATION});
         ViewGroup.LayoutParams layoutParams = top.getLayoutParams();
         layoutParams.height = PixAndDpUtil.getStatusBarHeight(this);
         top.setLayoutParams(layoutParams);
 
-        List<Fragment> fragments = new ArrayList<>();
+        fragments = new ArrayList<>();
         fragments.add(new HomePageFragment());
         fragments.add(new OrderFragment());
         fragments.add(new EmailFragment());
@@ -106,13 +103,14 @@ public class HomeActivity extends BaseActivity {
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void PageChangeEvent(PageEvents events){
+    public void PageChangeEvent(PageEvents events) {
         viewPager.setScrollble(events.isCanScroll());
     }
 
     @Override
     public void InitData() {
-        if(UserUtils.getInstance().getUser()==null)Autologin(MMkvUtil.getInstance(HomeActivity.this, "jwts").decodeString("account"),MMkvUtil.getInstance(HomeActivity.this, "jwts").decodeString("password"));
+        if (UserUtils.getInstance().getUser() == null)
+            Autologin(MMkvUtil.getInstance(HomeActivity.this, "jwts").decodeString("account"), MMkvUtil.getInstance(HomeActivity.this, "jwts").decodeString("password"));
     }
 
     @Override
@@ -156,7 +154,7 @@ public class HomeActivity extends BaseActivity {
                 e.printStackTrace();
                 new Handler(Looper.getMainLooper()).post(() -> {
                     jCenterDialog.dismiss();
-                    startActivity(new Intent(HomeActivity.this,LoginActivity.class));
+                    startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                     finish();
                 });
             }
@@ -184,19 +182,27 @@ public class HomeActivity extends BaseActivity {
                     } else {
                         new Handler(Looper.getMainLooper()).post(() -> {
                             jCenterDialog.dismiss();
-                            startActivity(new Intent(HomeActivity.this,LoginActivity.class));
+                            startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                             finish();
                         });
                     }
                 } catch (Exception e) {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         jCenterDialog.dismiss();
-                        startActivity(new Intent(HomeActivity.this,LoginActivity.class));
+                        startActivity(new Intent(HomeActivity.this, LoginActivity.class));
                         finish();
                     });
                 }
             }
         });
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void setPagePosition(PagePositionEvent pagePosition) {
+        if (pagePosition.getPosition_ViewPage() < fragments.size()) {
+            viewPager.setCurrentItem(pagePosition.getPosition_ViewPage());
+        }
     }
 
 

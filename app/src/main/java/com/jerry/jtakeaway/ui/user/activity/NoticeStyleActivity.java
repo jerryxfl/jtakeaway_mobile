@@ -1,6 +1,5 @@
 package com.jerry.jtakeaway.ui.user.activity;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,7 +102,7 @@ public class NoticeStyleActivity extends BaseActivity {
     public void InitListener() {
         return_aib.setOnClickListener(v -> finish());
         show.setOnClickListener(v ->{
-            Notifications.sendNormalNotification(NoticeStyleActivity.this,"疯狂外卖","样式测试",new Intent(NoticeStyleActivity.this,HomeActivity.class),1);
+            Notifications.sendNormalNotification(NoticeStyleActivity.this,"疯狂外卖","样式测试",1,-1);
         });
     }
 

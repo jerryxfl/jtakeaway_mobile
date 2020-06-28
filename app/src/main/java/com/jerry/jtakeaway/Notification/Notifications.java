@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.widget.RemoteViews;
 
+import com.jerry.jtakeaway.BroderCast.NotificationClickReceiver;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.utils.MMkvUtil;
 
@@ -17,26 +18,26 @@ public class Notifications {
 
 
 
-    public static void sendNormalNotification(Context context,String title,String content,Intent intent,int index){
+    public static void sendNormalNotification(Context context,String title,String content ,int index,int msgid){
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         int tag = MMkvUtil.getInstance(context,"Configuration").decodeInt("NoticeStyle");
         Notification.Builder builder = null;
         switch(tag){
             case 0:
                 //默认
-                builder = Default(context,title,content,intent);
+                builder = Default(context,title,content,msgid,index);
                 break;
             case 1:
                 //清新
-                builder = Fresh(context,title,content,intent);
+                builder = Fresh(context,title,content,msgid,index);
                 break;
             case 2:
                 //黑夜
-                builder = Default(context,title,content,intent);
+                builder = Default(context,title,content,msgid,index);
                 break;
             case 3:
                 //白昼
-                builder = Default(context,title,content,intent);
+                builder = Default(context,title,content,msgid,index);
                 break;
         }
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
@@ -45,7 +46,7 @@ public class Notifications {
         Objects.requireNonNull(notificationManager).notify(index, Objects.requireNonNull(builder).build());
     }
 
-    private static Notification.Builder Default(Context context,String title,String content,Intent intent){
+    private static Notification.Builder Default(Context context,String title,String content,int msgid,int index){
         Notification.Builder builder = new Notification.Builder(context).setDefaults(Notification.DEFAULT_SOUND|Notification.DEFAULT_LIGHTS|Notification.DEFAULT_VIBRATE);
         builder.setContentTitle(title);
         builder.setContentText(content);
@@ -53,12 +54,14 @@ public class Notifications {
         builder.setAutoCancel(true);
         builder.setPriority(Notification.PRIORITY_MAX);
         //关闭通知  通知意图
-        PendingIntent pendingIntent = PendingIntent.getActivity(context,0,intent,0);
+        Intent intent = new Intent(context, NotificationClickReceiver.class);
+        intent.putExtra("MSGID",msgid);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,index,intent,PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
         return builder;
     }
 
-    private static Notification.Builder Fresh(Context context,String title,String content,Intent intent){
+    private static Notification.Builder Fresh(Context context,String title,String content,int msgid,int index){
         RemoteViews contentView=new RemoteViews(context.getPackageName(), R.layout.fresh_notice);
 //        contentView.setViewVisibility(R.id.notification_background, View.GONE);
 //        contentView.setViewVisibility(R.id.background, View.VISIBLE);
@@ -76,7 +79,9 @@ public class Notifications {
             builder.setContent(contentView);
         }
         //关闭通知  通知意图
-        PendingIntent pendingIntent = PendingIntent.getActivity(context,0,intent,0);
+        Intent intent = new Intent(context, NotificationClickReceiver.class);
+        intent.putExtra("MSGID",msgid);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,index,intent,PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setContentIntent(pendingIntent);
         return builder;
     }

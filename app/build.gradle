@@ -144,11 +144,4 @@ dependencies {
     implementation "org.permissionsdispatcher:permissionsdispatcher:4.7.0"
     annotationProcessor "org.permissionsdispatcher:permissionsdispatcher-processor:4.7.0"
 
-    //cameraX
-// CameraX core library using camera2 implementation
-    implementation "androidx.camera:camera-camera2:1.0.0-beta06"
-// CameraX Lifecycle Library
-    implementation "androidx.camera:camera-lifecycle:1.0.0-beta06"
-// CameraX View class
-    implementation "androidx.camera:camera-view:1.0.0-alpha13"
 }
