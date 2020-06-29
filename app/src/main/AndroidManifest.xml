@@ -34,10 +34,14 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,UnusedAttribute"
         tools:replace="android:allowBackup,android:icon">
+        <activity android:name=".ui.user.activity.TransactionActivity"></activity>
+        <activity android:name=".ui.user.activity.CommentActivity" />
+        <activity android:name=".ui.user.activity.UserCommentActivity" />
+
         <receiver
             android:name=".BroderCast.NotificationClickReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
 
         <activity
             android:name=".ui.user.activity.CameraActivity"

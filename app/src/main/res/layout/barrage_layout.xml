@@ -11,8 +11,7 @@
         app:civ_border_color="#222222"
         android:id="@+id/avatar"
         android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/c6662b0de7365559f79d9eb6088d9527"/>
+        android:layout_height="30dp"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -28,7 +27,7 @@
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Jack ma"
+            android:layout_gravity="center"
             android:textColor="#2ecc71"/>
 
         <TextView
@@ -36,9 +35,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="哈哈哈"
+            android:layout_gravity="center"
             android:singleLine="true"
-            android:background="@drawable/shape_text"
             android:textColor="#000" />
     </LinearLayout>
 

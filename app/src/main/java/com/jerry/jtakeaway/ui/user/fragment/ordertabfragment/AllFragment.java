@@ -1,5 +1,7 @@
 package com.jerry.jtakeaway.ui.user.fragment.ordertabfragment;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.widget.ImageView;
@@ -16,6 +18,8 @@ import com.jerry.jtakeaway.base.BaseViewHolder;
 import com.jerry.jtakeaway.bean.Menus;
 import com.jerry.jtakeaway.bean.responseBean.ResponseOrder;
 import com.jerry.jtakeaway.custom.JAdapter;
+import com.jerry.jtakeaway.ui.user.activity.MenuActivity;
+import com.jerry.jtakeaway.ui.user.activity.ShopActivity;
 
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -70,8 +74,24 @@ public class AllFragment extends BaseFragment {
                 all_time.setText(simpleDateFormat.format(date));
                 JSONObject json = JSONObject.parseObject(datas.get(position).getDetailedinformation());
                 Menus menu = json.getObject("menu",Menus.class);
-                all_price.setText(String.valueOf(menu.getFoodprice()*datas.get(position).getMenuSize()));
+                all_price.setText("总价: $"+menu.getFoodprice()*datas.get(position).getMenuSize());
                 all_status.setText(datas.get(position).getStatus().getStatusdesc());
+
+                all_shop_img.setOnClickListener(v -> {
+                    Intent intent = new Intent(context, ShopActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("shop",datas.get(position).getSsuser());
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                });
+
+                all_fruit_img.setOnClickListener(v -> {
+                    Intent intent = new Intent(context, MenuActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("menu", datas.get(position).getMenus());
+                    intent.putExtras(bundle);
+                    context.startActivity(intent);
+                });
             }
 
             @Override

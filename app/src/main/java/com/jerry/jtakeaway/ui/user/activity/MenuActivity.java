@@ -23,6 +23,7 @@ import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
 import com.jerry.jtakeaway.base.BaseViewHolder;
 import com.jerry.jtakeaway.bean.Address;
+import com.jerry.jtakeaway.bean.Comment;
 import com.jerry.jtakeaway.bean.Coupon;
 import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.Menus;
@@ -33,6 +34,7 @@ import com.jerry.jtakeaway.bean.responseBean.Result1;
 import com.jerry.jtakeaway.bean.responseBean.Result2;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
+import com.jerry.jtakeaway.custom.JBarrageView;
 import com.jerry.jtakeaway.custom.JBottomDialog;
 import com.jerry.jtakeaway.custom.JCenterDialog;
 import com.jerry.jtakeaway.custom.JTIButton;
@@ -138,6 +140,9 @@ public class MenuActivity extends BaseActivity {
     @BindView(R.id.pay_rel)
     RelativeLayout pay_rel;
 
+    @BindView(R.id.barrage)
+    JBarrageView barrage;
+
     //3个选择dialog
     JBottomDialog mConponDialog;
     JBottomDialog mFoodDialog;
@@ -157,6 +162,7 @@ public class MenuActivity extends BaseActivity {
     private Menus setMenus;
     private int setSize = 0;
     private JCenterDialog jCenterDialog;
+    private List<Comment> barrageList = new ArrayList<Comment>();
 
 
     @Override
@@ -221,6 +227,36 @@ public class MenuActivity extends BaseActivity {
         getConpon();
         getOrders();
     }
+
+    private void getMsg() {
+        OkHttp3Util.GET(JUrl.shop_comment(suser.getId()), this, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result2 result = JsonUtils.getResult2(jsonObject);
+                if (result.getCode() == 10000) {
+                    barrageList.addAll(GsonUtil.parserJsonToArrayBeans(result.getData().toString(), Comment.class));
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        if(barrageList.size()!=0){
+                            System.out.println("弹幕大小:"+barrageList.size());
+                            barrage.setBarrageList(barrageList);
+                        }
+                    });
+                }else {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(MenuActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        });
+
+    }
+
 
 
     //获得所有订单
@@ -298,7 +334,7 @@ public class MenuActivity extends BaseActivity {
                 if (result.getCode() == 10000) {
                     address.addAll(GsonUtil.jsonToList(result.getData().toString(), com.jerry.jtakeaway.bean.Address.class));
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        if (!address.isEmpty()){
+                        if (!address.isEmpty()) {
                             if (address_tv != null)
                                 address_tv.setText(address.get(0).getAddress() + address.get(0).getDetaileaddress());
                             setAddress = address.get(0);
@@ -335,6 +371,7 @@ public class MenuActivity extends BaseActivity {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         if (moreinfo_tv != null) moreinfo_tv.setText(suser.getShopaddress());
                         if (shopName != null) shopName.setText(suser.getShopname() + ">");
+                        getMsg();
                     });
                 } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -527,10 +564,9 @@ public class MenuActivity extends BaseActivity {
                     shopDistance.setText("距离:100KM");
 
 
-
-                    setMenuItem(foodImg2,foodName2,menu,menuBtn,1);
-                    setMenuItem(view.findViewById(R.id.foodImg3),view.findViewById(R.id.foodName3),menu,view.findViewById(R.id.menu3),1);
-                    setMenuItem(view.findViewById(R.id.foodImg4),view.findViewById(R.id.foodName4),menu,view.findViewById(R.id.menu4),2);
+                    setMenuItem(foodImg2, foodName2, menu, menuBtn, 1);
+                    setMenuItem(view.findViewById(R.id.foodImg3), view.findViewById(R.id.foodName3), menu, view.findViewById(R.id.menu3), 1);
+                    setMenuItem(view.findViewById(R.id.foodImg4), view.findViewById(R.id.foodName4), menu, view.findViewById(R.id.menu4), 2);
                 });
                 mFoodDialog.show();
             } else {
@@ -582,11 +618,11 @@ public class MenuActivity extends BaseActivity {
         return_aib.setOnClickListener(v -> finish());
     }
 
-    private void setMenuItem(ImageView foodImg,TextView foodName,Menus menu,LinearLayout menuBtn,int size) {
+    private void setMenuItem(ImageView foodImg, TextView foodName, Menus menu, LinearLayout menuBtn, int size) {
         Glide.with(MenuActivity.this)
                 .load(menu.getFoodimg())
                 .into(foodImg);
-        foodName.setText(menu.getFoodname()+"x"+size);
+        foodName.setText(menu.getFoodname() + "x" + size);
         menuBtn.setOnClickListener(v2 -> {
             setMenus = menu;
             choseFood_tv.setText(menu.getFoodname());
@@ -609,7 +645,7 @@ public class MenuActivity extends BaseActivity {
         System.out.println("本地" + suserid + "  " + menuid + "   " + size);
         boolean tag = false;
         for (Orde orde : all_orders) {
-            if (orde.getSuserid() == suserid  &&orde.getStatusid() == 1) {
+            if (orde.getSuserid() == suserid && orde.getStatusid() == 1) {
                 com.alibaba.fastjson.JSONObject json = JSONObject.parseObject(orde.getMenus());
                 for (Map.Entry<String, Object> entry : json.entrySet()) {
                     System.out.println("在线" + entry.getKey() + "  " + entry.getValue());
@@ -624,13 +660,10 @@ public class MenuActivity extends BaseActivity {
                                     sDialog.dismissWithAnimation();
                                 })
                                 .setCancelText("去看看")
-                                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                    @Override
-                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                        EventBus.getDefault().post(new PagePositionEvent(1,2));
-                                        sweetAlertDialog.dismissWithAnimation();
-                                        startActivity(new Intent(MenuActivity.this,HomeActivity.class));
-                                    }
+                                .setCancelClickListener(sweetAlertDialog -> {
+                                    EventBus.getDefault().post(new PagePositionEvent(1, 2));
+                                    sweetAlertDialog.dismissWithAnimation();
+                                    startActivity(new Intent(MenuActivity.this, HomeActivity.class));
                                 })
                                 .show();
                     }
@@ -650,7 +683,7 @@ public class MenuActivity extends BaseActivity {
             jCenterDialog = new JCenterDialog(this, R.layout.loading_dialog);
         jCenterDialog.show();
 
-        OkHttp3Util.GET(JUrl.create_order(suserid, menuid, size,setAddress.getId()), this, new Callback() {
+        OkHttp3Util.GET(JUrl.create_order(suserid, menuid, size, setAddress.getId()), this, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 new Handler(Looper.getMainLooper()).post(() -> {
@@ -734,11 +767,23 @@ public class MenuActivity extends BaseActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        barrage.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        barrage.onPause();
+    }
+
     //监听订单变化
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void OrdersChanged(Orde orde) {
         for (int i = 0; i < all_orders.size(); i++) {
-            if(all_orders.get(i).getId() == orde.getId()){
+            if (all_orders.get(i).getId() == orde.getId()) {
                 all_orders.get(i).setStatusid(orde.getStatusid());
                 all_orders.get(i).setLevel(orde.getLevel());
             }

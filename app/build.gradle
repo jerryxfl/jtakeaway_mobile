@@ -144,4 +144,7 @@ dependencies {
     implementation "org.permissionsdispatcher:permissionsdispatcher:4.7.0"
     annotationProcessor "org.permissionsdispatcher:permissionsdispatcher-processor:4.7.0"
 
+    //折叠文本
+    implementation 'com.ms-square:expandableTextView:0.1.4'
+
 }

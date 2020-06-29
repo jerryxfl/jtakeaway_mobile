@@ -48,6 +48,10 @@
                     android:background="@drawable/return_btn_shape"
                     android:scaleType="centerCrop"
                     android:src="@drawable/return_btn" />
+                <com.jerry.jtakeaway.custom.JBarrageView
+                    android:id="@+id/barrage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
             </RelativeLayout>
             <LinearLayout
                 android:padding="10dp"

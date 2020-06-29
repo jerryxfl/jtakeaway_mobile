@@ -1,9 +1,10 @@
 package com.jerry.jtakeaway.bean;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-public class Comment {
+public class Comment implements Serializable {
     private int id;
     private String content;
     private Timestamp createtime;

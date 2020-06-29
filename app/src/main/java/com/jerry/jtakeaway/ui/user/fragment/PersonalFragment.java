@@ -23,6 +23,7 @@ import com.jerry.jtakeaway.bean.responseBean.Result1;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
 import com.jerry.jtakeaway.custom.JgridLayoutManager;
+import com.jerry.jtakeaway.eventBusEvents.PagePositionEvent;
 import com.jerry.jtakeaway.ui.generalActivity.LoginActivity;
 import com.jerry.jtakeaway.ui.user.activity.ExtractMoneyActivity;
 import com.jerry.jtakeaway.ui.user.activity.InvestActivity;
@@ -74,6 +75,9 @@ public class PersonalFragment extends BaseFragment {
     @BindView(R.id.settingAib)
     AniImgButton settingAib;
 
+    @BindView(R.id.all_order)
+    TextView all_order;
+
     private JAdapter<TIButton> jAdapterWallet;
     private JAdapter<TIButton> jAdapterOrder;
 
@@ -86,7 +90,7 @@ public class PersonalFragment extends BaseFragment {
     @Override
     public void InitView() {
         //订单
-        JgridLayoutManager jgridLayoutManager_order = new JgridLayoutManager(context,4);
+        JgridLayoutManager jgridLayoutManager_order = new JgridLayoutManager(context, 4);
         oder_recyclerview.setLayoutManager(jgridLayoutManager_order);
         jAdapterOrder = new JAdapter<>(context, oder_recyclerview, new int[]{R.layout.tibutton_item}, new JAdapter.adapterListener<TIButton>() {
             @Override
@@ -94,10 +98,10 @@ public class PersonalFragment extends BaseFragment {
                 LinearLayout container = holder.getView(R.id.container);
                 ImageView img = holder.getView(R.id.img);
                 TextView text = holder.getView(R.id.text);
-                img.setImageDrawable(ContextCompat.getDrawable(context,datas.get(position).getImg()));
+                img.setImageDrawable(ContextCompat.getDrawable(context, datas.get(position).getImg()));
                 text.setText(datas.get(position).getText());
                 container.setOnClickListener(v -> {
-                    datas.get(position).getEvent();
+                    datas.get(position).getEvent().onClick();
                 });
             }
 
@@ -114,7 +118,7 @@ public class PersonalFragment extends BaseFragment {
 
 
         //钱包
-        JgridLayoutManager jgridLayoutManager_wallet = new JgridLayoutManager(context,4);
+        JgridLayoutManager jgridLayoutManager_wallet = new JgridLayoutManager(context, 4);
         wallet_recyclerview.setLayoutManager(jgridLayoutManager_wallet);
         jAdapterWallet = new JAdapter<>(context, wallet_recyclerview, new int[]{R.layout.tibutton_item}, new JAdapter.adapterListener<TIButton>() {
             @Override
@@ -122,7 +126,7 @@ public class PersonalFragment extends BaseFragment {
                 LinearLayout container = holder.getView(R.id.container);
                 ImageView img = holder.getView(R.id.img);
                 TextView text = holder.getView(R.id.text);
-                img.setImageDrawable(ContextCompat.getDrawable(context,datas.get(position).getImg()));
+                img.setImageDrawable(ContextCompat.getDrawable(context, datas.get(position).getImg()));
                 text.setText(datas.get(position).getText());
                 container.setOnClickListener(v -> {
                     datas.get(position).getEvent().onClick();
@@ -146,36 +150,24 @@ public class PersonalFragment extends BaseFragment {
     public void InitData() {
         SignEventBus();
         List<TIButton> orders = new ArrayList<>();
-        orders.add(new TIButton(R.drawable.on_send, "进行中", new TIButton.Event() {
-            @Override
-            public void onClick() {
-
-            }
+        orders.add(new TIButton(R.drawable.on_send, "进行中", () -> {
+            EventBus.getDefault().post(new PagePositionEvent(1,1));
         }));
-        orders.add(new TIButton(R.drawable.complete, "已完成", new TIButton.Event() {
-            @Override
-            public void onClick() {
-
-            }
+        orders.add(new TIButton(R.drawable.complete, "已完成", () -> {
+            EventBus.getDefault().post(new PagePositionEvent(1,2));
         }));
-        orders.add(new TIButton(R.drawable.wait_commment, "待评价", new TIButton.Event() {
-            @Override
-            public void onClick() {
-
-            }
+        orders.add(new TIButton(R.drawable.wait_commment, "待评价", () -> {
+            EventBus.getDefault().post(new PagePositionEvent(1,3));
         }));
-        orders.add(new TIButton(R.drawable.refund, "退款/售后", new TIButton.Event() {
-            @Override
-            public void onClick() {
-
-            }
+        orders.add(new TIButton(R.drawable.refund, "退款/售后", () -> {
+            EventBus.getDefault().post(new PagePositionEvent(1,4));
         }));
         jAdapterOrder.adapter.setData(orders);
 
-       List<TIButton> wallets = new ArrayList<>();
-       wallets.add(new TIButton(R.drawable.invest, "充值", () -> {
+        List<TIButton> wallets = new ArrayList<>();
+        wallets.add(new TIButton(R.drawable.invest, "充值", () -> {
             startActivity(new Intent(context, InvestActivity.class));
-       }));
+        }));
         wallets.add(new TIButton(R.drawable.wallet, "提现", () -> {
             startActivity(new Intent(context, ExtractMoneyActivity.class));
         }));
@@ -186,14 +178,17 @@ public class PersonalFragment extends BaseFragment {
 
         }));
 
-       jAdapterWallet.adapter.setData(wallets);
+        jAdapterWallet.adapter.setData(wallets);
     }
 
 
     @Override
     public void InitListener() {
+        all_order.setOnClickListener(v -> {
+            EventBus.getDefault().post(new PagePositionEvent(1,0));
+        });
         wallet_btn.setOnClickListener(v -> {
-            if(UserUtils.getInstance().getUser()!= null){
+            if (UserUtils.getInstance().getUser() != null) {
                 if (UserUtils.getInstance().getUser().getUsertype() == 0) {
                     Nuser nuser = UserUtils.getInstance().getUserDetails(Nuser.class);
                     if (nuser.getWallet() == null) {
@@ -211,11 +206,11 @@ public class PersonalFragment extends BaseFragment {
                     } else {
                         startActivity(new Intent(context, WalletActivity.class));
                     }
-                }else{
+                } else {
                     startActivity(new Intent(context, WalletActivity.class));
                 }
-            }else {
-                Toast.makeText(context,"用户信息失效,重新登录",Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(context, "用户信息失效,重新登录", Toast.LENGTH_LONG).show();
                 startActivity(new Intent(context, LoginActivity.class));
                 activity.finish();
             }
@@ -231,9 +226,9 @@ public class PersonalFragment extends BaseFragment {
 
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky =true)
-    public void LoginEvent(ResponseUser responseUser){
-        System.out.println(UserUtils.getInstance().getUser().getUseradvatar()+" :::: "+UserUtils.getInstance().getUser().getUsernickname());
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void LoginEvent(ResponseUser responseUser) {
+        System.out.println(UserUtils.getInstance().getUser().getUseradvatar() + " :::: " + UserUtils.getInstance().getUser().getUsernickname());
         Glide.with(context)
                 .load(responseUser.getUseradvatar())
                 .into(userHeadImg);
@@ -242,8 +237,8 @@ public class PersonalFragment extends BaseFragment {
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void userChange(String tag){
-        if(tag.equals("userChange")){
+    public void userChange(String tag) {
+        if (tag.equals("userChange")) {
             getUserInfo();
         }
     }
@@ -262,7 +257,7 @@ public class PersonalFragment extends BaseFragment {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
                 Result1 result = JsonUtils.getResult1(jsonObject);
                 if (result.getCode() == 10000) {
-                    System.out.println("用户信息:"+result.getData().toString());
+                    System.out.println("用户信息:" + result.getData().toString());
                     UserUtils.getInstance().setUser(GsonUtil.gsonToBean(result.getData().toString(), ResponseUser.class));
                     EventBus.getDefault().postSticky(UserUtils.getInstance().getUser());
                     EventBus.getDefault().post("userChangeSuccess");

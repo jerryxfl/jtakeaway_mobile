@@ -74,15 +74,15 @@ public class WalletActivity extends BaseActivity {
 
         SignEventBus();
 
-        JgridLayoutManager jgridLayoutManager = new JgridLayoutManager(this,1);
+        JgridLayoutManager jgridLayoutManager = new JgridLayoutManager(this, 1);
         set_item.setLayoutManager(jgridLayoutManager);
-        jAdapter = new  JAdapter<>(this, set_item, new int[]{R.layout.setting_item}, new JAdapter.adapterListener<TIButton>() {
+        jAdapter = new JAdapter<>(this, set_item, new int[]{R.layout.setting_item}, new JAdapter.adapterListener<TIButton>() {
             @Override
             public void setItems(BaseViewHolder holder, int position, List<TIButton> datas) {
                 RelativeLayout container = holder.getView(R.id.container);
                 ImageView img = holder.getView(R.id.img);
                 TextView text = holder.getView(R.id.text);
-                img.setImageDrawable(ContextCompat.getDrawable(WalletActivity.this,datas.get(position).getImg()));
+                img.setImageDrawable(ContextCompat.getDrawable(WalletActivity.this, datas.get(position).getImg()));
                 text.setText(datas.get(position).getText());
                 container.setOnClickListener(v -> {
                     datas.get(position).getEvent().onClick();
@@ -106,10 +106,16 @@ public class WalletActivity extends BaseActivity {
     public void InitData() {
         List<TIButton> settings = new ArrayList<>();
         settings.add(new TIButton(R.drawable.invest, "充值", () -> {
-            startActivity(new Intent(WalletActivity.this,InvestActivity.class));
+            startActivity(new Intent(WalletActivity.this, InvestActivity.class));
         }));
         settings.add(new TIButton(R.drawable.wallet, "提现", () -> {
-            startActivity(new Intent(WalletActivity.this,ExtractMoneyActivity.class));
+            startActivity(new Intent(WalletActivity.this, ExtractMoneyActivity.class));
+        }));
+        settings.add(new TIButton(R.drawable.transaction, "交易记录", () -> {
+
+        }));
+        settings.add(new TIButton(R.drawable.pay_password, "支密修改", () -> {
+
         }));
         jAdapter.adapter.setData(settings);
 
@@ -117,7 +123,7 @@ public class WalletActivity extends BaseActivity {
     }
 
     private void getWallet(int type) {
-        if(type == 0){
+        if (type == 0) {
             if (jCenterDialog == null)
                 jCenterDialog = new JCenterDialog(this, R.layout.loading_dialog);
             jCenterDialog.show();
@@ -127,7 +133,7 @@ public class WalletActivity extends BaseActivity {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 new Handler(Looper.getMainLooper()).post(() -> {
-                    if(type == 0)jCenterDialog.dismiss();
+                    if (type == 0) jCenterDialog.dismiss();
                 });
             }
 
@@ -137,15 +143,15 @@ public class WalletActivity extends BaseActivity {
                 Result1 result = JsonUtils.getResult1(jsonObject);
                 if (result.getCode() == 10000) {
                     System.out.println(result.getData().toString());
-                    Wallet wallet = GsonUtil.gsonToBean(result.getData().toString(),Wallet.class);
+                    Wallet wallet = GsonUtil.gsonToBean(result.getData().toString(), Wallet.class);
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        if(type == 0)jCenterDialog.dismiss();
+                        if (type == 0) jCenterDialog.dismiss();
                         DecimalFormat df = new DecimalFormat("#.00");
                         money.setText(String.valueOf(df.format(wallet.getBalance())));
                     });
                 } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        if(type == 0)jCenterDialog.dismiss();
+                        if (type == 0) jCenterDialog.dismiss();
                         Toast.makeText(WalletActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
                     });
                 }
@@ -167,11 +173,11 @@ public class WalletActivity extends BaseActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void MoneyEvent(InvestMoney investMoney){
-       if(investMoney.isActive()){
-           System.out.println("余额改变");
-           getWallet(1);
-       }
+    public void MoneyEvent(InvestMoney investMoney) {
+        if (investMoney.isActive()) {
+            System.out.println("余额改变");
+            getWallet(1);
+        }
     }
 
 }

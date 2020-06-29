@@ -97,6 +97,10 @@ public class JUrl {
         return host + "G/shop_comment?suserid=" + suserid;
     }
 
+   public static final String hot_shop_one_menu(int suserid) {
+        return host + "G/hot_shop_one_menu?suerId=" + suserid;
+    }
+
 
     //post
     public static final String login = host + "authen/jwtLogin";

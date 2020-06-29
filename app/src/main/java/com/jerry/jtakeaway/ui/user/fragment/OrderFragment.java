@@ -151,8 +151,6 @@ public class OrderFragment extends BaseFragment {
                 StyleSpan styleSpan_B = new StyleSpan(Typeface.NORMAL);
                 spStr.setSpan(styleSpan_B, 0, trim.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                 tab.setText(spStr);
-
-
             }
 
             @Override
@@ -170,8 +168,8 @@ public class OrderFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void setPagePosition(PagePositionEvent pagePosition) {
-        if (pagePosition.getPosition_ViewPage() < orderTabFragments.size()) {
-            order_tab_view.setCurrentItem(pagePosition.getPosition_ViewPage());
+        if (pagePosition.getPosition_TabView() < orderTabFragments.size()) {
+            order_tab_view.setCurrentItem(pagePosition.getPosition_TabView());
         }
     }
 

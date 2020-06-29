@@ -23,11 +23,11 @@ import com.bumptech.glide.Glide;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
 import com.jerry.jtakeaway.base.BaseViewHolder;
+import com.jerry.jtakeaway.bean.Comment;
 import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.Menus;
 import com.jerry.jtakeaway.bean.Slide;
 import com.jerry.jtakeaway.bean.Suser;
-import com.jerry.jtakeaway.bean.model.Barrage;
 import com.jerry.jtakeaway.bean.responseBean.Result2;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
@@ -84,7 +84,8 @@ public class ShopActivity extends BaseActivity {
     @BindView(R.id.menu_recyclerview)
     RecyclerView menu_recyclerview;
 
-
+    @BindView(R.id.barrage)
+    JBarrageView barrage;
 
     private Suser suser;
     private JAdapter<Slide> bannerAdapter;
@@ -92,7 +93,7 @@ public class ShopActivity extends BaseActivity {
     private LinearLayoutManager banner_layoutManager;
     private JAdapter<Menus> menusJAdapter;
     private List<Menus> menusList = new ArrayList<Menus>();
-    private List<Barrage> barrageList = new ArrayList<Barrage>();
+    private List<Comment> barrageList = new ArrayList<Comment>();
 
     @Override
     public int getLayout() {
@@ -177,23 +178,37 @@ public class ShopActivity extends BaseActivity {
         setData(suser);
         getSlider(suser.getId());//获得轮播图
         getMenus(suser.getId());
+    }
 
+    private void getMsg() {
+        OkHttp3Util.GET(JUrl.shop_comment(suser.getId()), this, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
 
-        setBarrage();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result2 result = JsonUtils.getResult2(jsonObject);
+                if (result.getCode() == 10000) {
+                    barrageList.addAll(GsonUtil.parserJsonToArrayBeans(result.getData().toString(), Comment.class));
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        if(barrageList.size()!=0){
+                            System.out.println("弹幕大小:"+barrageList.size());
+                            barrage.setBarrageList(barrageList);
+                        }
+                    });
+                }else {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(ShopActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        });
 
     }
 
-    private void setBarrage() {
-        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
-        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
-        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
-        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
-        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
-        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
-        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
-        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
-        barrageList.add(new Barrage("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1593362256047&di=1f93b8b93571553aced52f141f98c696&imgtype=0&src=http%3A%2F%2Fpic.feizl.com%2Fupload%2Fallimg%2F170615%2F0001223938-4.jpg","jerry","你们好啊"));
-    }
 
 
 
@@ -253,6 +268,7 @@ public class ShopActivity extends BaseActivity {
                             banner.setVisibility(View.GONE);
                         }else{
                             bannerAdapter.adapter.setData(slideList);
+                            getMsg();
                         }
                     });
                 }else {
@@ -271,12 +287,29 @@ public class ShopActivity extends BaseActivity {
             indicator.setText(" "+(banner_layoutManager.findFirstVisibleItemPosition()+1)+"/"+slideList.size()+" ");
         });
         comment_tv.setOnClickListener(v -> {
-
+            Intent intent = new Intent(ShopActivity.this,CommentActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("SUSER",suser);
+            intent.putExtras(bundle);
+            startActivity(intent);
         });
         return_aib.setOnClickListener(v -> finish());
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        barrage.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        barrage.onPause();
+    }
+
+    @Override
     public void destroy() {
+//        barrage.onDestroy();
     }
 }

@@ -8,18 +8,23 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.jerry.jtakeaway.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
     private Context context;
-    private int[] LayoutId;
+    private List<Integer> LayoutId = new ArrayList<Integer>();
     private List<T> datas = new ArrayList<T>();
     public String TAG = "video";
 
     public BaseAdapter(Context context, int[] layoutId) {
         this.context = context;
-        this.LayoutId = layoutId;
+        for (int i = 0; i <layoutId.length ; i++) {
+            this.LayoutId.add(layoutId[i]);
+        }
+        this.LayoutId.add(R.layout.no_data_item);
     }
 
 
@@ -37,13 +42,13 @@ public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
     }
 
     public void setHeader(T datas) {
-            this.datas.add(0, datas);
-            notifyItemInserted(0);
-            notifyDataSetChanged();
+        this.datas.add(0, datas);
+        notifyItemInserted(0);
+        notifyDataSetChanged();
     }
 
     public void setHeaderOrderBack(List<T> datas) {
-        for (int i = datas.size()-1; i >=0; i--) {
+        for (int i = datas.size() - 1; i >= 0; i--) {
             this.datas.add(0, datas.get(i));
             notifyItemInserted(0);
             notifyDataSetChanged();
@@ -83,7 +88,7 @@ public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
         }
     }
 
-    public void changeData(int position){
+    public void changeData(int position) {
         System.out.println("刷新");
         notifyItemChanged(position);
     }
@@ -92,38 +97,44 @@ public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
     @NonNull
     @Override
     public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(LayoutId[viewType], parent, false);
+        View view = LayoutInflater.from(context).inflate(LayoutId.get(viewType), parent, false);
         return new BaseViewHolder(view, context);
     }
 
     @Override
     public void onBindViewHolder(@NonNull BaseViewHolder holder, int position, @NonNull List<Object> payloads) {
-        System.out.println(">>>>payloads"+payloads);
-        if (payloads.isEmpty()){
+        System.out.println(">>>>payloads" + payloads);
+        if (payloads.isEmpty()) {
             super.onBindViewHolder(holder, position, payloads);
             return;
         }
-        setItems.upDateItem(holder,position,payloads,datas);
+        if(datas.size()>0)setItems.upDateItem(holder, position, payloads, datas);
     }
 
     @Override
     public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
-        setItems.SetItems(holder, position, datas);
+        if(datas.size()>0)setItems.SetItems(holder, position, datas);
     }
 
     @Override
     public int getItemViewType(int position) {
-        return setItems.getViewType(datas, position);
+        if(datas.size()==0){
+            return LayoutId.size()-1;
+        }else{
+            return setItems.getViewType(datas, position);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return datas.size();
+        return  datas.size() > 0 ? datas.size() : 1;
     }
 
     public interface setItems<T> {
         void SetItems(BaseViewHolder holder, int position, List<T> datas);
-        void upDateItem(BaseViewHolder holder, int position, List<Object> payloads,List<T> datas);
+
+        void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<T> datas);
+
         int getViewType(List<T> datas, int position);
     }
 
@@ -133,7 +144,7 @@ public class BaseAdapter<T> extends RecyclerView.Adapter<BaseViewHolder> {
         this.setItems = setItems;
     }
 
-    public List<T> getDatas(){
+    public List<T> getDatas() {
         return datas;
     }
 
