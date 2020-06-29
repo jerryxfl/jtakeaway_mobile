@@ -21,6 +21,7 @@ public class JUrl {
     public static final String user_wallet_money = host + "U/user_wallet_money";
     public static final String jwtLogout = host + "authen/jwtLogout";
     public static final String g_login_reord = host + "U/g_login_reord";
+    public static final String transactions = host + "U/transactions";
 
     public static final String o_wallet(String payPassword) {
         return host + "U/o_wallet?payPassword=" + payPassword;

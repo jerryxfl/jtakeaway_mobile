@@ -112,7 +112,7 @@ public class WalletActivity extends BaseActivity {
             startActivity(new Intent(WalletActivity.this, ExtractMoneyActivity.class));
         }));
         settings.add(new TIButton(R.drawable.transaction, "交易记录", () -> {
-
+            startActivity(new Intent(WalletActivity.this, TransactionActivity.class));
         }));
         settings.add(new TIButton(R.drawable.pay_password, "支密修改", () -> {
 

@@ -34,6 +34,9 @@
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:background="#F4F4F4"/>
-
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tranRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

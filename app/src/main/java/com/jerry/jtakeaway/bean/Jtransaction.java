@@ -1,14 +1,13 @@
 package com.jerry.jtakeaway.bean;
 
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 public class Jtransaction {
     private int id;
     private Timestamp paytime;
-    private BigDecimal paymoney;
+    private Double paymoney;
     private int userid;
     private String more;
     private Integer couponid;
@@ -39,11 +38,11 @@ public class Jtransaction {
         this.paytime = paytime;
     }
 
-    public BigDecimal getPaymoney() {
+    public Double getPaymoney() {
         return paymoney;
     }
 
-    public void setPaymoney(BigDecimal paymoney) {
+    public void setPaymoney(Double paymoney) {
         this.paymoney = paymoney;
     }
 

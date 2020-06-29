@@ -72,9 +72,8 @@ public class RecentlLoginRecordActivity extends BaseActivity {
                 TextView time = holder.getView(R.id.time);
                 address.setText(datas.get(position).getAddress());
                 Date date = new Date(datas.get(position).getLotintime().getTime());
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 time.setText(formatter.format(date));
-
             }
 
             @Override
@@ -94,7 +93,7 @@ public class RecentlLoginRecordActivity extends BaseActivity {
         getLoginRecord();
     }
 
-    private void getLoginRecord(){
+    private void getLoginRecord() {
         if (jCenterDialog == null)
             jCenterDialog = new JCenterDialog(this, R.layout.loading_dialog);
         jCenterDialog.show();
@@ -110,17 +109,17 @@ public class RecentlLoginRecordActivity extends BaseActivity {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
                 Result2 result = JsonUtils.getResult2(jsonObject);
-                if(result.getCode() == 10000){
-                    loginrecordList.addAll(GsonUtil.jsonToList(result.getData().toString(),Loginrecord.class));
+                if (result.getCode() == 10000) {
+                    loginrecordList.addAll(GsonUtil.jsonToList(result.getData().toString(), Loginrecord.class));
                     new Handler(Looper.getMainLooper()).post(() -> {
                         jCenterDialog.dismiss();
-                        recordJAdapter.adapter.setFooter(loginrecordList);
+                        recordJAdapter.adapter.setHeader(loginrecordList);
                     });
-                }else if(result.getCode()==4){
+                } else if (result.getCode() == 4) {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         jCenterDialog.dismiss();
                     });
-                }else{
+                } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         jCenterDialog.dismiss();
                         Toast.makeText(RecentlLoginRecordActivity.this, "数据错误", Toast.LENGTH_SHORT).show();

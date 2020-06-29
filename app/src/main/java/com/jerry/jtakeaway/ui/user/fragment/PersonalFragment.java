@@ -29,6 +29,7 @@ import com.jerry.jtakeaway.ui.user.activity.ExtractMoneyActivity;
 import com.jerry.jtakeaway.ui.user.activity.InvestActivity;
 import com.jerry.jtakeaway.ui.user.activity.OpenPaymentActivity;
 import com.jerry.jtakeaway.ui.user.activity.SettingActivity;
+import com.jerry.jtakeaway.ui.user.activity.TransactionActivity;
 import com.jerry.jtakeaway.ui.user.activity.WalletActivity;
 import com.jerry.jtakeaway.utils.GsonUtil;
 import com.jerry.jtakeaway.utils.JsonUtils;
@@ -172,7 +173,7 @@ public class PersonalFragment extends BaseFragment {
             startActivity(new Intent(context, ExtractMoneyActivity.class));
         }));
         wallets.add(new TIButton(R.drawable.transaction, "交易记录", () -> {
-
+            startActivity(new Intent(context, TransactionActivity.class));
         }));
         wallets.add(new TIButton(R.drawable.pay_password, "支密修改", () -> {
 
