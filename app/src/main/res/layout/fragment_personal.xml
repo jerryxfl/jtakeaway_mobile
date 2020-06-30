@@ -84,6 +84,7 @@
                 app:cardCornerRadius="10dp"
                 app:cardElevation="10dp">
                 <LinearLayout
+                    android:id="@+id/orderWrapper"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

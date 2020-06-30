@@ -20,6 +20,8 @@ import com.jerry.jtakeaway.bean.responseBean.ResponseUser;
 import com.jerry.jtakeaway.bean.responseBean.Result1;
 import com.jerry.jtakeaway.custom.JCenterDialog;
 import com.jerry.jtakeaway.custom.JViewPager;
+import com.jerry.jtakeaway.eventBusEvents.BadgeDragEvent;
+import com.jerry.jtakeaway.eventBusEvents.BadgeEvent;
 import com.jerry.jtakeaway.eventBusEvents.PagePositionEvent;
 import com.jerry.jtakeaway.eventBusEvents.WebSocketEvent;
 import com.jerry.jtakeaway.eventBusEvents.WebSocketEventType;
@@ -98,7 +100,10 @@ public class HomeActivity extends BaseActivity {
         tabbar.setContainer(viewPager);
         tabbar.setPageAnimateEnable(true);
         tabbar.setSelectedColor(Color.parseColor("#fa8c16"));
-
+        tabbar.setDismissListener(position -> {
+            System.out.println("badge取消掉了");
+            EventBus.getDefault().postSticky(new BadgeDragEvent());
+        });
     }
 
 
@@ -202,6 +207,15 @@ public class HomeActivity extends BaseActivity {
     public void setPagePosition(PagePositionEvent pagePosition) {
         if (pagePosition.getPosition_ViewPage() < fragments.size()) {
             viewPager.setCurrentItem(pagePosition.getPosition_ViewPage());
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void setBadgeCount(BadgeEvent badgeEvent) {
+        if(badgeEvent.getCount()==0){
+            tabbar.showBadge(2,"");
+        }else{
+            tabbar.showBadge(2,badgeEvent.getCount()+"",true);
         }
     }
 

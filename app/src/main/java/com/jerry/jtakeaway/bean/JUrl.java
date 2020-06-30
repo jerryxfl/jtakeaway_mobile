@@ -1,7 +1,7 @@
 package com.jerry.jtakeaway.bean;
 
 public class JUrl {
-//    public static final String host = "http://192.168.0.104:8080/api-0.1/";
+    //    public static final String host = "http://192.168.0.104:8080/api-0.1/";
     public static final String host = "http://121.199.9.234:8080/api-0.1/";
 
 
@@ -98,8 +98,12 @@ public class JUrl {
         return host + "G/shop_comment?suserid=" + suserid;
     }
 
-   public static final String hot_shop_one_menu(int suserid) {
+    public static final String hot_shop_one_menu(int suserid) {
         return host + "G/hot_shop_one_menu?suerId=" + suserid;
+    }
+
+    public static final String messages(int size) {
+        return host + "U/messages?size=" + size;
     }
 
 

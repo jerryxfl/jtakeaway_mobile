@@ -3,11 +3,13 @@ package com.jerry.jtakeaway.ui.user.fragment;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +28,7 @@ import com.jerry.jtakeaway.custom.JgridLayoutManager;
 import com.jerry.jtakeaway.eventBusEvents.PagePositionEvent;
 import com.jerry.jtakeaway.ui.generalActivity.LoginActivity;
 import com.jerry.jtakeaway.ui.user.activity.ExtractMoneyActivity;
+import com.jerry.jtakeaway.ui.user.activity.ImgActivity;
 import com.jerry.jtakeaway.ui.user.activity.InvestActivity;
 import com.jerry.jtakeaway.ui.user.activity.OpenPaymentActivity;
 import com.jerry.jtakeaway.ui.user.activity.SettingActivity;
@@ -42,6 +45,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -79,6 +83,9 @@ public class PersonalFragment extends BaseFragment {
     @BindView(R.id.all_order)
     TextView all_order;
 
+    @BindView(R.id.orderWrapper)
+    LinearLayout orderWrapper;
+
     private JAdapter<TIButton> jAdapterWallet;
     private JAdapter<TIButton> jAdapterOrder;
 
@@ -90,32 +97,37 @@ public class PersonalFragment extends BaseFragment {
 
     @Override
     public void InitView() {
+        SignEventBus();
+
         //订单
-        JgridLayoutManager jgridLayoutManager_order = new JgridLayoutManager(context, 4);
-        oder_recyclerview.setLayoutManager(jgridLayoutManager_order);
-        jAdapterOrder = new JAdapter<>(context, oder_recyclerview, new int[]{R.layout.tibutton_item}, new JAdapter.adapterListener<TIButton>() {
-            @Override
-            public void setItems(BaseViewHolder holder, int position, List<TIButton> datas) {
-                LinearLayout container = holder.getView(R.id.container);
-                ImageView img = holder.getView(R.id.img);
-                TextView text = holder.getView(R.id.text);
-                img.setImageDrawable(ContextCompat.getDrawable(context, datas.get(position).getImg()));
-                text.setText(datas.get(position).getText());
-                container.setOnClickListener(v -> {
-                    datas.get(position).getEvent().onClick();
-                });
-            }
+        if (UserUtils.getInstance().getUser().getUsertype() == 0 || UserUtils.getInstance().getUser().getUsertype() == 1 || UserUtils.getInstance().getUser().getUsertype() == 2) {
+            JgridLayoutManager jgridLayoutManager_order = new JgridLayoutManager(context, 4);
+            oder_recyclerview.setLayoutManager(jgridLayoutManager_order);
+            jAdapterOrder = new JAdapter<>(context, oder_recyclerview, new int[]{R.layout.tibutton_item}, new JAdapter.adapterListener<TIButton>() {
+                @Override
+                public void setItems(BaseViewHolder holder, int position, List<TIButton> datas) {
+                    LinearLayout container = holder.getView(R.id.container);
+                    ImageView img = holder.getView(R.id.img);
+                    TextView text = holder.getView(R.id.text);
+                    img.setImageDrawable(ContextCompat.getDrawable(context, datas.get(position).getImg()));
+                    text.setText(datas.get(position).getText());
+                    container.setOnClickListener(v -> {
+                        datas.get(position).getEvent().onClick();
+                    });
+                }
 
-            @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<TIButton> datas) {
+                @Override
+                public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<TIButton> datas) {
+                }
 
-            }
-
-            @Override
-            public int getViewType(List<TIButton> datas, int position) {
-                return 0;
-            }
-        });
+                @Override
+                public int getViewType(List<TIButton> datas, int position) {
+                    return 0;
+                }
+            });
+        } else {
+            orderWrapper.setVisibility(View.GONE);
+        }
 
 
         //钱包
@@ -149,20 +161,36 @@ public class PersonalFragment extends BaseFragment {
 
     @Override
     public void InitData() {
-        SignEventBus();
         List<TIButton> orders = new ArrayList<>();
-        orders.add(new TIButton(R.drawable.on_send, "进行中", () -> {
-            EventBus.getDefault().post(new PagePositionEvent(1,1));
-        }));
-        orders.add(new TIButton(R.drawable.complete, "已完成", () -> {
-            EventBus.getDefault().post(new PagePositionEvent(1,2));
-        }));
-        orders.add(new TIButton(R.drawable.wait_commment, "待评价", () -> {
-            EventBus.getDefault().post(new PagePositionEvent(1,3));
-        }));
-        orders.add(new TIButton(R.drawable.refund, "退款/售后", () -> {
-            EventBus.getDefault().post(new PagePositionEvent(1,4));
-        }));
+        switch (UserUtils.getInstance().getUser().getUsertype()) {
+            case 0:
+                orders.add(new TIButton(R.drawable.on_send, "进行中", () -> {
+                    EventBus.getDefault().post(new PagePositionEvent(1, 1));
+                }));
+                orders.add(new TIButton(R.drawable.complete, "已完成", () -> {
+                    EventBus.getDefault().post(new PagePositionEvent(1, 2));
+                }));
+                orders.add(new TIButton(R.drawable.wait_commment, "待评价", () -> {
+                    EventBus.getDefault().post(new PagePositionEvent(1, 3));
+                }));
+                orders.add(new TIButton(R.drawable.refund, "退款/售后", () -> {
+                    EventBus.getDefault().post(new PagePositionEvent(1, 4));
+                }));
+                break;
+            case 1:
+            case 2:
+                orders.add(new TIButton(R.drawable.on_send, "进行中", () -> {
+                    EventBus.getDefault().post(new PagePositionEvent(1, 1));
+                }));
+                orders.add(new TIButton(R.drawable.complete, "已完成", () -> {
+                    EventBus.getDefault().post(new PagePositionEvent(1, 2));
+                }));
+                break;
+            case 3:
+                break;
+        }
+
+
         jAdapterOrder.adapter.setData(orders);
 
         List<TIButton> wallets = new ArrayList<>();
@@ -186,7 +214,7 @@ public class PersonalFragment extends BaseFragment {
     @Override
     public void InitListener() {
         all_order.setOnClickListener(v -> {
-            EventBus.getDefault().post(new PagePositionEvent(1,0));
+            EventBus.getDefault().post(new PagePositionEvent(1, 0));
         });
         wallet_btn.setOnClickListener(v -> {
             if (UserUtils.getInstance().getUser() != null) {
@@ -219,6 +247,15 @@ public class PersonalFragment extends BaseFragment {
 
         settingAib.setOnClickListener(v -> {
             startActivity(new Intent(context, SettingActivity.class));
+        });
+
+        userHeadImg.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ImgActivity.class);
+            List<String> list = new ArrayList<String>();
+            list.add(UserUtils.getInstance().getUser().getUseradvatar());
+            intent.putExtra("IMGS", (Serializable) list);
+            ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, v, "img");
+            startActivity(intent, optionsCompat.toBundle());
         });
     }
 
