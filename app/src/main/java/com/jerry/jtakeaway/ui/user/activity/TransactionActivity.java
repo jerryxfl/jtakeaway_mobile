@@ -1,9 +1,11 @@
 package com.jerry.jtakeaway.ui.user.activity;
 
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,7 @@ import com.jerry.jtakeaway.utils.PixAndDpUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,6 +53,10 @@ public class TransactionActivity extends BaseActivity {
 
     @BindView(R.id.tranRecyclerView)
     RecyclerView tranRecyclerView;
+
+    @BindView(R.id.table)
+    LinearLayout table;
+
     private JAdapter<ResponseTransaction> transactionJAdapter;
     private List<ResponseTransaction> responseTransactionList = new ArrayList<>();
     private JCenterDialog jCenterDialog;
@@ -74,17 +81,10 @@ public class TransactionActivity extends BaseActivity {
                 TextView descr = holder.getView(R.id.descr);
                 TextView time = holder.getView(R.id.time);
                 TextView money = holder.getView(R.id.money);
-                double payMoney = datas.get(position).getJtransaction().getPaymoney();
-                if(payMoney>0){
-                    Glide.with(TransactionActivity.this)
-                            .load(datas.get(position).getTargetUser().getUseradvatar())
-                            .into(avatar);
-                }else{
-                    Glide.with(TransactionActivity.this)
-                            .load(datas.get(position).getUser().getUseradvatar())
-                            .into(avatar);
-                }
-                descr.setText(datas.get(position).getJtransaction().getMore());
+                Glide.with(TransactionActivity.this)
+                        .load(datas.get(position).getTargetUser().getUseradvatar())
+                        .into(avatar);
+                descr.setText(datas.get(position).getTargetUser().getUsernickname());
                 Date date = datas.get(position).getJtransaction().getPaytime();
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MM-dd hh:mm:ss");
                 time.setText(simpleDateFormat.format(date));
@@ -153,6 +153,11 @@ public class TransactionActivity extends BaseActivity {
     @Override
     public void InitListener() {
         return_aib.setOnClickListener(v -> finish());
+        table.setOnClickListener(v -> {
+            Intent intent = new Intent(TransactionActivity.this,TableActivity.class);
+            intent.putExtra("TRANSACTION", (Serializable) responseTransactionList);
+            startActivity(intent);
+        });
     }
 
     @Override

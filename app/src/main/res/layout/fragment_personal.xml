@@ -23,16 +23,31 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="50dp"
             android:src="@drawable/icon_dark_green_by_milkinside"/>
-        <TextView
-            android:id="@+id/userNickName"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#222222"
-            android:text="我很疯狂"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="140dp"
-            android:textStyle="bold"
-            android:textSize="20sp"/>
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/userType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:background="@drawable/text_shape_red"
+                android:layout_marginTop="140dp"
+                android:textSize="14sp"/>
+            <TextView
+                android:layout_marginStart="10dp"
+                android:id="@+id/userNickName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#222222"
+                android:text="我很疯狂"
+                android:layout_marginTop="140dp"
+                android:textStyle="bold"
+                android:textSize="20sp"/>
+        </LinearLayout>
         <com.jerry.jtakeaway.custom.AniImgButton
             android:id="@+id/settingAib"
             android:layout_width="30dp"
@@ -45,6 +60,7 @@
             android:background="@color/float_transparent"/>
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/conponCard"
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="50dp"

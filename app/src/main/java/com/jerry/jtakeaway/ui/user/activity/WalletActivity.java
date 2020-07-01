@@ -115,7 +115,7 @@ public class WalletActivity extends BaseActivity {
             startActivity(new Intent(WalletActivity.this, TransactionActivity.class));
         }));
         settings.add(new TIButton(R.drawable.pay_password, "支密修改", () -> {
-
+            Toast.makeText(WalletActivity.this,"暂不支持修改支付密码",Toast.LENGTH_SHORT).show();
         }));
         jAdapter.adapter.setData(settings);
 

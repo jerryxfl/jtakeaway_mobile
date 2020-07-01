@@ -3,7 +3,9 @@ package com.jerry.jtakeaway.bean.responseBean;
 import com.jerry.jtakeaway.bean.Jtransaction;
 import com.jerry.jtakeaway.bean.User;
 
-public class ResponseTransaction {
+import java.io.Serializable;
+
+public class ResponseTransaction implements Serializable {
     private Jtransaction jtransaction;
     private User user;
     private User targetUser;

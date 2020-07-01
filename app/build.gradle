@@ -144,7 +144,11 @@ dependencies {
     implementation "org.permissionsdispatcher:permissionsdispatcher:4.7.0"
     annotationProcessor "org.permissionsdispatcher:permissionsdispatcher-processor:4.7.0"
 
-    //折叠文本
-    implementation 'com.ms-square:expandableTextView:0.1.4'
+    //图标生成
+    implementation 'com.github.lecho:hellocharts-library:1.5.8@aar'
+
+
+    //时间选择
+    implementation 'com.contrarywind:Android-PickerView:3.2.6'
 
 }

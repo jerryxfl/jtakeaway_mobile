@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.gabrielsamojlo.keyboarddismisser.KeyboardDismisser;
 import com.jerry.jtakeaway.utils.InitApp;
 
 import org.greenrobot.eventbus.EventBus;

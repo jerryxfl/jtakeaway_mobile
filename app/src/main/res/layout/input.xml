@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/password_lt"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginTop="5dp"
+    android:layout_marginBottom="5dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:background="@drawable/timepicker_shape"
     android:alpha="0.6">
     <TextView
+        android:id="@+id/tag"
         android:layout_marginStart="10dp"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
@@ -18,14 +23,14 @@
         android:textColor="#222222"
         android:text="密码"/>
     <EditText
+        android:id="@+id/edt"
         android:layout_marginStart="10dp"
-        android:id="@+id/password_et"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@null"
         android:maxLength="18"
         android:singleLine="true"
-        android:inputType="textPassword"
+        android:inputType="text"
         android:textColorHint="#919191"/>
 
 </LinearLayout>

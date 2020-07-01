@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,6 +13,8 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AnticipateOvershootInterpolator;
+
+import com.jerry.jtakeaway.R;
 
 @SuppressWarnings("all")
 public class JLoginButton extends View {
@@ -53,11 +56,17 @@ public class JLoginButton extends View {
 
     public JLoginButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        Init();
+        Init(attrs);
     }
 
 
-    private void Init() {
+    private void Init(AttributeSet attrs) {
+        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.JLoginButton);
+        text = a.getString(R.styleable.JLoginButton_jltext);
+        a.recycle();
+
+        if(text==null)text = "登录/注册";
+
         //初始化圆的画笔
         Paint p = new Paint(Paint.ANTI_ALIAS_FLAG);
         p.setDither(true);

@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,11 +18,13 @@ import com.bumptech.glide.Glide;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseFragment;
 import com.jerry.jtakeaway.base.BaseViewHolder;
+import com.jerry.jtakeaway.bean.Coupon;
 import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.Nuser;
 import com.jerry.jtakeaway.bean.model.TIButton;
 import com.jerry.jtakeaway.bean.responseBean.ResponseUser;
 import com.jerry.jtakeaway.bean.responseBean.Result1;
+import com.jerry.jtakeaway.bean.responseBean.Result2;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
 import com.jerry.jtakeaway.custom.JgridLayoutManager;
@@ -47,6 +50,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -86,8 +90,18 @@ public class PersonalFragment extends BaseFragment {
     @BindView(R.id.orderWrapper)
     LinearLayout orderWrapper;
 
+    @BindView(R.id.userType)
+    TextView userType;
+
+    @BindView(R.id.conpon_card_tv)
+    TextView conpon_card_tv;
+
+    @BindView(R.id.conponCard)
+    CardView conponCard;
+
     private JAdapter<TIButton> jAdapterWallet;
     private JAdapter<TIButton> jAdapterOrder;
+    private List<Coupon> couponList = new ArrayList<>();
 
 
     @Override
@@ -98,6 +112,37 @@ public class PersonalFragment extends BaseFragment {
     @Override
     public void InitView() {
         SignEventBus();
+
+        //钱包
+        JgridLayoutManager jgridLayoutManager_wallet = new JgridLayoutManager(context, 4);
+        wallet_recyclerview.setLayoutManager(jgridLayoutManager_wallet);
+        jAdapterWallet = new JAdapter<>(context, wallet_recyclerview, new int[]{R.layout.tibutton_item}, new JAdapter.adapterListener<TIButton>() {
+            @Override
+            public void setItems(BaseViewHolder holder, int position, List<TIButton> datas) {
+                LinearLayout container = holder.getView(R.id.container);
+                ImageView img = holder.getView(R.id.img);
+                TextView text = holder.getView(R.id.text);
+                img.setImageDrawable(ContextCompat.getDrawable(context, datas.get(position).getImg()));
+                text.setText(datas.get(position).getText());
+                container.setOnClickListener(v -> {
+                    datas.get(position).getEvent().onClick();
+                });
+            }
+
+            @Override
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<TIButton> datas) {
+
+            }
+
+            @Override
+            public int getViewType(List<TIButton> datas, int position) {
+                return 0;
+            }
+        });
+
+    }
+
+    private void initOrder() {
 
         //订单
         if (UserUtils.getInstance().getUser().getUsertype() == 0 || UserUtils.getInstance().getUser().getUsertype() == 1 || UserUtils.getInstance().getUser().getUsertype() == 2) {
@@ -129,38 +174,6 @@ public class PersonalFragment extends BaseFragment {
             orderWrapper.setVisibility(View.GONE);
         }
 
-
-        //钱包
-        JgridLayoutManager jgridLayoutManager_wallet = new JgridLayoutManager(context, 4);
-        wallet_recyclerview.setLayoutManager(jgridLayoutManager_wallet);
-        jAdapterWallet = new JAdapter<>(context, wallet_recyclerview, new int[]{R.layout.tibutton_item}, new JAdapter.adapterListener<TIButton>() {
-            @Override
-            public void setItems(BaseViewHolder holder, int position, List<TIButton> datas) {
-                LinearLayout container = holder.getView(R.id.container);
-                ImageView img = holder.getView(R.id.img);
-                TextView text = holder.getView(R.id.text);
-                img.setImageDrawable(ContextCompat.getDrawable(context, datas.get(position).getImg()));
-                text.setText(datas.get(position).getText());
-                container.setOnClickListener(v -> {
-                    datas.get(position).getEvent().onClick();
-                });
-            }
-
-            @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<TIButton> datas) {
-
-            }
-
-            @Override
-            public int getViewType(List<TIButton> datas, int position) {
-                return 0;
-            }
-        });
-
-    }
-
-    @Override
-    public void InitData() {
         List<TIButton> orders = new ArrayList<>();
         switch (UserUtils.getInstance().getUser().getUsertype()) {
             case 0:
@@ -190,8 +203,13 @@ public class PersonalFragment extends BaseFragment {
                 break;
         }
 
-
         jAdapterOrder.adapter.setData(orders);
+
+    }
+
+    @Override
+    public void InitData() {
+
 
         List<TIButton> wallets = new ArrayList<>();
         wallets.add(new TIButton(R.drawable.invest, "充值", () -> {
@@ -204,7 +222,7 @@ public class PersonalFragment extends BaseFragment {
             startActivity(new Intent(context, TransactionActivity.class));
         }));
         wallets.add(new TIButton(R.drawable.pay_password, "支密修改", () -> {
-
+            Toast.makeText(context,"暂不支持修改支付密码",Toast.LENGTH_SHORT).show();
         }));
 
         jAdapterWallet.adapter.setData(wallets);
@@ -266,11 +284,29 @@ public class PersonalFragment extends BaseFragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void LoginEvent(ResponseUser responseUser) {
-        System.out.println(UserUtils.getInstance().getUser().getUseradvatar() + " :::: " + UserUtils.getInstance().getUser().getUsernickname());
         Glide.with(context)
                 .load(responseUser.getUseradvatar())
                 .into(userHeadImg);
         userNickName.setText(responseUser.getUsernickname());
+        switch (responseUser.getUsertype()) {
+            case 0:
+                userType.setText("普通用户");
+                getConpons();
+                break;
+            case 1:
+                userType.setText("商家");
+                conponCard.setVisibility(View.GONE);
+                break;
+            case 2:
+                userType.setText("骑手");
+                conponCard.setVisibility(View.GONE);
+                break;
+            case 3:
+                userType.setText("管理员");
+                conponCard.setVisibility(View.GONE);
+                break;
+        }
+        initOrder();
     }
 
 
@@ -299,6 +335,48 @@ public class PersonalFragment extends BaseFragment {
                     UserUtils.getInstance().setUser(GsonUtil.gsonToBean(result.getData().toString(), ResponseUser.class));
                     EventBus.getDefault().postSticky(UserUtils.getInstance().getUser());
                     EventBus.getDefault().post("userChangeSuccess");
+                } else {
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(context, "数据错误", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
+        });
+    }
+
+
+    private void getConpons() {
+        OkHttp3Util.GET(JUrl.m_conpon, context, new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    Toast.makeText(context, "链接服务器失败", Toast.LENGTH_SHORT).show();
+                });
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
+                Result2 result = JsonUtils.getResult2(jsonObject);
+                if (result.getCode() == 10000) {
+                    couponList.addAll(GsonUtil.parserJsonToArrayBeans(result.getData().toString(), Coupon.class));
+                    int canUse = 0;
+                    int fail = 0;
+                    for (Coupon coupon : couponList) {
+                        if (coupon.getConponfailuretime() != null) {
+                            Date date = coupon.getConponfailuretime();
+                            Date now = new Date();
+                            if (now.after(date)) {
+                                fail++;
+                            }
+                        }
+                    }
+                    canUse = couponList.size() - fail;
+                    int finalCanUse = canUse;
+                    int finalFail = fail;
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        conpon_card_tv.setText("有" + finalCanUse + "张优惠卷可用," + finalFail + "过期>");
+                    });
                 } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         Toast.makeText(context, "数据错误", Toast.LENGTH_SHORT).show();

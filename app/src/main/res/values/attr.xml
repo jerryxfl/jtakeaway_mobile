@@ -36,5 +36,8 @@
     <declare-styleable name="JAudioImgView">
         <attr name="jAudioImg" format="reference"/>
     </declare-styleable>
+  <declare-styleable name="JLoginButton">
+        <attr name="jltext" format="string"/>
+    </declare-styleable>
 
 </resources>

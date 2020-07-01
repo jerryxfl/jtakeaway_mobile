@@ -124,7 +124,7 @@ public class UnderwayFragment extends BaseFragment {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky =  true)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void DatasEvent(List<ResponseOrder> responseOrder){
         new Thread(() -> {
             List<ResponseOrder> responseOrders = new  ArrayList<ResponseOrder>();

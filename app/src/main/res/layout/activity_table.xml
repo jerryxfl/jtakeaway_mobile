@@ -24,48 +24,48 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="交易记录"
+            android:text="支出统计"
             android:layout_centerInParent="true"
             android:textColor="#222222"
             android:textStyle="bold"
             android:textSize="18sp"/>
     </RelativeLayout>
-    <RelativeLayout
-        android:padding="10dp"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
         <LinearLayout
-            android:id="@+id/table"
-            android:background="@drawable/table_selector"
-            android:padding="10dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
-            android:layout_width="wrap_content"
             android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <ImageView
-                android:src="@drawable/table"
-                android:scaleType="centerCrop"
-                android:layout_width="20dp"
-                android:layout_height="20dp"/>
+            <View
+                android:layout_gravity="center"
+                android:background="#B4B4B4"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="0.5dp"/>
             <TextView
-                android:layout_marginStart="5dp"
+                android:id="@+id/selectDate"
+                android:padding="5dp"
+                android:background="@drawable/calender_g"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="分析"
-                android:layout_centerInParent="true"
-                android:textColor="#222222"
-                android:textSize="14sp"/>
+                android:text="2020年6月>"
+                android:textStyle="bold" />
+            <View
+                android:layout_gravity="center"
+                android:background="#B4B4B4"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="0.5dp"/>
         </LinearLayout>
+        <lecho.lib.hellocharts.view.LineChartView
+            android:id="@+id/table"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"/>
 
-    </RelativeLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:background="#F4F4F4"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/tranRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
+    </LinearLayout>
 </LinearLayout>

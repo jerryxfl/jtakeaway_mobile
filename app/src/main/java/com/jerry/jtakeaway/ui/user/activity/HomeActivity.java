@@ -101,7 +101,6 @@ public class HomeActivity extends BaseActivity {
         tabbar.setPageAnimateEnable(true);
         tabbar.setSelectedColor(Color.parseColor("#fa8c16"));
         tabbar.setDismissListener(position -> {
-            System.out.println("badge取消掉了");
             EventBus.getDefault().postSticky(new BadgeDragEvent());
         });
     }

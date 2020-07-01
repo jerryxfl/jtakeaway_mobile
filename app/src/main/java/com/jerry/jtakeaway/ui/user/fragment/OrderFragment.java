@@ -17,6 +17,7 @@ import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseFragment;
 import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.responseBean.ResponseOrder;
+import com.jerry.jtakeaway.bean.responseBean.ResponseUser;
 import com.jerry.jtakeaway.bean.responseBean.Result2;
 import com.jerry.jtakeaway.eventBusEvents.PagePositionEvent;
 import com.jerry.jtakeaway.ui.user.adapter.OrderTabAdapter;
@@ -62,7 +63,7 @@ public class OrderFragment extends BaseFragment {
     @Override
     public void InitView() {
         SignEventBus();
-        orderTabFragments = new ArrayList<Fragment>();
+        orderTabFragments = new ArrayList<>();
         orderTabFragments.add(new AllFragment());
         orderTabFragments.add(new UnderwayFragment());
         orderTabFragments.add(new CompletedFragment());
@@ -92,12 +93,10 @@ public class OrderFragment extends BaseFragment {
                 tab.setText(spStr);
             }
         }
-
     }
 
     @Override
     public void InitData() {
-        getOrders();
     }
 
     private void getOrders() {
@@ -113,9 +112,8 @@ public class OrderFragment extends BaseFragment {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
                 Result2 result = JsonUtils.getResult2(jsonObject);
                 if (result.getCode() == 10000) {
-                    System.out.println("所有订单" + result.getData().toString());
                     responseOrderList.addAll(GsonUtil.parserJsonToArrayBeans(result.getData().toString(), ResponseOrder.class));
-                    EventBus.getDefault().postSticky(responseOrderList);
+                    EventBus.getDefault().post(responseOrderList);
                 } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         Toast.makeText(context, "数据错误", Toast.LENGTH_SHORT).show();
@@ -138,7 +136,6 @@ public class OrderFragment extends BaseFragment {
                 StyleSpan styleSpan_B = new StyleSpan(Typeface.BOLD);
                 spStr.setSpan(styleSpan_B, 0, trim.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
                 tab.setText(spStr);
-
             }
 
             @Override
@@ -163,6 +160,12 @@ public class OrderFragment extends BaseFragment {
     @Override
     public void destroy() {
 
+    }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void LoginEvent(ResponseUser responseUser) {
+        getOrders();
     }
 
 

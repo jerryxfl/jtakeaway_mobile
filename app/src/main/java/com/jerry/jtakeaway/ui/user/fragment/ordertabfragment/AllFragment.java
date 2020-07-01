@@ -125,7 +125,7 @@ public class AllFragment extends BaseFragment {
     }
 
 
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky =  true)
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void DatasEvent(List<ResponseOrder> responseOrder){
         System.out.println("所有订单订阅收到");
         responseOrderList.clear();

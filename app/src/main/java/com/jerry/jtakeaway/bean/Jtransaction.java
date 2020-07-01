@@ -1,10 +1,11 @@
 package com.jerry.jtakeaway.bean;
 
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-public class Jtransaction {
+public class Jtransaction implements Serializable {
     private int id;
     private Timestamp paytime;
     private Double paymoney;

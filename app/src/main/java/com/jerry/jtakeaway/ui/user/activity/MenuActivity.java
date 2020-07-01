@@ -565,8 +565,8 @@ public class MenuActivity extends BaseActivity {
 
 
                     setMenuItem(foodImg2, foodName2, menu, menuBtn, 1);
-                    setMenuItem(view.findViewById(R.id.foodImg3), view.findViewById(R.id.foodName3), menu, view.findViewById(R.id.menu3), 1);
-                    setMenuItem(view.findViewById(R.id.foodImg4), view.findViewById(R.id.foodName4), menu, view.findViewById(R.id.menu4), 2);
+                    setMenuItem(view.findViewById(R.id.foodImg3), view.findViewById(R.id.foodName3), menu, view.findViewById(R.id.menu3), 2);
+                    setMenuItem(view.findViewById(R.id.foodImg4), view.findViewById(R.id.foodName4), menu, view.findViewById(R.id.menu4), 3);
                 });
                 mFoodDialog.show();
             } else {
@@ -625,10 +625,10 @@ public class MenuActivity extends BaseActivity {
         foodName.setText(menu.getFoodname() + "x" + size);
         menuBtn.setOnClickListener(v2 -> {
             setMenus = menu;
+            setSize = size;
             choseFood_tv.setText(menu.getFoodname());
             mFoodDialog.dismiss();
         });
-        setSize = size;
     }
 
 

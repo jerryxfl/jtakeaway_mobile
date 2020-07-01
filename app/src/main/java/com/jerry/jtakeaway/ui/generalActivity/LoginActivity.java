@@ -70,8 +70,8 @@ public class LoginActivity extends BaseActivity {
     AniImgButton wechat_aib;
     @BindView(R.id.forgetpwd_tv)
     TextView forgetpwd_tv;
-    @BindView(R.id.just_login_tv)
-    TextView justlogin_tv;
+    @BindView(R.id.just_sign_tv)
+    TextView just_sign_tv;
     @BindView(R.id.login_card_wapper)
     LinearLayout login_card_wapper;
 
@@ -171,8 +171,8 @@ public class LoginActivity extends BaseActivity {
         });
 
         //直接登录
-        justlogin_tv.setOnClickListener(v -> {
-
+        just_sign_tv.setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this,SignActivity.class));
         });
     }
 

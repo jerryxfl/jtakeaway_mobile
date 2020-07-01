@@ -15,6 +15,7 @@ import com.jerry.jtakeaway.base.BaseFragment;
 import com.jerry.jtakeaway.base.BaseViewHolder;
 import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.Msg;
+import com.jerry.jtakeaway.bean.responseBean.ResponseUser;
 import com.jerry.jtakeaway.bean.responseBean.Result2;
 import com.jerry.jtakeaway.custom.JAdapter;
 import com.jerry.jtakeaway.eventBusEvents.BadgeDragEvent;
@@ -106,7 +107,6 @@ public class EmailFragment extends BaseFragment {
 
     @Override
     public void InitData() {
-        getMessages();
     }
 
     private void getMessages() {
@@ -153,6 +153,14 @@ public class EmailFragment extends BaseFragment {
     public void destroy() {
 
     }
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void LoginEvent(ResponseUser responseUser) {
+        getMessages();
+    }
+
+
 
 
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
