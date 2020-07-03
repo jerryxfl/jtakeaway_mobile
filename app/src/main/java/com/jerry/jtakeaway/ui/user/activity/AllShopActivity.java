@@ -6,6 +6,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,10 +20,9 @@ import com.bumptech.glide.Glide;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
 import com.jerry.jtakeaway.base.BaseViewHolder;
-import com.jerry.jtakeaway.bean.Comment;
 import com.jerry.jtakeaway.bean.JUrl;
-import com.jerry.jtakeaway.bean.Suser;
 import com.jerry.jtakeaway.bean.responseBean.Result2;
+import com.jerry.jtakeaway.bean.responseBean.ShopHaveMenu;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
 import com.jerry.jtakeaway.utils.GsonUtil;
@@ -32,39 +33,37 @@ import com.jerry.jtakeaway.utils.PixAndDpUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
-import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+import per.wsj.library.AndRatingBar;
 
-public class CommentActivity extends BaseActivity {
+public class AllShopActivity extends BaseActivity {
     @BindView(R.id.top)
     View top;
+
 
     @BindView(R.id.return_aib)
     AniImgButton return_aib;
 
 
-    @BindView(R.id.comment_recyclerView)
-    RecyclerView comment_recyclerView;
+    @BindView(R.id.shopRecyclerView)
+    RecyclerView shopRecyclerView;
 
     @BindView(R.id.refresh)
     SwipeRefreshLayout refresh;
 
-    List<Comment> commentList = new ArrayList<Comment>();
-    private JAdapter<Comment> commentJAdapter;
-    private Suser suser;
+    private JAdapter<ShopHaveMenu> shopJadapter;
+    List<ShopHaveMenu> shopHaveMenuList = new ArrayList<ShopHaveMenu>();
 
     @Override
     public int getLayout() {
-        return R.layout.activity_comment;
+        return R.layout.activity_all_shop;
     }
 
     @Override
@@ -73,65 +72,69 @@ public class CommentActivity extends BaseActivity {
         layoutParams.height = PixAndDpUtil.getStatusBarHeight(this);
         top.setLayoutParams(layoutParams);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager layoutManager= new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        comment_recyclerView.setLayoutManager(layoutManager);
-        commentJAdapter = new JAdapter<>(this, comment_recyclerView, new int[]{R.layout.comment_item}, new JAdapter.adapterListener<Comment>() {
+        shopRecyclerView.setLayoutManager(layoutManager);
+        shopJadapter = new JAdapter<ShopHaveMenu>(this, shopRecyclerView, new int[]{R.layout.shop_item}, new JAdapter.adapterListener<ShopHaveMenu>() {
             @Override
-            public void setItems(BaseViewHolder holder, int position, List<Comment> datas) {
-                CircleImageView avatar = holder.getView(R.id.avatar);
-                TextView userNickName = holder.getView(R.id.userNickName);
-                TextView time = holder.getView(R.id.time);
-                TextView content = holder.getView(R.id.content);
-                CardView container = holder.getView(R.id.container);
+            public void setItems(BaseViewHolder holder, int position, List<ShopHaveMenu> datas) {
+                ImageView shop_image = holder.getView(R.id.shop_image);
+                LinearLayout container = holder.getView(R.id.container);
+                CardView shop_image_wrapper = holder.getView(R.id.shop_image_wrapper);
+                TextView shopname_tv = holder.getView(R.id.shopname_tv);
+                AndRatingBar shopleve_rating = holder.getView(R.id.shopleve_rating);
+                TextView decr_tv = holder.getView(R.id.decr_tv);
+                if(datas.get(position).getMenu()!=null){
+                    Glide.with(AllShopActivity.this)
+                            .load(datas.get(position).getMenu().getFoodimg())
+                            .into(shop_image);
+                }else{
+                    shop_image_wrapper.setVisibility(View.GONE);
+                }
+                if(datas.get(position).getSuser().getLevel()>5){
+                    shopleve_rating.setRating(5);
+                }else{
+                    shopleve_rating.setRating((float) datas.get(position).getSuser().getLevel());
+                }
 
-                Glide.with(CommentActivity.this)
-                        .load(datas.get(position).getUser().getUseradvatar())
-                        .into(avatar);
+                shopname_tv.setText(datas.get(position).getSuser().getShopname());
+                decr_tv.setText(datas.get(position).getSuser().getDscr());
 
-                userNickName.setText(datas.get(position).getUser().getUsernickname());
-                Date date = datas.get(position).getCreatetime();
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yy-MM-dd hh:mm:ss");
-                time.setText(dateFormat.format(date));
-                content.setText(datas.get(position).getContent());
-                container.setOnClickListener(v->{
-                    Intent intent = new Intent(CommentActivity.this, UserCommentActivity.class);
+                container.setOnClickListener(v -> {
+                    Intent intent = new Intent(AllShopActivity.this, ShopActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("COMMENT",datas.get(position));
+                    bundle.putSerializable("shop", datas.get(position).getSuser());
                     intent.putExtras(bundle);
                     startActivity(intent);
                 });
             }
 
             @Override
-            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<Comment> datas) {
+            public void upDateItem(BaseViewHolder holder, int position, List<Object> payloads, List<ShopHaveMenu> datas) {
 
             }
 
             @Override
-            public int getViewType(List<Comment> datas, int position) {
+            public int getViewType(List<ShopHaveMenu> datas, int position) {
                 return 0;
             }
         });
+
 
     }
 
     @Override
     public void InitData() {
-        Intent intent = getIntent();
-        suser = (Suser) intent.getSerializableExtra("SUSER");
-        if(suser !=null){
-            getMsg(suser);
-        }
-
+        getShops();
     }
 
-
-    private void getMsg(Suser suser) {
-        OkHttp3Util.GET(JUrl.shop_comment(suser.getId()), this, new Callback() {
+    private void getShops() {
+        OkHttp3Util.GET(JUrl.shops(shopHaveMenuList.size()), this, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                new Handler(Looper.getMainLooper()).post(() -> {
 
+                });
             }
 
             @Override
@@ -139,27 +142,28 @@ public class CommentActivity extends BaseActivity {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
                 Result2 result = JsonUtils.getResult2(jsonObject);
                 if (result.getCode() == 10000) {
-                    commentList.addAll(GsonUtil.parserJsonToArrayBeans(result.getData().toString(), Comment.class));
+                    System.out.println("商家:" + result.getData());
+                    List<ShopHaveMenu> datas = GsonUtil.parserJsonToArrayBeans(result.getData().toString(),ShopHaveMenu.class);
+                    shopHaveMenuList.addAll(datas);
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        commentJAdapter.adapter.setHeader(commentList);
+                        shopJadapter.adapter.setFooter(datas);
                         refresh.setRefreshing(false);
                     });
-                }else {
+                } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        Toast.makeText(CommentActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AllShopActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
                     });
                 }
+
             }
         });
-
     }
-
 
     @Override
     public void InitListener() {
         return_aib.setOnClickListener(v -> finish());
-        refresh.setOnRefreshListener(() -> getMsg(suser));
-        comment_recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        refresh.setOnRefreshListener(this::getShops);
+        shopRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);

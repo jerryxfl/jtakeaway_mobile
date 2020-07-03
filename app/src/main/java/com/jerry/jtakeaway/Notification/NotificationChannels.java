@@ -11,6 +11,8 @@ import android.os.Build;
 
 import com.jerry.jtakeaway.utils.MMkvUtil;
 
+import java.util.UUID;
+
 public class NotificationChannels {
     public static String SYSTEM_ID = "";
     private final static String SYSTEM = "系统消息";
@@ -19,8 +21,9 @@ public class NotificationChannels {
 
     public static void createAllNotificationChannels(Context context){
         if(MMkvUtil.getInstance(context,"Configuration").decodeString("SYSTEM_ID")==null||MMkvUtil.getInstance(context,"Configuration").decodeString("SYSTEM_ID").equals("")){
-            SYSTEM_ID = "JERRY_SYSTEM"+System.currentTimeMillis();
+            SYSTEM_ID = "JERRY_SYSTEM"+ UUID.randomUUID();
             MMkvUtil.getInstance(context,"Configuration").encode("SYSTEM_ID",SYSTEM_ID);
+            System.out.println("创建通知频道:"+SYSTEM_ID);
         }else{
             SYSTEM_ID = MMkvUtil.getInstance(context,"Configuration").decodeString("SYSTEM_ID");
         }
@@ -49,9 +52,11 @@ public class NotificationChannels {
 
     public static void changeChannels(Context context){
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        System.out.println("删除通知频道:"+MMkvUtil.getInstance(context,"Configuration").decodeString("SYSTEM_ID"));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.deleteNotificationChannel(MMkvUtil.getInstance(context,"Configuration").decodeString("SYSTEM_ID"));
+            MMkvUtil.getInstance(context,"Configuration").encode("SYSTEM_ID","");
         }
     }
 

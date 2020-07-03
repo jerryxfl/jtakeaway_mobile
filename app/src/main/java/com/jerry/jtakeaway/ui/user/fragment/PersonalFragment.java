@@ -33,6 +33,7 @@ import com.jerry.jtakeaway.ui.generalActivity.LoginActivity;
 import com.jerry.jtakeaway.ui.user.activity.ExtractMoneyActivity;
 import com.jerry.jtakeaway.ui.user.activity.ImgActivity;
 import com.jerry.jtakeaway.ui.user.activity.InvestActivity;
+import com.jerry.jtakeaway.ui.user.activity.MyConponActivity;
 import com.jerry.jtakeaway.ui.user.activity.OpenPaymentActivity;
 import com.jerry.jtakeaway.ui.user.activity.SettingActivity;
 import com.jerry.jtakeaway.ui.user.activity.TransactionActivity;
@@ -213,13 +214,13 @@ public class PersonalFragment extends BaseFragment {
 
         List<TIButton> wallets = new ArrayList<>();
         wallets.add(new TIButton(R.drawable.invest, "充值", () -> {
-            startActivity(new Intent(context, InvestActivity.class));
+            canIntoWallet(() -> startActivity(new Intent(context, InvestActivity.class)));
         }));
         wallets.add(new TIButton(R.drawable.wallet, "提现", () -> {
-            startActivity(new Intent(context, ExtractMoneyActivity.class));
+            canIntoWallet(()->startActivity(new Intent(context, ExtractMoneyActivity.class)));
         }));
         wallets.add(new TIButton(R.drawable.transaction, "交易记录", () -> {
-            startActivity(new Intent(context, TransactionActivity.class));
+            canIntoWallet(() ->startActivity(new Intent(context, TransactionActivity.class)));
         }));
         wallets.add(new TIButton(R.drawable.pay_password, "支密修改", () -> {
             Toast.makeText(context,"暂不支持修改支付密码",Toast.LENGTH_SHORT).show();
@@ -228,9 +229,38 @@ public class PersonalFragment extends BaseFragment {
         jAdapterWallet.adapter.setData(wallets);
     }
 
+    private void canIntoWallet(canWallet canWallet) {
+        if(UserUtils.getInstance().getUser().getUsertype()==0){
+            Nuser nuser = UserUtils.getInstance().getUserDetails(Nuser.class);
+            if(nuser.getWallet()==null){
+                new SweetAlertDialog(context, SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("你还未开通钱包功能,是否前去开通?")
+                        .setConfirmText("是的")
+                        .setConfirmClickListener(sDialog -> {
+                            startActivity(new Intent(context, OpenPaymentActivity.class));
+                            sDialog.dismissWithAnimation();
+                        })
+                        .setCancelText("不了")
+                        .setCancelClickListener(SweetAlertDialog::dismissWithAnimation)
+                        .show();
+            }else{
+                canWallet.event();
+            }
+        }else{
+            canWallet.event();
+        }
+    }
+
+
+    interface canWallet{
+        void event();
+    }
 
     @Override
     public void InitListener() {
+        conponCard.setOnClickListener(v -> {
+            startActivity(new Intent(context, MyConponActivity.class));
+        });
         all_order.setOnClickListener(v -> {
             EventBus.getDefault().post(new PagePositionEvent(1, 0));
         });

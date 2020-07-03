@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
@@ -51,6 +52,9 @@ public class OrderFragment extends BaseFragment {
     TabLayout order_tab;
     @BindView(R.id.order_tab_view)
     ViewPager order_tab_view;
+    @BindView(R.id.refresh)
+    SwipeRefreshLayout refresh;
+
     private List<Fragment> orderTabFragments;
     private List<ResponseOrder> responseOrderList = new ArrayList<>();
 
@@ -114,6 +118,9 @@ public class OrderFragment extends BaseFragment {
                 if (result.getCode() == 10000) {
                     responseOrderList.addAll(GsonUtil.parserJsonToArrayBeans(result.getData().toString(), ResponseOrder.class));
                     EventBus.getDefault().post(responseOrderList);
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        refresh.setRefreshing(false);
+                    });
                 } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         Toast.makeText(context, "数据错误", Toast.LENGTH_SHORT).show();
@@ -155,6 +162,8 @@ public class OrderFragment extends BaseFragment {
 
             }
         });
+
+        refresh.setOnRefreshListener(() -> getOrders());
     }
 
     @Override

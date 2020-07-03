@@ -37,7 +37,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentBottom="true"
                     android:layout_margin="10dp"
-                    android:background="@drawable/timepicker_shape"/>
+                    android:background="@drawable/indicator"/>
                 <com.jerry.jtakeaway.custom.AniImgButton
                     android:id="@+id/return_aib"
                     android:layout_width="40dp"

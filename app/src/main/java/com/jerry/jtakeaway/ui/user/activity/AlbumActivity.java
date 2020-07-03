@@ -43,6 +43,8 @@ public class AlbumActivity extends BaseActivity {
     @BindView(R.id.ok)
     Button ok;
 
+    private String filePath;
+
     private String img;
     private JCenterDialog jCenterDialog;
 
@@ -68,9 +70,9 @@ public class AlbumActivity extends BaseActivity {
     public void InitListener() {
         cancel.setOnClickListener(v -> finish());
         ok.setOnClickListener(v ->{
-            String path = writeFileByBitmap(clip_image_view.clip());
-            if(path != null){
-                upLoadImage(path);
+            filePath = writeFileByBitmap(clip_image_view.clip());
+            if(filePath != null){
+                upLoadImage(filePath);
             }
         });
     }
@@ -95,6 +97,11 @@ public class AlbumActivity extends BaseActivity {
                 Result1 result = JsonUtils.getResult1(jsonObject);
                 if(result.getCode() == 10000){
                     new Handler(Looper.getMainLooper()).post(() -> {
+                        File file = new File(filePath);
+                        if(file.isFile()){
+                            file.delete();
+                        }
+
                         jCenterDialog.dismiss();
                         EventBus.getDefault().post("userChange");
                         Toast.makeText(AlbumActivity.this, "上传成功", Toast.LENGTH_SHORT).show();

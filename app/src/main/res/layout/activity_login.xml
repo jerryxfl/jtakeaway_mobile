@@ -4,9 +4,12 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/startimg"
     tools:context=".ui.generalActivity.LoginActivity">
-
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/startimg"/>
 
     <LinearLayout
         android:id="@+id/login_card_wapper"

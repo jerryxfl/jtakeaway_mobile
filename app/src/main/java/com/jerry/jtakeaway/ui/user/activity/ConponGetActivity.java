@@ -14,6 +14,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
@@ -49,12 +50,17 @@ public class ConponGetActivity extends BaseActivity {
 
     @BindView(R.id.conpon_recyclview)
     RecyclerView conpon_recyclview;
+
+    @BindView(R.id.refresh)
+    SwipeRefreshLayout refresh;
+
+
     private JAdapter<Coupon> couponJAdapter;
 
     private List<Coupon> couponList = new ArrayList<>();
     private List<Coupon> couponHaveList = new ArrayList<>();
     private boolean[] booleans;
-    private int targetid;
+    private int targetid = -1;
 
     @Override
     public int getLayout() {
@@ -123,7 +129,7 @@ public class ConponGetActivity extends BaseActivity {
     @Override
     public void InitData() {
         Intent intent = getIntent();
-        targetid = intent.getIntExtra("targetid",0);
+        targetid = intent.getIntExtra("targetid",-1);
 
         getUsefulCoupons();
     }
@@ -196,6 +202,7 @@ public class ConponGetActivity extends BaseActivity {
                     }
                     new Handler(Looper.getMainLooper()).post(() -> {
                         couponJAdapter.adapter.setHeader(couponList);
+                        refresh.setRefreshing(false);
                     });
                 }else if(result.getCode()==6){
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -231,7 +238,11 @@ public class ConponGetActivity extends BaseActivity {
                     couponList.addAll(GsonUtil.jsonToList(result.getData().toString(),Coupon.class));
                     List<Coupon> coupons = new ArrayList<Coupon>();
                     for (Coupon coupon : couponList){
-                        if(coupon.getConpontarget()==null||coupon.getConpontarget()==targetid){
+                        if(targetid != -1){
+                            if(coupon.getConpontarget()==null||coupon.getConpontarget()==targetid){
+                                couponList.add(coupon);
+                            }
+                        }else{
                             couponList.add(coupon);
                         }
                     }
@@ -254,6 +265,23 @@ public class ConponGetActivity extends BaseActivity {
     @Override
     public void InitListener() {
         return_aib.setOnClickListener(v -> finish());
+        refresh.setOnRefreshListener(() -> getUsefulCoupons());
+        conpon_recyclview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int topRowVerticalPosition =
+                        (recyclerView == null || recyclerView.getChildCount() == 0) ? 0 : recyclerView.getChildAt(0).getTop();
+                refresh.setEnabled(topRowVerticalPosition >= 0 && recyclerView != null && !recyclerView.canScrollVertically(-1));
+
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
     }
 
     @Override

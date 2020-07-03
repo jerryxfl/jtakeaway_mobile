@@ -5,9 +5,12 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/startimg"
     tools:context=".ui.generalActivity.LoginActivity">
-
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/startimg"/>
 
     <LinearLayout
         android:id="@+id/login_card_wapper"
@@ -79,8 +82,8 @@
             android:layout_height="0dp"
             android:layout_weight="7">
             <include layout="@layout/nomal_sign_layout"/>
-            <include layout="@layout/hourse_sign_layout" android:id="@+id/shopSign"/>
-            <include layout="@layout/shop_sign_layout" android:id="@+id/hourseSign"/>
+            <include layout="@layout/hourse_sign_layout" android:id="@+id/hourseSign"/>
+            <include layout="@layout/shop_sign_layout" android:id="@+id/shopSign"/>
         </LinearLayout>
 
 

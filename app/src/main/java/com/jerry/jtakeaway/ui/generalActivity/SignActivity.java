@@ -1,14 +1,8 @@
 package com.jerry.jtakeaway.ui.generalActivity;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -23,23 +17,22 @@ import com.gabrielsamojlo.keyboarddismisser.KeyboardDismisser;
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseActivity;
 import com.jerry.jtakeaway.bean.JUrl;
-import com.jerry.jtakeaway.bean.model.form;
 import com.jerry.jtakeaway.bean.requestBean.Sign;
 import com.jerry.jtakeaway.bean.responseBean.Result1;
+import com.jerry.jtakeaway.bean.responseBean.SignResult;
 import com.jerry.jtakeaway.custom.JCenterDialog;
 import com.jerry.jtakeaway.custom.JLoginButton;
-import com.jerry.jtakeaway.utils.BitmapBlurHelper;
+import com.jerry.jtakeaway.utils.GsonUtil;
 import com.jerry.jtakeaway.utils.JsonUtils;
 import com.jerry.jtakeaway.utils.OkHttp3Util;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -64,7 +57,6 @@ public class SignActivity extends BaseActivity {
     EditText passWord;
 
 
-    private List<form> formList = new ArrayList<>();
     private int userType = 0;
     private JCenterDialog jCenterDialog;
     private View shopSign;
@@ -91,9 +83,6 @@ public class SignActivity extends BaseActivity {
     @Override
     public void InitView() {
         KeyboardDismisser.useWith(this);
-        Bitmap bitmap = BitmapBlurHelper.doBlur(this, BitmapFactory.decodeResource(getResources(), R.drawable.startimg), 20);
-        Drawable drawable = new BitmapDrawable(bitmap);
-        container.setBackground(drawable);
 
         login_card_wapper.getBackground().setAlpha(100);
         shopSign2 = findViewById(R.id.shopSign);
@@ -102,10 +91,10 @@ public class SignActivity extends BaseActivity {
         shopSign = getLayoutInflater().inflate(R.layout.shop_sign_layout,null);
         hourseSign = getLayoutInflater().inflate(R.layout.hourse_sign_layout,null);
 
-        IdCard = hourseSign.findViewById(R.id.IdCard);
-        phoneNumber = hourseSign.findViewById(R.id.phoneNumber);
-        address = shopSign.findViewById(R.id.address);
-        shopName = shopSign.findViewById(R.id.shopName);
+        IdCard = hourseSign2.findViewById(R.id.IdCard);
+        phoneNumber = hourseSign2.findViewById(R.id.phoneNumber);
+        address = shopSign2.findViewById(R.id.address);
+        shopName = shopSign2.findViewById(R.id.shopName);
 
         initSpinner();
     }
@@ -155,6 +144,14 @@ public class SignActivity extends BaseActivity {
     @Override
     public void InitListener() {
         sign_btn.setOnClickListener(v -> {
+            System.out.println("注册按钮:"+userType);
+            userNickNameText =userNickName.getText().toString().trim();
+            passWordText =passWord.getText().toString().trim();
+            IdCardText =IdCard.getText().toString().trim();
+            phoneNumberText =phoneNumber.getText().toString().trim();
+            addressText =address.getText().toString().trim();
+            shopNameText =shopName.getText().toString().trim();
+
             if(userNickNameText.equals("")){
                 userNickName.setError("请填写昵称");
                 return;
@@ -184,6 +181,7 @@ public class SignActivity extends BaseActivity {
                 }
             }
             Sign signBean = new Sign();
+            signBean.setType(userType);
             signBean.setUserNickName(userNickNameText);
             signBean.setPassword(passWordText);
             signBean.setIdcard(IdCardText);
@@ -191,103 +189,6 @@ public class SignActivity extends BaseActivity {
             signBean.setAddress(addressText);
             signBean.setShopName(shopNameText);
             Sign(signBean);
-        });
-
-        userNickName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                userNickNameText = userNickName.getText().toString().trim();
-            }
-        });
-        passWord.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                passWordText = passWord.getText().toString().trim();
-            }
-        });
-        IdCard.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                IdCardText = IdCard.getText().toString().trim();
-            }
-        });
-        phoneNumber.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                phoneNumberText = phoneNumber.getText().toString().trim();
-            }
-        });
-        address.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                addressText = address.getText().toString().trim();
-            }
-        });
-        shopName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                shopNameText = shopName.getText().toString().trim();
-            }
         });
     }
 
@@ -315,12 +216,18 @@ public class SignActivity extends BaseActivity {
                     if (result.getCode() == 10000) {
                         //success
                         if (result.getData() != null) {
-
+                            SignResult signResult = GsonUtil.gsonToBean(result.getData().toString(),SignResult.class);
+                            new Handler(Looper.getMainLooper()).post(() -> {
+                                sign_btn.reset();
+                                jCenterDialog.dismiss();
+                                new SweetAlertDialog(SignActivity.this,SweetAlertDialog.SUCCESS_TYPE)
+                                        .setTitleText("注册成功")
+                                        .setContentText("你的账号为:"+signResult.getAccount())
+                                        .setConfirmText("确认")
+                                        .setConfirmClickListener(SweetAlertDialog::dismissWithAnimation)
+                                        .show();
+                            });
                         }
-                        new Handler(Looper.getMainLooper()).post(() -> {
-                            sign_btn.reset();
-                            jCenterDialog.dismiss();
-                        });
                     } else {
                         new Handler(Looper.getMainLooper()).post(() -> {
                             Toast.makeText(SignActivity.this, result.getMsg(), Toast.LENGTH_SHORT).show();

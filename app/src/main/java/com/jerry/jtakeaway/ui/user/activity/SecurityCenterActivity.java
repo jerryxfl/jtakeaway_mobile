@@ -76,8 +76,17 @@ public class SecurityCenterActivity extends BaseActivity {
         }
         pwdLevel.setText(pwdType);
         accountLevel.setText(pwdType);
-        String phone = UserUtils.getInstance().getUser().getPhone().substring(0, 3) + "****" + UserUtils.getInstance().getUser().getPhone().substring(7, 11);
-        phone_tv.setText(phone);
+        if(UserUtils.getInstance().getUser().getPhone()!=null&&!"".equals(UserUtils.getInstance().getUser().getPhone())){
+            try{
+                String phone = UserUtils.getInstance().getUser().getPhone().substring(0, 3) + "****" + UserUtils.getInstance().getUser().getPhone().substring(7, 11);
+                phone_tv.setText(phone);
+            }catch (StringIndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }
+        }else{
+            phone_tv.setText("未绑定手机号码");
+        }
+
 
     }
 

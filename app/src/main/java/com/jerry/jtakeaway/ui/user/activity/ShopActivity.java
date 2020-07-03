@@ -267,6 +267,7 @@ public class ShopActivity extends BaseActivity {
                         if(slideList.isEmpty()){
                             banner.setVisibility(View.GONE);
                         }else{
+                            indicator.setText("1/"+slideList.size());
                             bannerAdapter.adapter.setData(slideList);
                             getMsg();
                         }

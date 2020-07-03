@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.jerry.jtakeaway.R;
 import com.jerry.jtakeaway.base.BaseFragment;
@@ -44,6 +45,9 @@ import okhttp3.Response;
 public class EmailFragment extends BaseFragment {
     @BindView(R.id.email_recyclerview)
     RecyclerView email_recyclerview;
+
+    @BindView(R.id.refresh)
+    SwipeRefreshLayout refresh;
 
     private JAdapter<Msg>emailAdapter;
     private List<Msg> messages = new ArrayList<>();
@@ -132,6 +136,7 @@ public class EmailFragment extends BaseFragment {
                     EventBus.getDefault().post(new BadgeEvent(size));
                     new Handler(Looper.getMainLooper()).post(() -> {
                         emailAdapter.adapter.setHeader(msgs);
+                        refresh.setRefreshing(false);
                     });
                 }else{
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -146,7 +151,23 @@ public class EmailFragment extends BaseFragment {
 
     @Override
     public void InitListener() {
+        refresh.setOnRefreshListener(() -> getMessages());
+        email_recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
 
+                int topRowVerticalPosition =
+                        (recyclerView == null || recyclerView.getChildCount() == 0) ? 0 : recyclerView.getChildAt(0).getTop();
+                refresh.setEnabled(topRowVerticalPosition >= 0 && recyclerView != null && !recyclerView.canScrollVertically(-1));
+
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
     }
 
     @Override

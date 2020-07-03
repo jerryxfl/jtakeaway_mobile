@@ -33,6 +33,10 @@ public class JApplication extends Application {
 
         jApplication =this;
         JUncaughtExceptionHandler.getInstance().init(getApplicationContext());
+        if(MMkvUtil.getInstance(this,"Configuration").decodeString("GUIDE")== null){
+            MMkvUtil.getInstance(this,"Configuration").encode("GUIDE",0);
+        }
+
         if(MMkvUtil.getInstance(this,"Configuration").decodeString("Audio")== null){
             MMkvUtil.getInstance(this,"Configuration").encode("Audio",NotificationAudios.AUDIO_8);
         }

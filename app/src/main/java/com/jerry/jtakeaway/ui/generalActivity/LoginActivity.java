@@ -1,11 +1,7 @@
 package com.jerry.jtakeaway.ui.generalActivity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -30,7 +26,6 @@ import com.jerry.jtakeaway.custom.JLoginButton;
 import com.jerry.jtakeaway.eventBusEvents.WebSocketEvent;
 import com.jerry.jtakeaway.eventBusEvents.WebSocketEventType;
 import com.jerry.jtakeaway.ui.user.activity.HomeActivity;
-import com.jerry.jtakeaway.utils.BitmapBlurHelper;
 import com.jerry.jtakeaway.utils.GsonUtil;
 import com.jerry.jtakeaway.utils.JsonUtils;
 import com.jerry.jtakeaway.utils.KeyboardUtils;
@@ -89,12 +84,7 @@ public class LoginActivity extends BaseActivity {
         loadtoast = new LoadToast(this);
         //点击键盘外任何地方键盘消失
         KeyboardDismisser.useWith(this);
-        Bitmap bitmap = BitmapBlurHelper.doBlur(this, BitmapFactory.decodeResource(getResources(), R.drawable.startimg), 20);
-        Drawable drawable = new BitmapDrawable(bitmap);
-        container.setBackground(drawable);
-
         login_card_wapper.getBackground().setAlpha(100);
-
 
         username_et.setText(MMkvUtil.getInstance(LoginActivity.this, "jwts").decodeString("account") == null ? "" : MMkvUtil.getInstance(LoginActivity.this, "jwts").decodeString("account"));
         password_et.setText(MMkvUtil.getInstance(LoginActivity.this, "jwts").decodeString("password") == null ? "" : MMkvUtil.getInstance(LoginActivity.this, "jwts").decodeString("password"));
@@ -205,6 +195,7 @@ public class LoginActivity extends BaseActivity {
                     if (result.getCode() == 10000) {
                         //success
                         if (result.getData() != null) {
+                            System.out.println("登录成功返回信息:"+result.getData());
                             String jwt = result.getData().getString("jwt");
                             MMkvUtil.getInstance(LoginActivity.this, "jwts").encode("jwt", jwt);
                             MMkvUtil.getInstance(LoginActivity.this, "jwts").encode("account", username);

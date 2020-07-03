@@ -11,7 +11,7 @@
         android:scaleType="centerCrop"
         android:src="@drawable/startimg"/>
     <TextView
-        android:background="@drawable/timepicker_shape"
+        android:background="@drawable/indicator"
         android:alpha="0.2"
         android:layout_marginEnd="10dp"
         android:id="@+id/timepicker_tv"

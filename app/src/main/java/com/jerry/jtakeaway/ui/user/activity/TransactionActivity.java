@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.jerry.jtakeaway.R;
@@ -56,6 +57,9 @@ public class TransactionActivity extends BaseActivity {
 
     @BindView(R.id.table)
     LinearLayout table;
+
+    @BindView(R.id.refresh)
+    SwipeRefreshLayout refresh;
 
     private JAdapter<ResponseTransaction> transactionJAdapter;
     private List<ResponseTransaction> responseTransactionList = new ArrayList<>();
@@ -128,11 +132,14 @@ public class TransactionActivity extends BaseActivity {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
                 Result2 result = JsonUtils.getResult2(jsonObject);
                 if(result.getCode() == 10000){
+                    responseTransactionList.clear();
                     responseTransactionList.addAll(GsonUtil.parserJsonToArrayBeans(result.getData().toString(),ResponseTransaction.class));
                     System.out.println("交易记录:"+result.getData().toString());
                     new Handler(Looper.getMainLooper()).post(() -> {
                         jCenterDialog.dismiss();
+                        transactionJAdapter.adapter.setData(new ArrayList<>());
                         transactionJAdapter.adapter.setHeader(responseTransactionList);
+                        refresh.setRefreshing(false);
                     });
                 }else if(result.getCode()==4){
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -157,6 +164,23 @@ public class TransactionActivity extends BaseActivity {
             Intent intent = new Intent(TransactionActivity.this,TableActivity.class);
             intent.putExtra("TRANSACTION", (Serializable) responseTransactionList);
             startActivity(intent);
+        });
+        refresh.setOnRefreshListener(() -> getTransactions());
+        tranRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int topRowVerticalPosition =
+                        (recyclerView == null || recyclerView.getChildCount() == 0) ? 0 : recyclerView.getChildAt(0).getTop();
+                refresh.setEnabled(topRowVerticalPosition >= 0 && recyclerView != null && !recyclerView.canScrollVertically(-1));
+
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
         });
     }
 

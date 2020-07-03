@@ -2,6 +2,7 @@ package com.jerry.jtakeaway.bean;
 
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 public class User implements Serializable {
@@ -14,7 +15,7 @@ public class User implements Serializable {
     private int userdetailsid;
     private String phone;
     private String email;
-
+    private Timestamp createtime;
     public int getId() {
         return id;
     }
@@ -87,6 +88,13 @@ public class User implements Serializable {
         this.email = email;
     }
 
+    public Timestamp getCreatetime() {
+        return createtime;
+    }
+
+    public void setCreatetime(Timestamp createtime) {
+        this.createtime = createtime;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

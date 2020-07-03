@@ -1,9 +1,11 @@
 package com.jerry.jtakeaway.ui.user.fragment.ordertabfragment;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -51,7 +53,8 @@ public class AllFragment extends BaseFragment {
         SignEventBus();
         LinearLayoutManager layoutManager=new LinearLayoutManager(context,RecyclerView.VERTICAL,false);
         all_recyclerview.setLayoutManager(layoutManager);
-        allAdapter=new JAdapter<ResponseOrder>(context, all_recyclerview, new int[]{R.layout.order_all_recyclerview}, new JAdapter.adapterListener<ResponseOrder>() {
+        allAdapter= new JAdapter<>(context, all_recyclerview, new int[]{R.layout.order_all_recyclerview}, new JAdapter.adapterListener<ResponseOrder>() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void setItems(BaseViewHolder holder, int position, List<ResponseOrder> datas) {
                 ImageView all_shop_img = holder.getView(R.id.all_shop_img);
@@ -60,6 +63,7 @@ public class AllFragment extends BaseFragment {
                 TextView all_time = holder.getView(R.id.all_time);
                 TextView all_price = holder.getView(R.id.all_price);
                 TextView all_status = holder.getView(R.id.all_status);
+                Button all_btn_again = holder.getView(R.id.all_btn_again);
 
                 Glide.with(context)
                         .load(datas.get(position).getSuser().getUseradvatar())
@@ -70,17 +74,17 @@ public class AllFragment extends BaseFragment {
 
                 all_shop_name.setText(datas.get(position).getSsuser().getShopname());
                 Date date = datas.get(position).getCreatedTime();
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
                 all_time.setText(simpleDateFormat.format(date));
                 JSONObject json = JSONObject.parseObject(datas.get(position).getDetailedinformation());
-                Menus menu = json.getObject("menu",Menus.class);
-                all_price.setText("总价: $"+menu.getFoodprice()*datas.get(position).getMenuSize());
+                Menus menu = json.getObject("menu", Menus.class);
+                all_price.setText("总价: $" + menu.getFoodprice() * datas.get(position).getMenuSize());
                 all_status.setText(datas.get(position).getStatus().getStatusdesc());
 
                 all_shop_img.setOnClickListener(v -> {
                     Intent intent = new Intent(context, ShopActivity.class);
                     Bundle bundle = new Bundle();
-                    bundle.putSerializable("shop",datas.get(position).getSsuser());
+                    bundle.putSerializable("shop", datas.get(position).getSsuser());
                     intent.putExtras(bundle);
                     startActivity(intent);
                 });
@@ -92,6 +96,8 @@ public class AllFragment extends BaseFragment {
                     intent.putExtras(bundle);
                     context.startActivity(intent);
                 });
+
+
             }
 
             @Override

@@ -34,6 +34,16 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,UnusedAttribute"
         tools:replace="android:allowBackup,android:icon">
+        <activity android:name=".ui.generalActivity.LunchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.generalActivity.GuideActivity"/>
+        <activity android:name=".ui.user.activity.AllShopActivity" />
+        <activity android:name=".ui.user.activity.MyConponActivity" />
         <activity android:name=".ui.user.activity.TableActivity" />
         <activity android:name=".ui.generalActivity.SignActivity" />
         <activity android:name=".ui.user.activity.TransactionActivity" />
@@ -56,7 +66,8 @@
         <service
             android:name=".service.NotificationService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"
+            android:permission="TODO" />
 
         <activity android:name=".ui.user.activity.NoticeStyleActivity" />
         <activity android:name=".ui.user.activity.AudioStyleActivity" />
@@ -94,24 +105,10 @@
         <activity
             android:name=".ui.user.activity.HomeActivity"
             android:label="home"
-            android:launchMode="singleTask">
-
-        </activity> <!-- flutteractivity -->
-        <!-- <activity -->
-        <!-- android:name="io.flutter.embedding.android.FlutterActivity" -->
-        <!-- android:theme="@style/TransTheme" -->
-        <!-- android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" -->
-        <!-- android:hardwareAccelerated="true" -->
-        <!-- android:windowSoftInputMode="adjustResize" /> -->
+            android:launchMode="singleTask" />
         <activity
             android:name=".ui.generalActivity.LoginActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:label="@string/app_name" />
         <activity
             android:name=".ui.generalActivity.WebActivity"
             android:label="@string/app_name" />

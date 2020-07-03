@@ -27,6 +27,7 @@ import com.jerry.jtakeaway.bean.Comment;
 import com.jerry.jtakeaway.bean.Coupon;
 import com.jerry.jtakeaway.bean.JUrl;
 import com.jerry.jtakeaway.bean.Menus;
+import com.jerry.jtakeaway.bean.Nuser;
 import com.jerry.jtakeaway.bean.Orde;
 import com.jerry.jtakeaway.bean.Suser;
 import com.jerry.jtakeaway.bean.events.AddressEvent;
@@ -46,6 +47,7 @@ import com.jerry.jtakeaway.utils.GsonUtil;
 import com.jerry.jtakeaway.utils.JsonUtils;
 import com.jerry.jtakeaway.utils.OkHttp3Util;
 import com.jerry.jtakeaway.utils.PixAndDpUtil;
+import com.jerry.jtakeaway.utils.UserUtils;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -596,8 +598,8 @@ public class MenuActivity extends BaseActivity {
                 Toast.makeText(MenuActivity.this, "请选择配送地址", Toast.LENGTH_SHORT).show();
                 return;
             }
+            canCreateOrder();
             //生成订单
-            createOrder(suser.getId(), setMenus.getId(), setSize);
         });
 
         shopName.setOnClickListener(v -> {
@@ -618,6 +620,32 @@ public class MenuActivity extends BaseActivity {
         return_aib.setOnClickListener(v -> finish());
     }
 
+    private void canCreateOrder() {
+        if(UserUtils.getInstance().getUser().getUsertype()==0){
+            Nuser nuser = UserUtils.getInstance().getUserDetails(Nuser.class);
+            if(nuser.getWallet()==null){
+                new SweetAlertDialog(MenuActivity.this, SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("你还未开通钱包功能,是否确认开通?")
+                        .setConfirmText("是")
+                        .setConfirmClickListener(sDialog -> {
+                            sDialog.dismissWithAnimation();
+                            startActivity(new Intent(MenuActivity.this,OpenPaymentActivity.class));
+                        })
+                        .setCancelText("否")
+                        .setCancelClickListener(SweetAlertDialog::dismissWithAnimation)
+                        .show();
+            }else{
+                createOrder(suser.getId(), setMenus.getId(), setSize);
+            }
+        }else{
+            new SweetAlertDialog(MenuActivity.this, SweetAlertDialog.WARNING_TYPE)
+                    .setTitleText("该用户不支持创建订单")
+                    .setConfirmText("知道了")
+                    .setConfirmClickListener(SweetAlertDialog::dismissWithAnimation)
+                    .show();
+        }
+    }
+
     private void setMenuItem(ImageView foodImg, TextView foodName, Menus menu, LinearLayout menuBtn, int size) {
         Glide.with(MenuActivity.this)
                 .load(menu.getFoodimg())
@@ -626,7 +654,7 @@ public class MenuActivity extends BaseActivity {
         menuBtn.setOnClickListener(v2 -> {
             setMenus = menu;
             setSize = size;
-            choseFood_tv.setText(menu.getFoodname());
+            choseFood_tv.setText(menu.getFoodname() + "x" + size);
             mFoodDialog.dismiss();
         });
     }

@@ -11,6 +11,7 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -40,6 +41,7 @@ import com.jerry.jtakeaway.bean.responseBean.ShopHaveMenu;
 import com.jerry.jtakeaway.custom.AniImgButton;
 import com.jerry.jtakeaway.custom.JAdapter;
 import com.jerry.jtakeaway.custom.JgridLayoutManager;
+import com.jerry.jtakeaway.ui.user.activity.AllShopActivity;
 import com.jerry.jtakeaway.ui.user.activity.MenuActivity;
 import com.jerry.jtakeaway.ui.user.activity.ShopActivity;
 import com.jerry.jtakeaway.utils.GPSUtils;
@@ -98,6 +100,12 @@ public class HomePageFragment extends BaseFragment {
 
     @BindView(R.id.people_red_recyclerview)
     RecyclerView people_red_recyclerview;
+
+    @BindView(R.id.more)
+    Button more;
+
+    @BindView(R.id.more1)
+    Button more1;
 
     private CarouselLayoutManager layoutManager;
     private Timer timer;
@@ -470,7 +478,6 @@ public class HomePageFragment extends BaseFragment {
                 if (result.getCode() == 10000) {
                     red_people_shopList.clear();
                     red_people_shopList.addAll(GsonUtil.jsonToList(result.getData().toString(), ShopHaveMenu.class));
-                    System.out.println("热门商家:" + result.getData());
                     new Handler(Looper.getMainLooper()).post(() -> {
                         peopleRedAdapter.adapter.setData(red_people_shopList);
                     });
@@ -500,7 +507,6 @@ public class HomePageFragment extends BaseFragment {
                 if (result.getCode() == 10000) {
                     five_shopList.clear();
                     five_shopList.addAll(GsonUtil.jsonToList(result.getData().toString(), ShopHaveMenu.class));
-                    System.out.println("热门商家:" + result.getData());
                     new Handler(Looper.getMainLooper()).post(() -> {
                         fiveLevelAdapter.adapter.setData(five_shopList);
                     });
@@ -657,6 +663,9 @@ public class HomePageFragment extends BaseFragment {
 
     @Override
     public void InitListener() {
+        more.setOnClickListener(v->startActivity(new Intent(context, AllShopActivity.class)));
+        more1.setOnClickListener(v->startActivity(new Intent(context, AllShopActivity.class)));
+
         recyclerview_banner.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
