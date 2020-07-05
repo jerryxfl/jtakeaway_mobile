@@ -139,9 +139,26 @@ public class CommentActivity extends BaseActivity {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
                 Result2 result = JsonUtils.getResult2(jsonObject);
                 if (result.getCode() == 10000) {
-                    commentList.addAll(GsonUtil.parserJsonToArrayBeans(result.getData().toString(), Comment.class));
+                    List<Comment> comments = new ArrayList<>();
+                    List<Comment> newComments = new ArrayList<>();
+                    comments.addAll(GsonUtil.parserJsonToArrayBeans(result.getData().toString(), Comment.class));
+                    for (int i = 0; i < comments.size(); i++) {
+                        boolean add = true;
+
+                        for (int j = 0; j < commentList.size(); j++) {
+                            if(comments.get(i).getId() == commentList.get(j).getId()){
+                                add =false;
+                                break;
+                            }
+                        }
+
+                        if(add)newComments.add(comments.get(i));
+                    }
+
+                    commentList.addAll(newComments);
+
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        commentJAdapter.adapter.setHeader(commentList);
+                        commentJAdapter.adapter.setHeader(newComments);
                         refresh.setRefreshing(false);
                     });
                 }else {

@@ -104,6 +104,7 @@ public class OrderFragment extends BaseFragment {
     }
 
     private void getOrders() {
+        System.out.println("已获取订单大小:"+responseOrderList.size());
         OkHttp3Util.GET(JUrl.orders(responseOrderList.size()), context, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {

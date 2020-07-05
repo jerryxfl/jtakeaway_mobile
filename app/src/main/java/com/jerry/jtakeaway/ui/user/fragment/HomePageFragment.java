@@ -722,6 +722,7 @@ public class HomePageFragment extends BaseFragment {
     @Override
     public void destroy() {
         if (timer != null) timer.cancel();
+        GPSUtils.getInstance(context).removeListener();
     }
 
 
