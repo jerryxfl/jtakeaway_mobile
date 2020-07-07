@@ -89,7 +89,7 @@ public class EditAddressActivity extends BaseActivity {
     public void InitData() {
         Intent intent = getIntent();
         address = (Address) intent.getSerializableExtra("address");
-        if(address !=null){
+        if (address != null) {
             choose_address_tv.setText(address.getAddress());
             real_address_et.setText(address.getDetaileaddress());
             contact_et.setText(address.getContact());
@@ -103,32 +103,32 @@ public class EditAddressActivity extends BaseActivity {
     @Override
     public void InitListener() {
         choose_address_tv.setOnClickListener(v -> {
-            startActivityForResult(new Intent(EditAddressActivity.this, AddressActivity.class),1);
+            startActivityForResult(new Intent(EditAddressActivity.this, AddressActivity.class), 1);
         });
-        save_btn.setOnClickListener(v ->{
-           String address = choose_address_tv.getText().toString();
-           String detaileAddress = real_address_et.getText().toString().trim();
-           String contact = contact_et.getText().toString().trim();
-           String phone = phone_et.getText().toString().trim();
+        save_btn.setOnClickListener(v -> {
+            String address = choose_address_tv.getText().toString();
+            String detaileAddress = real_address_et.getText().toString().trim();
+            String contact = contact_et.getText().toString().trim();
+            String phone = phone_et.getText().toString().trim();
 
-           if(address.equals("点击选择")){
-               Toast.makeText(EditAddressActivity.this,"请选择地址",Toast.LENGTH_SHORT).show();
+            if (address.equals("点击选择")) {
+                Toast.makeText(EditAddressActivity.this, "请选择地址", Toast.LENGTH_SHORT).show();
                 return;
-           }
-           if(detaileAddress.equals("")){
-               real_address_et.setError("请填写详细地址");
-               return;
-           }
+            }
+            if (detaileAddress.equals("")) {
+                real_address_et.setError("请填写详细地址");
+                return;
+            }
 
-           if(contact.equals("")){
-               company_tv.setError("请填写收货人姓名");
-               return;
-           }
+            if (contact.equals("")) {
+                company_tv.setError("请填写收货人姓名");
+                return;
+            }
 
-           if(phone.equals("")){
-               phone_et.setError("请填写收货人手机号");
-               return;
-           }
+            if (phone.equals("")) {
+                phone_et.setError("请填写收货人手机号");
+                return;
+            }
 
             Address mAddress = new Address();
             mAddress.setId(id);
@@ -137,7 +137,7 @@ public class EditAddressActivity extends BaseActivity {
             mAddress.setDetaileaddress(detaileAddress);
             mAddress.setPhone(phone);
             mAddress.setLabel(label);
-            if(this.address!=null){
+            if (this.address != null) {
                 mAddress.setUser(this.address.getUser());
                 saveChange(mAddress);
             } else {
@@ -147,7 +147,7 @@ public class EditAddressActivity extends BaseActivity {
 
         });
 
-        home_tv.setOnClickListener(v->{
+        home_tv.setOnClickListener(v -> {
             chooseLabel(home_tv.getText().toString());
         });
 
@@ -161,10 +161,10 @@ public class EditAddressActivity extends BaseActivity {
         return_aib.setOnClickListener(v -> finish());
     }
 
-    private void saveChange(Address address){
+    private void saveChange(Address address) {
         JSONObject json = (JSONObject) JSONObject.toJSON(address);
 //        System.out.println("修改的内容"+json.toString());
-        OkHttp3Util.POST(JUrl.c_address, this,json, new Callback() {
+        OkHttp3Util.POST(JUrl.c_address, this, json, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 new Handler(Looper.getMainLooper()).post(() -> {
@@ -177,15 +177,15 @@ public class EditAddressActivity extends BaseActivity {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
                 System.out.println(jsonObject.toString());
                 Result1 result = JsonUtils.getResult1(jsonObject);
-                if(result.getCode() == 10000){
+                if (result.getCode() == 10000) {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        Toast.makeText(EditAddressActivity.this,"保存成功",Toast.LENGTH_SHORT).show();
-                        EventBus.getDefault().post(new AddressEvent(address,0));
+                        Toast.makeText(EditAddressActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
+                        EventBus.getDefault().post(new AddressEvent(address, 0));
                         finish();
                     });
-                }else{
+                } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        Toast.makeText(EditAddressActivity.this,"数据错误",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditAddressActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
                     });
                 }
             }
@@ -193,10 +193,10 @@ public class EditAddressActivity extends BaseActivity {
     }
 
 
-    private void addAddress(Address address){
+    private void addAddress(Address address) {
         JSONObject json = (JSONObject) JSONObject.toJSON(address);
-        System.out.println("增加的内容"+json.toString());
-        OkHttp3Util.POST(JUrl.a_address, this,json, new Callback() {
+        System.out.println("增加的内容" + json.toString());
+        OkHttp3Util.POST(JUrl.a_address, this, json, new Callback() {
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 new Handler(Looper.getMainLooper()).post(() -> {
@@ -209,16 +209,16 @@ public class EditAddressActivity extends BaseActivity {
                 com.alibaba.fastjson.JSONObject jsonObject = com.alibaba.fastjson.JSONObject.parseObject(Objects.requireNonNull(response.body()).string());
                 System.out.println(jsonObject.toString());
                 Result1 result = JsonUtils.getResult1(jsonObject);
-                if(result.getCode() == 10000){
+                if (result.getCode() == 10000) {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        Toast.makeText(EditAddressActivity.this,"添加成功",Toast.LENGTH_SHORT).show();
-                        Address mAddress = GsonUtil.gsonToBean(result.getData().toString(),Address.class);
-                        EventBus.getDefault().postSticky(new AddressEvent(mAddress,1));
+                        Toast.makeText(EditAddressActivity.this, "添加成功", Toast.LENGTH_SHORT).show();
+                        Address mAddress = GsonUtil.gsonToBean(result.getData().toString(), Address.class);
+                        EventBus.getDefault().postSticky(new AddressEvent(mAddress, 1));
                         finish();
                     });
-                }else{
+                } else {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        Toast.makeText(EditAddressActivity.this,"数据错误",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditAddressActivity.this, "数据错误", Toast.LENGTH_SHORT).show();
                     });
                 }
             }
@@ -226,28 +226,27 @@ public class EditAddressActivity extends BaseActivity {
     }
 
 
-
-    private void chooseLabel(String label){
+    private void chooseLabel(String label) {
 
 
         home_tv.setTextColor(Color.BLACK);
         company_tv.setTextColor(Color.BLACK);
         school_tv.setTextColor(Color.BLACK);
 
-        home_tv.setBackground(ContextCompat.getDrawable(this,R.drawable.address_shape));
-        company_tv.setBackground(ContextCompat.getDrawable(this,R.drawable.address_shape));
-        school_tv.setBackground(ContextCompat.getDrawable(this,R.drawable.address_shape));
+        home_tv.setBackground(ContextCompat.getDrawable(this, R.drawable.address_shape));
+        company_tv.setBackground(ContextCompat.getDrawable(this, R.drawable.address_shape));
+        school_tv.setBackground(ContextCompat.getDrawable(this, R.drawable.address_shape));
 
-        if(label!=null){
-            if(!label.equals("")){
-                if(label.contentEquals(home_tv.getText())){
-                    home_tv.setBackground(ContextCompat.getDrawable(this,R.drawable.address_select_shape));
+        if (label != null) {
+            if (!label.equals("")) {
+                if (label.contentEquals(home_tv.getText())) {
+                    home_tv.setBackground(ContextCompat.getDrawable(this, R.drawable.address_select_shape));
                     home_tv.setTextColor(Color.WHITE);
-                }else if(label.contentEquals(company_tv.getText())){
-                    company_tv.setBackground(ContextCompat.getDrawable(this,R.drawable.address_select_shape));
+                } else if (label.contentEquals(company_tv.getText())) {
+                    company_tv.setBackground(ContextCompat.getDrawable(this, R.drawable.address_select_shape));
                     company_tv.setTextColor(Color.WHITE);
-                }else if(label.contentEquals(school_tv.getText())){
-                    school_tv.setBackground(ContextCompat.getDrawable(this,R.drawable.address_select_shape));
+                } else if (label.contentEquals(school_tv.getText())) {
+                    school_tv.setBackground(ContextCompat.getDrawable(this, R.drawable.address_select_shape));
                     school_tv.setTextColor(Color.WHITE);
                 }
             }
@@ -263,7 +262,7 @@ public class EditAddressActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==1&&resultCode==1){
+        if (requestCode == 1 && resultCode == 1) {
             String address = data.getStringExtra("address");
             choose_address_tv.setText(address);
         }
